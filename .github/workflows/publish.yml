@@ -1,0 +1,12 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+
+jobs:
+  tag-and-release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: giancosta86/aurora-github/actions/tag-and-release@v11
