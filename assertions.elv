@@ -1,6 +1,6 @@
 use str
-use github.com/aurora-elvish/command
-use github.com/aurora-elvish/string
+use github.com/giancosta86/aurora-elvish/command
+use github.com/giancosta86/aurora-elvish/string
 use ./core
 
 fn -print-expected-and-actual { |inputs|
