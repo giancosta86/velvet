@@ -1,6 +1,6 @@
 use str
-use ../../console
-use ../../lang
+use github.com/giancosta86/aurora-elvish/console
+use github.com/giancosta86/aurora-elvish/lang
 
 fn -print-indentation { |level|
   console:print (str:repeat ' ' (* $level 4))
@@ -41,8 +41,12 @@ fn -display-outcome-map { |outcome-map level|
 }
 
 fn display { |outcome-map|
+  console:echo
+
   #TODO! Remove the section with emoji?
   console:section &emoji=📋 (styled 'Test outcomes' blue bold) {
     -display-outcome-map $outcome-map 0
   }
+
+  console:echo
 }

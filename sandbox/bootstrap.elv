@@ -1,7 +1,7 @@
 use path
-use ../console
-use ../fs
-use ./namespace
+use github.com/giancosta86/aurora-elvish/console
+use github.com/giancosta86/aurora-elvish/fs
+use ../namespace
 
 fn -run-file { |&fail-fast=$false source-path test-namespace|
   var source-string = (slurp < $source-path)
@@ -11,7 +11,7 @@ fn -run-file { |&fail-fast=$false source-path test-namespace|
   eval &ns=$test-namespace $source-string
 }
 
-fn -run { |inputs|
+fn run-tests { |inputs|
   var includes = $inputs[includes]
   var excludes = $inputs[excludes]
   var fail-fast = $inputs[fail-fast]
@@ -32,15 +32,3 @@ fn -run { |inputs|
     &outcome-map=($namespace-controller[get-outcome-map])
   ]
 }
-
-fn -main {
-  var inputs = (echo $args[0] | from-json)
-
-  console:inspect-inputs $inputs
-
-  var run-result = (-run $inputs | only-values)
-
-  put $run-result | to-json
-}
-
--main

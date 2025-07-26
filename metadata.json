@@ -1,0 +1,9 @@
+{
+  "description": "Elegant utilities for the Elvish shell",
+
+  "maintainers": ["Gianluca Costa <gianluca@gianlucacosta.info>"],
+
+  "homepage": "https://github.com/giancosta86/aurora-elvish",
+
+  "dependencies": ["github.com/giancosta86/aurora-elvish"]
+}

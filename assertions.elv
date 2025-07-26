@@ -1,7 +1,7 @@
 use str
-use ../command
-use ../console
-use ../string
+use github.com/aurora-elvish/command
+use github.com/aurora-elvish/string
+use ./core
 
 fn -print-expected-and-actual { |inputs|
   var expected-description = $inputs[expected-description]
@@ -10,11 +10,11 @@ fn -print-expected-and-actual { |inputs|
   var actual-description = $inputs[actual-description]
   var actual = $inputs[actual]
 
-  console:print (styled $expected-description': ' green bold)
-  console:pprint $expected
+  $core:tracer[print] (styled $expected-description': ' green bold)
+  $core:tracer[pprint] $expected
 
-  console:print (styled $actual-description': ' red bold)
-  console:pprint $actual
+  $core:tracer[print] (styled $actual-description': ' red bold)
+  $core:tracer[pprint] $actual
 }
 
 fn should-be { |&strict=$false expected|

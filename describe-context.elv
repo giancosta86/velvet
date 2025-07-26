@@ -1,9 +1,9 @@
 use str
-use ../command
-use ../console
-use ../exception
-use ../map
-use ../seq
+use github.com/giancosta86/aurora-elvish/command
+use github.com/giancosta86/aurora-elvish/exception
+use github.com/giancosta86/aurora-elvish/map
+use github.com/giancosta86/aurora-elvish/seq
+use ./core
 
 fn ensure-in-map { |map title factory|
   var existing-context = (map:get-value $map $title)
@@ -63,7 +63,7 @@ fn -create { |describe-path|
             $block
           } catch e {
             if (not (exception:is-return $e)) {
-              console:pprint $e
+              $core:tracer[pprint] $e
               fail $e
             }
           }

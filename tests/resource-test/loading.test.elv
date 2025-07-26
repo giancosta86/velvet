@@ -1,4 +1,4 @@
-use ../../resources
+use github.com/giancosta86/aurora-elvish/resources
 
 describe 'Loading resources from a nested script'  {
   it 'should return the content' {

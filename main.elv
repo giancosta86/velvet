@@ -1,14 +1,16 @@
-use ../console
-use ../fs
-use ../resources
-use ../seq
+use github.com/giancosta86/aurora-elvish/fs
+use github.com/giancosta86/aurora-elvish/resources
+use github.com/giancosta86/aurora-elvish/seq
+use ./core
 use ./reporting/cli
 
 var -resources = (resources:for-script (src))
 
+var -sandbox-script = ($-resources[get-path] sandbox.main.elv)
+
 var -default-includes = '**[type:regular][nomatch-ok].test.elv'
 
-fn has-tests { |&includes=$-default-includes &excludes=$nil|
+fn has-test-files { |&includes=$-default-includes &excludes=$nil|
   fs:wildcard $includes &excludes=$excludes |
     take 1 |
     count |
@@ -21,42 +23,38 @@ fn test { |
   &fail-fast=$false
   &reporters=[$cli:display~]
 |
-  var inputs = [
+  var sandbox-inputs = [
     &includes=$includes
     &excludes=$excludes
     &fail-fast=$fail-fast
   ]
 
-  var inputs-json = (put $inputs | to-json)
+  var sandbox-inputs-json = (put $sandbox-inputs | to-json)
 
-  var runner-script = ($-resources[get-path] runner.main.elv)
-
-  var runner-output = (
-    elvish $runner-script $inputs-json
+  var sandbox-output = (
+    elvish $-sandbox-script $sandbox-inputs-json
   )
 
-  var run-result = (echo $runner-output | from-json)
+  var sandbox-result = (echo $sandbox-output | from-json)
 
   if (seq:is-non-empty $reporters) {
-    var outcome-map = $run-result[outcome-map]
+    var outcome-map = $sandbox-result[outcome-map]
 
     all $reporters | each { |reporter|
-      console:echo
       $reporter $outcome-map
     }
   }
 
-  console:echo
+  var stats = $sandbox-result[stats]
 
-  var stats = $run-result[stats]
 
   if $stats[is-ok] {
     var message = 'All the '$stats[total-tests]' tests passed.'
-    console:echo (styled $message green bold)
+    $core:tracer[echo] (styled $message green bold)
   } else {
     var message = 'Failed tests: '$stats[total-failed]' out of '$stats[total-tests]'.'
-    console:echo (styled $message red bold)
+    $core:tracer[echo] (styled $message red bold)
   }
 
-  put $run-result
+  put $sandbox-result
 }
