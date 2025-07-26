@@ -1,5 +1,4 @@
 use path
-use github.com/giancosta86/aurora-elvish/console
 use github.com/giancosta86/aurora-elvish/fs
 use ../namespace
 
