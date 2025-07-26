@@ -16,8 +16,6 @@ fn -display-outcome { |test-title outcome describe-context-level|
 }
 
 fn -display-outcome-map { |outcome-map level|
-  console:inspect 'OUTCOME MAP' $outcome-map
-
   keys  $outcome-map |
     order &key=$str:to-lower~ |
     each { |describe-title|

@@ -1,12 +1,8 @@
 use github.com/giancosta86/aurora-elvish/fs
-use github.com/giancosta86/aurora-elvish/resources
 use github.com/giancosta86/aurora-elvish/seq
 use ./core
+use ./global-runner
 use ./reporting/cli
-
-var -resources = (resources:for-script (src))
-
-var -sandbox-script = ($-resources[get-path] sandbox.main.elv)
 
 var -default-includes = '**[type:regular][nomatch-ok].test.elv'
 
@@ -17,36 +13,23 @@ fn has-test-files { |&includes=$-default-includes &excludes=$nil|
     != (all) 0
 }
 
-fn test { |
+fn run-tests { |
   &includes=$-default-includes
   &excludes=$nil
   &fail-fast=$false
   &reporters=[$cli:display~]
 |
-  var sandbox-inputs = [
-    &includes=$includes
-    &excludes=$excludes
-    &fail-fast=$fail-fast
-  ]
-
-  var sandbox-inputs-json = (put $sandbox-inputs | to-json)
-
-  var sandbox-output = (
-    elvish $-sandbox-script $sandbox-inputs-json
-  )
-
-  var sandbox-result = (echo $sandbox-output | from-json)
+  var global-result = (global-runner:run-tests &fail-fast=$fail-fast $includes $excludes)
 
   if (seq:is-non-empty $reporters) {
-    var outcome-map = $sandbox-result[outcome-map]
+    var outcome-map = $global-result[outcome-map]
 
     all $reporters | each { |reporter|
       $reporter $outcome-map
     }
   }
 
-  var stats = $sandbox-result[stats]
-
+  var stats = $global-result[stats]
 
   if $stats[is-ok] {
     var message = 'All the '$stats[total-tests]' tests passed.'
@@ -56,5 +39,16 @@ fn test { |
     $core:tracer[echo] (styled $message red bold)
   }
 
-  put $sandbox-result
+  put $global-result
+}
+
+
+fn test { |
+  &includes=$-default-includes
+  &excludes=$nil
+  &fail-fast=$false
+  &reporters=[$cli:display~]
+|
+
+  run-tests &includes=$includes &excludes=$excludes &fail-fast=$fail-fast &reporters=$reporters | only-bytes
 }

@@ -2,18 +2,14 @@ use path
 use ./assertions
 use ./describe-context
 
-fn create { |&fail-fast=$false|
-  var current-source-path
+fn create { |&fail-fast=$false source-path|
+  var current-source-path = (path:abs $source-path)
 
   var total-tests = 0
   var total-failed = 0
 
   var root-describe-contexts = [&]
   var current-describe-context = $nil
-
-  fn set-current-source-path { |path|
-    set current-source-path = (path:abs $path)
-  }
 
   fn virtual-src {
     put [
@@ -92,6 +88,5 @@ fn create { |&fail-fast=$false|
     &namespace=$namespace
     &get-stats=$get-stats~
     &get-outcome-map=$get-outcome-map~
-    &set-current-source-path=$set-current-source-path~
   ]
 }
