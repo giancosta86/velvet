@@ -1,3 +1,7 @@
+# velvet
+
+_Smooth testing for the Elvish shell _
+
 ## github.com/giancosta86/main
 
 - **test**: runs all the available tests in the current directory tree.

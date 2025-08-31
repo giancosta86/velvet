@@ -1,9 +1,9 @@
 {
-  "description": "Elegant utilities for the Elvish shell",
+  "description": "Smooth testing for the Elvish shell ",
 
   "maintainers": ["Gianluca Costa <gianluca@gianlucacosta.info>"],
 
-  "homepage": "https://github.com/giancosta86/aurora-elvish",
+  "homepage": "https://github.com/giancosta86/velvet",
 
   "dependencies": ["github.com/giancosta86/aurora-elvish"]
 }
