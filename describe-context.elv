@@ -2,42 +2,9 @@ use str
 use github.com/giancosta86/aurora-elvish/command
 use github.com/giancosta86/aurora-elvish/exception
 use github.com/giancosta86/aurora-elvish/lang
-use github.com/giancosta86/aurora-elvish/map
-use github.com/giancosta86/aurora-elvish/seq
 use ./core
+use ./describe-context-map
 use ./outcomes
-
-fn ensure-in-map { |map title factory|
-  var existing-context = (map:get-value $map $title)
-
-  if $existing-context {
-    put [
-      &context=$existing-context
-      &updated-map=$map
-    ]
-  } else {
-    var new-context = ($factory)
-
-    var updated-map = (assoc $map $title $new-context)
-
-    put [
-      &context=$new-context
-      &updated-map=$updated-map
-    ]
-  }
-}
-
-fn get-outcome-context { |context-map|
-  var result = (map:entries $context-map |
-    seq:each-spread { |describe-title context|
-      var outcome-context = ($context[get-outcome-context])
-
-      put [$describe-title $outcome-context]
-    } |
-    make-map)
-
-  put $result
-}
 
 fn -create { |describe-path|
   var title = $describe-path[-1]
@@ -51,7 +18,7 @@ fn -create { |describe-path|
   put [
     &ensure-sub-context={ |describe-title|
       var ensure-result = (
-        ensure-in-map $sub-contexts $describe-title { -create [$@describe-path $describe-title] }
+        describe-context-map:ensure-context $sub-contexts $describe-title { -create [$@describe-path $describe-title] }
       )
 
       set sub-contexts = $ensure-result[updated-map]
@@ -86,7 +53,7 @@ fn -create { |describe-path|
     &get-outcome-context={
       put [
         &outcomes=$outcomes
-        &sub-contexts=(get-outcome-context $sub-contexts)
+        &sub-contexts=(describe-context-map:get-outcome-context $sub-contexts)
       ]
     }
   ]

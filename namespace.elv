@@ -1,6 +1,7 @@
 use path
 use ./assertions
 use ./describe-context
+use ./describe-context-map
 
 fn create { |&fail-fast=$false source-path|
   var current-source-path = (path:abs $source-path)
@@ -25,7 +26,7 @@ fn create { |&fail-fast=$false source-path|
         $current-describe-context[ensure-sub-context] $describe-title
       } else {
         var ensure-result = (
-          describe-context:ensure-in-map $root-describe-contexts $describe-title { describe-context:create-root $describe-title }
+          describe-context-map:ensure-context $root-describe-contexts $describe-title { describe-context:create-root $describe-title }
         )
 
         set root-describe-contexts = $ensure-result[updated-map]
@@ -81,7 +82,7 @@ fn create { |&fail-fast=$false source-path|
   }
 
   fn get-outcome-context {
-    describe-context:get-outcome-context $root-describe-contexts
+    describe-context-map:get-outcome-context $root-describe-contexts
   }
 
   put [

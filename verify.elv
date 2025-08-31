@@ -12,9 +12,11 @@ fn assert { |predicate failure-message|
 }
 
 fn test-block { |title block|
-  console:section &emoji=🎭 $title $block
+  console:section &emoji=🎭 $title {
+    $block
 
-  echo ✅All the tests for this section are OK!
+    echo ✅All the tests for this section are OK!
+  }
 }
 
 test-block 'Testing a describe context' {
