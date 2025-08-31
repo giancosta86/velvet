@@ -22,10 +22,10 @@ fn run-tests { |
   var global-result = (global-runner:run-tests &fail-fast=$fail-fast $includes $excludes)
 
   if (seq:is-non-empty $reporters) {
-    var outcome-map = $global-result[outcome-map]
+    var outcome-context = $global-result[outcome-context]
 
     all $reporters | each { |reporter|
-      $reporter $outcome-map
+      $reporter $outcome-context
     }
   }
 

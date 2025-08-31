@@ -1,9 +1,11 @@
 use str
 use github.com/giancosta86/aurora-elvish/command
 use github.com/giancosta86/aurora-elvish/exception
+use github.com/giancosta86/aurora-elvish/lang
 use github.com/giancosta86/aurora-elvish/map
 use github.com/giancosta86/aurora-elvish/seq
 use ./core
+use ./outcomes
 
 fn ensure-in-map { |map title factory|
   var existing-context = (map:get-value $map $title)
@@ -25,12 +27,16 @@ fn ensure-in-map { |map title factory|
   }
 }
 
-fn get-outcome-map { |context-map|
-  map:entries $context-map |
+fn get-outcome-context { |context-map|
+  var result = (map:entries $context-map |
     seq:each-spread { |describe-title context|
-      put [$describe-title ($context[get-outcome-map])]
+      var outcome-context = ($context[get-outcome-context])
+
+      put [$describe-title $outcome-context]
     } |
-    make-map
+    make-map)
+
+  put $result
 }
 
 fn -create { |describe-path|
@@ -57,7 +63,7 @@ fn -create { |describe-path|
         fail 'Duplicated test: '(format-path $test-title)
       }
 
-      var outcome = ?(
+      var command-status = ?(
         command:silence-until-error &description=(styled (format-path $test-title) red bold) {
           try {
             $block
@@ -70,15 +76,17 @@ fn -create { |describe-path|
         }
       )
 
+      var outcome = (lang:ternary (eq $command-status $ok) $outcomes:passed $outcomes:failed)
+
       set outcomes = (assoc $outcomes $test-title $outcome)
 
       put $outcome
     }
 
-    &get-outcome-map={
+    &get-outcome-context={
       put [
         &outcomes=$outcomes
-        &sub-contexts=(get-outcome-map $sub-contexts)
+        &sub-contexts=(get-outcome-context $sub-contexts)
       ]
     }
   ]

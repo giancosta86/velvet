@@ -5,8 +5,8 @@ use ./describe-context
 fn create { |&fail-fast=$false source-path|
   var current-source-path = (path:abs $source-path)
 
-  var total-tests = 0
-  var total-failed = 0
+  var total-tests = (num 0)
+  var total-failed = (num 0)
 
   var root-describe-contexts = [&]
   var current-describe-context = $nil
@@ -80,13 +80,13 @@ fn create { |&fail-fast=$false source-path|
     ]
   }
 
-  fn get-outcome-map {
-    describe-context:get-outcome-map $root-describe-contexts
+  fn get-outcome-context {
+    describe-context:get-outcome-context $root-describe-contexts
   }
 
   put [
     &namespace=$namespace
     &get-stats=$get-stats~
-    &get-outcome-map=$get-outcome-map~
+    &get-outcome-context=$get-outcome-context~
   ]
 }

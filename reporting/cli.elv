@@ -15,11 +15,11 @@ fn -display-outcome { |test-title outcome describe-context-level|
   console:echo (styled $test-title $color bold) $emoji
 }
 
-fn -display-outcome-map { |outcome-map level|
-  keys  $outcome-map |
+fn -display-outcome-context { |outcome-context level|
+  keys  $outcome-context |
     order &key=$str:to-lower~ |
     each { |describe-title|
-      var context = $outcome-map[$describe-title]
+      var context = $outcome-context[$describe-title]
 
       -print-indentation $level
       console:echo (styled $describe-title white bold)
@@ -34,16 +34,16 @@ fn -display-outcome-map { |outcome-map level|
           -display-outcome $test-title $outcome $level
         }
 
-      -display-outcome-map $context[sub-contexts] (+ $level 1)
+      -display-outcome-context $context[sub-contexts] (+ $level 1)
     }
 }
 
-fn display { |outcome-map|
+fn display { |outcome-context|
   console:echo
 
   #TODO! Remove the section with emoji?
   console:section &emoji=📋 (styled 'Test outcomes' blue bold) {
-    -display-outcome-map $outcome-map 0
+    -display-outcome-context $outcome-context 0
   }
 
   console:echo
