@@ -1,5 +1,4 @@
 use path
-use github.com/giancosta86/aurora-elvish/console
 use ./namespace
 
 fn main { |source-path fail-fast|
@@ -10,14 +9,10 @@ fn main { |source-path fail-fast|
   tmp pwd = (path:dir $source-path)
   eval &ns=$namespace-controller[namespace] $source-string
 
-  console:inspect &emoji=🐿 'CONTEXT RIGHT HERE' ($namespace-controller[get-outcome-context])
-
   var file-result = [
     &stats=($namespace-controller[get-stats])
     &outcome-context=($namespace-controller[get-outcome-context])
   ]
-
-  console:inspect &emoji=🐬 'FILE RESULT IS' $file-result
 
   put $file-result | to-json
 }
