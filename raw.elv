@@ -1,14 +1,14 @@
+use os
 use github.com/giancosta86/aurora-elvish/console
 
 fn -test { |title block|
-  console:print ▶️ $title' '
-  $block
-  console:echo ✅
+  console:echo ▶ $title
+  $block > $os:dev-null 2>&1
 }
 
-fn -assert { |predicate failure-message|
+fn -assert { |predicate|
   if (not $predicate) {
-    fail $failure-message
+    fail 'Assertion failed!'
   }
 }
 

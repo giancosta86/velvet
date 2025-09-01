@@ -82,7 +82,10 @@ fn create { |&fail-fast=$false source-path|
   }
 
   fn to-outcome-context {
-    describe-context-map:to-outcome-context $root-describe-contexts
+    put [
+      &outcomes=[]
+      &sub-contexts=(describe-context-map:to-outcome-context-map $root-describe-contexts)
+    ]
   }
 
   put [

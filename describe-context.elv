@@ -53,7 +53,7 @@ fn -create { |describe-path|
     &to-outcome-context={
       put [
         &outcomes=$outcomes
-        &sub-contexts=(describe-context-map:to-outcome-context $sub-contexts)
+        &sub-contexts=(describe-context-map:to-outcome-context-map $sub-contexts)
       ]
     }
   ]

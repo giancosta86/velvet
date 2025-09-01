@@ -7,7 +7,7 @@ raw:suite 'Testing a describe context' { |test~ assert~|
 
     var outcome-context = ($root-context[to-outcome-context])
 
-    assert (eq $outcome-context[outcomes] [&]) 'The initial outcome context must have no outcomes!'
-    assert (eq $outcome-context[sub-contexts] [&]) 'The initial outcome context must have no subcontexts!'
+    assert (eq $outcome-context[outcomes] [&])
+    assert (eq $outcome-context[sub-contexts] [&])
   }
 }
