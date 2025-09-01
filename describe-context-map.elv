@@ -21,10 +21,10 @@ fn ensure-context { |map title factory|
   }
 }
 
-fn get-outcome-context { |context-map|
+fn to-outcome-context { |context-map|
   map:entries $context-map |
     seq:each-spread { |describe-title context|
-      var outcome-context = ($context[get-outcome-context])
+      var outcome-context = ($context[to-outcome-context])
 
       put [$describe-title $outcome-context]
     } |

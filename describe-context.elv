@@ -11,14 +11,14 @@ fn -create { |describe-path|
   var outcomes = [&]
   var sub-contexts = [&]
 
-  fn format-path { |title|
-    str:join ' -> ' [$@describe-path $title]
+  fn format-path { |subtitle|
+    str:join ' -> ' [$@describe-path $subtitle]
   }
 
   put [
-    &ensure-sub-context={ |describe-title|
+    &ensure-sub-context={ |subtitle|
       var ensure-result = (
-        describe-context-map:ensure-context $sub-contexts $describe-title { -create [$@describe-path $describe-title] }
+        describe-context-map:ensure-context $sub-contexts $subtitle { -create [$@describe-path $subtitle] }
       )
 
       set sub-contexts = $ensure-result[updated-map]
@@ -50,10 +50,10 @@ fn -create { |describe-path|
       put $outcome
     }
 
-    &get-outcome-context={
+    &to-outcome-context={
       put [
         &outcomes=$outcomes
-        &sub-contexts=(describe-context-map:get-outcome-context $sub-contexts)
+        &sub-contexts=(describe-context-map:to-outcome-context $sub-contexts)
       ]
     }
   ]

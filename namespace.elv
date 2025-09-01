@@ -81,13 +81,13 @@ fn create { |&fail-fast=$false source-path|
     ]
   }
 
-  fn get-outcome-context {
-    describe-context-map:get-outcome-context $root-describe-contexts
+  fn to-outcome-context {
+    describe-context-map:to-outcome-context $root-describe-contexts
   }
 
   put [
     &namespace=$namespace
     &get-stats=$get-stats~
-    &get-outcome-context=$get-outcome-context~
+    &to-outcome-context=$to-outcome-context~
   ]
 }

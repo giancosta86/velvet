@@ -11,7 +11,7 @@ fn main { |source-path fail-fast|
 
   var file-result = [
     &stats=($namespace-controller[get-stats])
-    &outcome-context=($namespace-controller[get-outcome-context])
+    &outcome-context=($namespace-controller[to-outcome-context])
   ]
 
   put $file-result | to-json
