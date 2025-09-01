@@ -3,7 +3,7 @@ use github.com/giancosta86/aurora-elvish/console
 
 fn -test { |title block|
   console:echo ▶ $title
-  $block > $os:dev-null 2>&1
+  $block | only-bytes > $os:dev-null
 }
 
 fn -assert { |predicate|
