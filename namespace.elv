@@ -1,7 +1,6 @@
 use path
 use ./assertions
 use ./describe-context
-use ./describe-context-map
 
 fn create { |&fail-fast=$false source-path|
   var current-source-path = (path:abs $source-path)
@@ -9,7 +8,7 @@ fn create { |&fail-fast=$false source-path|
   var total-tests = (num 0)
   var total-failed = (num 0)
 
-  var root-describe-contexts = [&]
+  var root-context = (describe-context:create-root)
   var current-describe-context = $nil
 
   fn virtual-src {
@@ -41,6 +40,7 @@ fn create { |&fail-fast=$false source-path|
   }
 
   fn it { |test-title block|
+    #TODO! Should this constraint be removed?
     if (not $current-describe-context) {
       fail 'Tests must be declared via "it" blocks within a hierarchy of "declare" blocks!'
     }
@@ -81,16 +81,16 @@ fn create { |&fail-fast=$false source-path|
     ]
   }
 
-  fn to-outcome-context {
+  fn to-result-context {
     put [
       &outcomes=[]
-      &sub-contexts=(describe-context-map:to-outcome-context-map $root-describe-contexts)
+      &sub-contexts=(describe-context-map:to-result-context-map $root-describe-contexts)
     ]
   }
 
   put [
     &namespace=$namespace
     &get-stats=$get-stats~
-    &to-outcome-context=$to-outcome-context~
+    &to-result-context=$to-result-context~
   ]
 }

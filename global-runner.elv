@@ -5,7 +5,7 @@ use ./file-runner
 
 fn run-tests { |&fail-fast=$false includes excludes|
   var global-result = [
-    &outcome-context=[&]
+    &result-context=[&]
     &stats=[&]
   ]
 
@@ -25,7 +25,7 @@ fn run-tests { |&fail-fast=$false includes excludes|
     console:inspect 'FILE RESULT' $file-result
 
     set global-result = [
-      &outcome-context=(map:merge $global-result[outcome-context] $file-result[outcome-context])
+      &result-context=(map:merge $global-result[result-context] $file-result[result-context])
       &stats=(map:merge $global-result[stats] $file-result[stats])
     ]
   }

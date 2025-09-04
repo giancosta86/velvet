@@ -2,6 +2,8 @@ use str
 use github.com/giancosta86/aurora-elvish/console
 use github.com/giancosta86/aurora-elvish/lang
 
+#TODO! Handle tests not within a describe block, if they are allowed
+
 fn -print-indentation { |level|
   console:print (str:repeat ' ' (* $level 4))
 }
@@ -15,11 +17,11 @@ fn -display-outcome { |test-title outcome describe-context-level|
   console:echo (styled $test-title $color bold) $emoji
 }
 
-fn -display-outcome-context { |outcome-context level|
-  keys  $outcome-context |
+fn -display-result-context { |result-context level|
+  keys  $result-context |
     order &key=$str:to-lower~ |
     each { |describe-title|
-      var context = $outcome-context[$describe-title]
+      var context = $result-context[$describe-title]
 
       -print-indentation $level
       console:echo (styled $describe-title white bold)
@@ -34,16 +36,16 @@ fn -display-outcome-context { |outcome-context level|
           -display-outcome $test-title $outcome $level
         }
 
-      -display-outcome-context $context[sub-contexts] (+ $level 1)
+      -display-result-context $context[sub-contexts] (+ $level 1)
     }
 }
 
-fn display { |outcome-context|
+fn display { |result-context|
   console:echo
 
   #TODO! Remove the section with emoji?
   console:section &emoji=📋 (styled 'Test outcomes' blue bold) {
-    -display-outcome-context $outcome-context 0
+    -display-result-context $result-context 0
   }
 
   console:echo
