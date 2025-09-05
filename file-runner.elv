@@ -1,11 +1,12 @@
 use path
 use github.com/giancosta86/aurora-elvish/resources
 
-var -resources = (resources:for-script (src))
+var -main-code = ({
+  var resources = (resources:for-script (src))
+  var main-script = ($resources[get-path] file-runner.main.elv)
 
-var -file-runner-script = ($-resources[get-path] file-runner.main.elv)
-
-var -file-runner-code = (slurp < $-file-runner-script)
+  slurp < $main-script
+})
 
 fn run { |&fail-fast=$false source-path|
   var inputs = [
@@ -15,7 +16,7 @@ fn run { |&fail-fast=$false source-path|
 
   var inputs-json = (put $inputs | to-json)
 
-  var outputs-json = (elvish -c $-file-runner-code $inputs-json)
+  var outputs-json = (elvish -c $-main-code $inputs-json)
 
   echo $outputs-json | from-json
 }

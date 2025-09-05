@@ -1,10 +1,8 @@
-use str
 use github.com/giancosta86/aurora-elvish/command
 use github.com/giancosta86/aurora-elvish/exception
 use github.com/giancosta86/aurora-elvish/lang
 use github.com/giancosta86/aurora-elvish/map
 use github.com/giancosta86/aurora-elvish/seq
-use ./core
 use ./outcomes
 
 fn create {
@@ -33,7 +31,9 @@ fn create {
 
       var capture-result = (command:capture $block)
 
-      var outcome = (lang:ternary (eq $capture-result[status] $ok) $outcomes:passed $outcomes:failed)
+      var outcome = (
+        lang:ternary (eq $capture-result[status] $ok) $outcomes:passed $outcomes:failed
+      )
 
       var test = [
         &output=$capture-result[output]
@@ -45,11 +45,9 @@ fn create {
 
     &to-result-context={
       var converted-sub-contexts = (
-        map:entries $sub-contexts |
-          seq:each-spread { |sub-title sub-context|
-            put [$sub-title ($sub-context[to-result-context])]
-          } |
-          make-map
+        map:map $sub-contexts { |sub-title sub-context|
+          $sub-context[to-result-context]
+        }
       )
 
       put [

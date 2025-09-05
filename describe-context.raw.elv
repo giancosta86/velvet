@@ -189,6 +189,8 @@ raw:suite 'Testing a describe context' { |test~ assert~|
 
     var result-context = ($root[to-result-context])
 
+    pprint $result-context
+
     assert (eq $result-context [
       &tests=[&]
       &sub-contexts=[
