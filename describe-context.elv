@@ -31,9 +31,9 @@ fn create {
         fail 'Duplicated test: '$test-title
       }
 
-      var capture-result = (command:capture-bytes $block)
+      var capture-result = (command:capture $block)
 
-      var outcome = (lang:ternary (eq $capture-result[exception] $nil) $outcomes:passed $outcomes:failed)
+      var outcome = (lang:ternary (eq $capture-result[status] $ok) $outcomes:passed $outcomes:failed)
 
       var test = [
         &output=$capture-result[output]

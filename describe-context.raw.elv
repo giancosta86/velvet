@@ -15,7 +15,7 @@ raw:suite 'Testing a describe context' { |test~ assert~|
   test 'Creating a new sub-context' {
     var root = (describe-context:create)
 
-    $root[ensure-sub-context] 'Alpha'
+    $root[ensure-sub-context] Alpha
 
     var result-context = ($root[to-result-context])
 
@@ -25,8 +25,8 @@ raw:suite 'Testing a describe context' { |test~ assert~|
   test 'Ensuring an existing sub-context' {
     var root = (describe-context:create)
 
-    range 0 5 | each { |_|
-      $root[ensure-sub-context] 'Alpha'
+    range 0 3 | each { |_|
+      $root[ensure-sub-context] Alpha
     }
 
     var result-context = ($root[to-result-context])
@@ -43,10 +43,12 @@ raw:suite 'Testing a describe context' { |test~ assert~|
 
     var result-context = ($root[to-result-context])
 
+    pprint $result-context
+
     assert (eq $result-context [
       &tests=[
         &T_OK=[
-          &output=Wiiii!
+          &output="Wiiii!\n"
           &outcome=passed
         ]
       ]
@@ -67,7 +69,7 @@ raw:suite 'Testing a describe context' { |test~ assert~|
     assert (eq $result-context [
       &tests=[
         &T_FAIL=[
-          &output=Hello
+          &output="Hello\n"
           &outcome=failed
         ]
       ]
@@ -107,23 +109,65 @@ raw:suite 'Testing a describe context' { |test~ assert~|
       &tests=[
         &'T_FAIL 1'=[
           &outcome=failed
-          &output='Hello 1'
+          &output="Hello 1\n"
         ]
         &'T_FAIL 2'=[
           &outcome=failed
-          &output='Hello 2'
+          &output="Hello 2\n"
         ]
         &'T_OK 1'=[
           &outcome=passed
-          &output='Wiiii 1!'
+          &output="Wiiii 1!\n"
         ]
         &'T_OK 2'=[
           &outcome=passed
-          &output='Wiiii 2!'
+          &output="Wiiii 2!\n"
         ]
         &'T_OK 3'=[
           &outcome=passed
-          &output='Wiiii 3!'
+          &output="Wiiii 3!\n"
+        ]
+      ]
+    ])
+  }
+
+  test 'Converting to result context with test tree' {
+    var root = (describe-context:create)
+    var alpha = ($root[ensure-sub-context] alpha)
+    var beta = ($alpha[ensure-sub-context] beta)
+
+    $alpha[run-test] alpha-test {
+      echo Hello!
+    }
+
+    $beta[run-test] beta-test {
+      echo World!
+    }
+
+    var result-context = ($root[to-result-context])
+
+    assert (eq $result-context [
+      &tests=[&]
+      &sub-contexts=[
+        &alpha=[
+          &tests=[
+            &alpha-test=[
+              &outcome=passed
+              &output="Hello!\n"
+            ]
+          ]
+
+          &sub-contexts=[
+            &beta=[
+              &tests=[
+                &beta-test=[
+                  &outcome=passed
+                  &output="World!\n"
+                ]
+              ]
+              &sub-contexts= [&]
+            ]
+          ]
         ]
       ]
     ])

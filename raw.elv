@@ -1,9 +1,16 @@
 use os
 use github.com/giancosta86/aurora-elvish/console
+use github.com/giancosta86/aurora-elvish/command
 
 fn -test { |title block|
   console:echo ▶ $title
-  $block | only-bytes > $os:dev-null
+
+  var capture-result = (command:capture $block)
+
+  if (not-eq $capture-result[status] $ok) {
+    echo $capture-result[output]
+    fail $capture-result[status]
+  }
 }
 
 fn -assert { |predicate|
