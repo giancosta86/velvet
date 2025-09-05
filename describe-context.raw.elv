@@ -1,4 +1,5 @@
 use github.com/giancosta86/aurora-elvish/hash-set
+use github.com/giancosta86/aurora-elvish/command
 use ./raw
 use ./describe-context
 
@@ -71,6 +72,48 @@ raw:suite 'Testing a describe context' { |test~ assert~|
         &T_FAIL=[
           &output="Hello\n"
           &outcome=failed
+        ]
+      ]
+      &sub-contexts= [&]
+    ])
+  }
+
+  test 'Running a test with multiple output lines' {
+    var root = (describe-context:create)
+
+    $root[run-test] T_OK {
+      echo Cip
+      echo Ciop
+    }
+
+    var result-context = ($root[to-result-context])
+
+    assert (eq $result-context [
+      &tests=[
+        &T_OK=[
+          &output="Cip\nCiop\n"
+          &outcome=passed
+        ]
+      ]
+      &sub-contexts= [&]
+    ])
+  }
+
+  test 'Running a test with both stdout and stderr' {
+    var root = (describe-context:create)
+
+    $root[run-test] T_OK {
+      echo Cip
+      echo Ciop >&2
+    }
+
+    var result-context = ($root[to-result-context])
+
+    assert (eq $result-context [
+      &tests=[
+        &T_OK=[
+          &output="Cip\nCiop\n"
+          &outcome=passed
         ]
       ]
       &sub-contexts= [&]
@@ -171,5 +214,25 @@ raw:suite 'Testing a describe context' { |test~ assert~|
         ]
       ]
     ])
+  }
+
+  test 'Running test with the same name' {
+    var root = (describe-context:create)
+
+    $root[run-test] 'T_OK' {
+      echo Wiiii!
+    }
+
+    var capture-result = (command:capture {
+      $root[run-test] 'T_OK' {
+        echo Wiiii!
+      }
+    })
+
+    pprint $capture-result[status]
+
+    assert (
+      eq $capture-result[status][reason][content] 'Duplicated test: ''T_OK'''
+    )
   }
 }

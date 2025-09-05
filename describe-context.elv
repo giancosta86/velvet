@@ -28,7 +28,7 @@ fn create {
 
     &run-test={ |test-title block|
       if (has-key $tests $test-title) {
-        fail 'Duplicated test: '$test-title
+        fail 'Duplicated test: '''$test-title"'"
       }
 
       var capture-result = (command:capture $block)
