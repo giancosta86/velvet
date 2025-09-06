@@ -1,16 +1,24 @@
-use github.com/giancosta86/aurora-elvish/hash-set
 use github.com/giancosta86/aurora-elvish/command
-use ./raw
+use github.com/giancosta86/aurora-elvish/exception
 use ./describe-context
+use ./raw
 
 raw:suite 'Testing a describe context' { |test~ assert~|
+  fn expect-result-context { |source expected-context|
+    var result-context = ($source[to-result-context])
+
+    pprint $result-context
+
+    assert (eq $result-context $expected-context)
+  }
+
   test 'Creating empty root' {
     var root = (describe-context:create)
 
-    var result-context = ($root[to-result-context])
-
-    assert (eq $result-context[tests] [&])
-    assert (eq $result-context[sub-contexts] [&])
+    expect-result-context $root [
+      &tests=[&]
+      &sub-contexts=[&]
+    ]
   }
 
   test 'Creating a new sub-context' {
@@ -18,9 +26,15 @@ raw:suite 'Testing a describe context' { |test~ assert~|
 
     $root[ensure-sub-context] Alpha
 
-    var result-context = ($root[to-result-context])
-
-    assert (hash-set:equals $result-context[sub-contexts] [Alpha])
+    expect-result-context $root [
+      &tests=[&]
+      &sub-contexts=[
+        &Alpha=[
+          &tests=[&]
+          &sub-contexts=[&]
+        ]
+      ]
+    ]
   }
 
   test 'Ensuring an existing sub-context' {
@@ -30,9 +44,15 @@ raw:suite 'Testing a describe context' { |test~ assert~|
       $root[ensure-sub-context] Alpha
     }
 
-    var result-context = ($root[to-result-context])
-
-    assert (hash-set:equals $result-context[sub-contexts] [Alpha])
+    expect-result-context $root [
+      &tests=[&]
+      &sub-contexts=[
+        &Alpha=[
+          &tests=[&]
+          &sub-contexts=[&]
+        ]
+      ]
+    ]
   }
 
   test 'Running a successful test' {
@@ -42,19 +62,15 @@ raw:suite 'Testing a describe context' { |test~ assert~|
       echo Wiiii!
     }
 
-    var result-context = ($root[to-result-context])
-
-    pprint $result-context
-
-    assert (eq $result-context [
+    expect-result-context $root [
       &tests=[
         &T_OK=[
           &output="Wiiii!\n"
           &outcome=passed
         ]
       ]
-      &sub-contexts= [&]
-    ])
+      &sub-contexts=[&]
+    ]
   }
 
   test 'Running a failed test' {
@@ -65,17 +81,15 @@ raw:suite 'Testing a describe context' { |test~ assert~|
       fail Dodo
     }
 
-    var result-context = ($root[to-result-context])
-
-    assert (eq $result-context [
+    expect-result-context $root [
       &tests=[
         &T_FAIL=[
           &output="Hello\n"
           &outcome=failed
         ]
       ]
-      &sub-contexts= [&]
-    ])
+      &sub-contexts=[&]
+    ]
   }
 
   test 'Running a test with multiple output lines' {
@@ -86,17 +100,15 @@ raw:suite 'Testing a describe context' { |test~ assert~|
       echo Ciop
     }
 
-    var result-context = ($root[to-result-context])
-
-    assert (eq $result-context [
+    expect-result-context $root [
       &tests=[
         &T_OK=[
           &output="Cip\nCiop\n"
           &outcome=passed
         ]
       ]
-      &sub-contexts= [&]
-    ])
+      &sub-contexts=[&]
+    ]
   }
 
   test 'Running a test with both stdout and stderr' {
@@ -107,17 +119,15 @@ raw:suite 'Testing a describe context' { |test~ assert~|
       echo Ciop >&2
     }
 
-    var result-context = ($root[to-result-context])
-
-    assert (eq $result-context [
+    expect-result-context $root [
       &tests=[
         &T_OK=[
           &output="Cip\nCiop\n"
           &outcome=passed
         ]
       ]
-      &sub-contexts= [&]
-    ])
+      &sub-contexts=[&]
+    ]
   }
 
   test 'Running successful and failed tests' {
@@ -145,9 +155,7 @@ raw:suite 'Testing a describe context' { |test~ assert~|
       echo Wiiii 3!
     }
 
-    var result-context = ($root[to-result-context])
-
-    assert (eq $result-context [
+    expect-result-context $root [
       &sub-contexts=[&]
       &tests=[
         &'T_FAIL 1'=[
@@ -171,7 +179,7 @@ raw:suite 'Testing a describe context' { |test~ assert~|
           &output="Wiiii 3!\n"
         ]
       ]
-    ])
+    ]
   }
 
   test 'Converting to result context with test tree' {
@@ -187,11 +195,7 @@ raw:suite 'Testing a describe context' { |test~ assert~|
       echo World!
     }
 
-    var result-context = ($root[to-result-context])
-
-    pprint $result-context
-
-    assert (eq $result-context [
+    expect-result-context $root [
       &tests=[&]
       &sub-contexts=[
         &alpha=[
@@ -210,12 +214,12 @@ raw:suite 'Testing a describe context' { |test~ assert~|
                   &output="World!\n"
                 ]
               ]
-              &sub-contexts= [&]
+              &sub-contexts=[&]
             ]
           ]
         ]
       ]
-    ])
+    ]
   }
 
   test 'Running test with the same name' {
@@ -225,16 +229,16 @@ raw:suite 'Testing a describe context' { |test~ assert~|
       echo Wiiii!
     }
 
-    var capture-result = (command:capture {
-      $root[run-test] 'T_OK' {
-        echo Wiiii!
+    var capture-result = (
+      command:capture {
+        $root[run-test] 'T_OK' {
+          echo Wiiii!
+        }
       }
-    })
-
-    pprint $capture-result[status]
+    )
 
     assert (
-      eq $capture-result[status][reason][content] 'Duplicated test: ''T_OK'''
+      eq (exception:get-fail-message $capture-result[status]) 'Duplicated test: ''T_OK'''
     )
   }
 }
