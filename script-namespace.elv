@@ -2,7 +2,7 @@ use path
 use ./assertions
 use ./describe-context
 
-fn create { |&fail-fast=$false source-path|
+fn create-controller { |source-path|
   var absolute-path = (path:abs $source-path)
 
   var total-tests = (num 0)
@@ -10,6 +10,8 @@ fn create { |&fail-fast=$false source-path|
 
   var root-context = (describe-context:create-root)
   var current-describe-context = $nil
+
+  var first-exception = $nil
 
   fn virtual-src {
     put [
@@ -52,9 +54,7 @@ fn create { |&fail-fast=$false source-path|
     if (not $test-outcome) {
       set total-failed = (+ $total-failed 1)
 
-      if $fail-fast {
-        fail $test-outcome
-      }
+      #TODO! If the first exception is not set, set it based on the test outcome!
     }
   }
 
