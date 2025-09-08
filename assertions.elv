@@ -1,7 +1,27 @@
 use str
+use github.com/giancosta86/aurora-elvish/console
 use github.com/giancosta86/aurora-elvish/command
 use github.com/giancosta86/aurora-elvish/string
-use ./core
+
+fn assert { |predicate|
+  if (not $predicate) {
+    fail 'Assertion failed!'
+  }
+}
+
+fn expect-crash { |block|
+  try {
+    $block
+  } catch e {
+    put $e
+  } else {
+    fail 'The given code block did not fail!'
+  }
+}
+
+fn fail-test {
+  fail 'TEST SET TO FAIL'
+}
 
 fn -print-expected-and-actual { |inputs|
   var expected-description = $inputs[expected-description]
@@ -10,15 +30,14 @@ fn -print-expected-and-actual { |inputs|
   var actual-description = $inputs[actual-description]
   var actual = $inputs[actual]
 
-  $core:tracer[print] (styled $expected-description': ' green bold)
-  $core:tracer[pprint] $expected
+  console:print (styled $expected-description': ' green bold)
+  console:pprint $expected
 
-  $core:tracer[print] (styled $actual-description': ' red bold)
-  $core:tracer[pprint] $actual
+  console:print (styled $actual-description': ' red bold)
+  console:pprint $actual
 }
 
 fn should-be { |&strict=$false expected|
-  #TODO! Check this "one"
   one | each { |actual|
     if $strict {
       if (not-eq $expected $actual) {
@@ -45,48 +64,6 @@ fn should-be { |&strict=$false expected|
 
         fail 'should-be assertion failed'
       }
-    }
-  }
-}
-
-fn expect-crash { |block|
-  try {
-    $block
-  } catch e {
-    put $e
-  } else {
-    fail 'The given code block did not fail!'
-  }
-}
-
-fn expect-log { |&partial=$false &stream=both expected block|
-  var capture-result = (command:capture-bytes &stream=$stream $block)
-
-  defer $capture-result[clean]
-
-  var log = ($capture-result[get-log])
-
-  if $partial {
-    if (not (str:contains $log $expected)) {
-      -print-expected-and-actual [
-        &expected-description='Expected partial log'
-        &expected=$expected
-        &actual-description='Actual log'
-        &actual=$log
-      ]
-
-      fail 'expect-log (&partial) assertion failed'
-    }
-  } else {
-    if (not-eq $log $expected) {
-      -print-expected-and-actual [
-        &expected-description='Expected log'
-        &expected=$expected
-        &actual-description='Actual log'
-        &actual=$log
-      ]
-
-      fail 'expect-log assertion failed'
     }
   }
 }

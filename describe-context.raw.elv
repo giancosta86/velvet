@@ -1,15 +1,13 @@
 use github.com/giancosta86/aurora-elvish/command
 use github.com/giancosta86/aurora-elvish/exception
+use ./assertions
 use ./describe-context
 use ./raw
 
-raw:suite 'Testing a describe context' { |test~ assert~|
+raw:suite 'Testing a describe context' { |test~|
   fn expect-result-context { |source expected-context|
-    var result-context = ($source[to-result-context])
-
-    pprint $result-context
-
-    assert (eq $result-context $expected-context)
+    $source[to-result-context] |
+      assertions:should-be $expected-context
   }
 
   test 'Creating empty root' {
@@ -237,8 +235,7 @@ raw:suite 'Testing a describe context' { |test~ assert~|
       }
     )
 
-    assert (
-      eq (exception:get-fail-message $capture-result[status]) 'Duplicated test: ''T_OK'''
-    )
+    exception:get-fail-message $capture-result[status] |
+      assertions:should-be 'Duplicated test: ''T_OK'''
   }
 }

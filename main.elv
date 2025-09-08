@@ -1,6 +1,6 @@
+use github.com/giancosta86/aurora-elvish/console
 use github.com/giancosta86/aurora-elvish/fs
 use github.com/giancosta86/aurora-elvish/seq
-use ./core
 use ./global-runner
 use ./reporting/cli
 
@@ -33,10 +33,10 @@ fn run-tests { |
 
   if $stats[is-ok] {
     var message = 'All the '$stats[total-tests]' tests passed.'
-    $core:tracer[echo] (styled $message green bold)
+    console:echo (styled $message green bold)
   } else {
     var message = 'Failed tests: '$stats[total-failed]' out of '$stats[total-tests]'.'
-    $core:tracer[echo] (styled $message red bold)
+    console:echo (styled $message red bold)
   }
 
   put $global-result

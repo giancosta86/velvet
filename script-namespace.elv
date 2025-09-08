@@ -3,7 +3,7 @@ use ./assertions
 use ./describe-context
 
 fn create { |&fail-fast=$false source-path|
-  var current-source-path = (path:abs $source-path)
+  var absolute-path = (path:abs $source-path)
 
   var total-tests = (num 0)
   var total-failed = (num 0)
@@ -15,7 +15,7 @@ fn create { |&fail-fast=$false source-path|
     put [
       &code="src\n"
       &is-file=$true
-      &name=$current-source-path
+      &name=$absolute-path
     ]
   }
 
@@ -59,7 +59,7 @@ fn create { |&fail-fast=$false source-path|
   }
 
   fn fail-test {
-    fail 'TEST SET TO FAIL'
+    assertions:fail-test
   }
 
   var namespace = (ns [
@@ -69,7 +69,6 @@ fn create { |&fail-fast=$false source-path|
     &fail-test~=$fail-test~
     &should-be~=$assertions:should-be~
     &expect-crash~=$assertions:expect-crash~
-    &expect-log~=$assertions:expect-log~
   ])
 
   fn get-stats {
@@ -83,7 +82,7 @@ fn create { |&fail-fast=$false source-path|
 
   fn to-result-context {
     put [
-      &outcomes=[]
+      &tests=[]
       &sub-contexts=(describe-context-map:to-result-context-map $root-describe-contexts)
     ]
   }

@@ -13,17 +13,11 @@ fn -test { |title block|
   }
 }
 
-fn -assert { |predicate|
-  if (not $predicate) {
-    fail 'Assertion failed!'
-  }
-}
-
 fn suite { |title block|
   console:echo
 
   console:section &emoji=🎭 (styled $title bold) {
-    $block $-test~ $-assert~
+    $block $-test~
 
     echo ✅ All the tests for this section are OK!
   }

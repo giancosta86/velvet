@@ -46,7 +46,9 @@ fn create {
     &to-result-context={
       var converted-sub-contexts = (
         map:map $sub-contexts { |sub-title sub-context|
-          $sub-context[to-result-context]
+          var result-context = ($sub-context[to-result-context])
+
+          put [$sub-title $result-context]
         }
       )
 
