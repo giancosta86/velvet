@@ -58,17 +58,14 @@ fn create { |&fail-fast=$false source-path|
     }
   }
 
-  fn fail-test {
-    assertions:fail-test
-  }
-
   var namespace = (ns [
     &src~=$virtual-src~
     &describe~=$describe~
     &it~=$it~
-    &fail-test~=$fail-test~
-    &should-be~=$assertions:should-be~
+    &assert~==$assertions:assert~
     &expect-crash~=$assertions:expect-crash~
+    &fail-test~=$assertions:fail-test~
+    &should-be~=$assertions:should-be~
   ])
 
   fn get-stats {
