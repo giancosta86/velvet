@@ -1,30 +1,16 @@
 use path
 use ./assertions
 use ./describe-context
+use ./outcomes
 
 fn create-controller { |source-path|
-  var absolute-path = (path:abs $source-path)
-  var source-code = (slurp < $absolute-path)
-
-  var total-tests = (num 0)
+  var total-passed = (num 0)
   var total-failed = (num 0)
 
   var root-context = (describe-context:create)
   var current-describe-context = $nil
 
   var first-exception = $nil
-
-  fn virtual-src {
-    put [
-      &code=$source-code
-      &is-file=$true
-      &name=$absolute-path
-    ]
-  }
-
-  fn virtual-use-mod { |requested-module|
-    use-mod './tests/relative/beta'
-  }
 
   fn describe { |describe-title block|
     var sub-context = (
@@ -42,20 +28,24 @@ fn create-controller { |source-path|
       fail 'Tests must be declared via "it" blocks within a hierarchy of "declare" blocks!'
     }
 
-    set total-tests = (+ $total-tests 1)
-
     var test-outcome = ($current-describe-context[run-test] $test-title $block)
 
-    if (not $test-outcome) {
-      set total-failed = (+ $total-failed 1)
+    var outcome-handler = [
+      $outcomes:passed={
+        set total-passed = (+ $total-passed 1)
+      }
 
-      #TODO! If the first exception is not set, set it based on the test outcome!
-    }
+      $outcomes:failed={
+        set total-failed = (+ $total-failed 1)
+
+        if (eq $first-exception $nil) {
+          set first-exception = $test-outcome[status]
+        }
+      }
+    ][$test-outcome]
   }
 
   var namespace = (ns [
-    &src~=$virtual-src~
-    &use-mod~=$virtual-use-mod~
     &describe~=$describe~
     &it~=$it~
     &assert~=$assertions:assert~
@@ -66,9 +56,9 @@ fn create-controller { |source-path|
 
   fn get-stats {
     put [
-      &total=$total-tests
       &failed=$total-failed
-      &passed=(- $total-tests $total-failed)
+      &passed=$total-passed
+      &total=(+ $total-passed $total-failed)
     ]
   }
 
@@ -76,13 +66,14 @@ fn create-controller { |source-path|
     $root-context[to-result-context]
   }
 
-  eval $source-code &ns=$namespace &on-end={ |final-namespace|
-    set namespace = $final-namespace
+  fn get-first-exception {
+    put $first-exception
   }
 
   put [
     &namespace=$namespace
     &get-stats=$get-stats~
     &to-result-context=$to-result-context~
+    &get-first-exception=$get-first-exception~
   ]
 }

@@ -37,6 +37,7 @@ fn create {
 
       var test = [
         &output=$capture-result[output]
+        &status=$capture-result[status]
         &outcome=$outcome
       ]
 

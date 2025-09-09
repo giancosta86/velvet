@@ -1,19 +1,52 @@
 use github.com/giancosta86/aurora-elvish/command
 use github.com/giancosta86/aurora-elvish/exception
+use github.com/giancosta86/aurora-elvish/map
 use ./assertions
 use ./describe-context
 use ./raw
 
 raw:suite 'Testing a describe context' { |test~|
-  fn expect-result-context { |source expected-context|
-    $source[to-result-context] |
-      assertions:should-be $expected-context
+  fn simplify-test { |test|
+    put [
+      &output=$test[output]
+      &outcome=$test[outcome]
+    ]
+  }
+
+  fn simplify-result-context { |result-context|
+    var simplified-tests = (
+      map:map $result-context[tests] { |key test|
+        put [$key (simplify-test $test)]
+      }
+    )
+
+    var simplified-sub-contexts = (
+      map:map $result-context[sub-contexts] { |key sub-context|
+        put [$key (simplify-result-context $sub-context)]
+      }
+    )
+
+    put [
+      &tests=$simplified-tests
+      &sub-contexts=$simplified-sub-contexts
+    ]
+  }
+
+  fn expect-simplified-result-context { |actual-describe-context simplified-expected-context|
+    var simplified-actual-context = (
+      simplify-result-context ($actual-describe-context[to-result-context])
+    )
+
+    pprint $simplified-actual-context
+
+    put $simplified-actual-context |
+      assertions:should-be $simplified-expected-context
   }
 
   test 'Creating empty root' {
     var root = (describe-context:create)
 
-    expect-result-context $root [
+    expect-simplified-result-context $root [
       &tests=[&]
       &sub-contexts=[&]
     ]
@@ -24,7 +57,7 @@ raw:suite 'Testing a describe context' { |test~|
 
     $root[ensure-sub-context] Alpha
 
-    expect-result-context $root [
+    expect-simplified-result-context $root [
       &tests=[&]
       &sub-contexts=[
         &Alpha=[
@@ -42,7 +75,7 @@ raw:suite 'Testing a describe context' { |test~|
       $root[ensure-sub-context] Alpha
     }
 
-    expect-result-context $root [
+    expect-simplified-result-context $root [
       &tests=[&]
       &sub-contexts=[
         &Alpha=[
@@ -60,7 +93,7 @@ raw:suite 'Testing a describe context' { |test~|
       echo Wiiii!
     }
 
-    expect-result-context $root [
+    expect-simplified-result-context $root [
       &tests=[
         &T_OK=[
           &output="Wiiii!\n"
@@ -79,7 +112,7 @@ raw:suite 'Testing a describe context' { |test~|
       fail Dodo
     }
 
-    expect-result-context $root [
+    expect-simplified-result-context $root [
       &tests=[
         &T_FAIL=[
           &output="Hello\n"
@@ -98,7 +131,7 @@ raw:suite 'Testing a describe context' { |test~|
       echo Ciop
     }
 
-    expect-result-context $root [
+    expect-simplified-result-context $root [
       &tests=[
         &T_OK=[
           &output="Cip\nCiop\n"
@@ -117,7 +150,7 @@ raw:suite 'Testing a describe context' { |test~|
       echo Ciop >&2
     }
 
-    expect-result-context $root [
+    expect-simplified-result-context $root [
       &tests=[
         &T_OK=[
           &output="Cip\nCiop\n"
@@ -153,7 +186,7 @@ raw:suite 'Testing a describe context' { |test~|
       echo Wiiii 3!
     }
 
-    expect-result-context $root [
+    expect-simplified-result-context $root [
       &sub-contexts=[&]
       &tests=[
         &'T_FAIL 1'=[
@@ -193,7 +226,7 @@ raw:suite 'Testing a describe context' { |test~|
       echo World!
     }
 
-    expect-result-context $root [
+    expect-simplified-result-context $root [
       &tests=[&]
       &sub-contexts=[
         &alpha=[

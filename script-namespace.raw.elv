@@ -35,48 +35,28 @@ raw:suite 'Script namespace controller upon creation' { |test~|
       ]
   }
 
-  test 'Calling src from the namespace' {
+  test 'Accessing the global functions' {
     var namespace-controller = (create-test-controller)
 
     var namespace = $namespace-controller[namespace]
 
-    var namespace-src = ($namespace[src~])
-
-    put $namespace-src[is-file] |
-      assertions:should-be $true
-
-    put $namespace-src[name] |
-      assertions:should-be $test-script-path
-
-    str:trim-space $namespace-src[code] |
-      str:contains (all) 'use-mod' |
-      assertions:should-be $true
+    all [
+      describe
+      it
+      assert
+      expect-crash
+      fail-test
+      should-be
+    ] | each { |name|
+      kind-of $namespace[$name'~'] |
+        assertions:should-be 'fn'
+    }
   }
 
-  test 'Calling a function from the enriched namespace' {
+  test 'Getting the first exception' {
     var namespace-controller = (create-test-controller)
 
-    var namespace = $namespace-controller[namespace]
-
-    $namespace[safe~] |
-      assertions:should-be 92
-  }
-
-  test 'Importing a relative module from within the namespace' {
-    var namespace-controller = (create-test-controller)
-
-    var namespace = $namespace-controller[namespace]
-
-    $namespace[with-use~] |
-      assertions:should-be 95
-  }
-
-  test 'Calling use-mod from within the namespace' {
-    var namespace-controller = (create-test-controller)
-
-    var namespace = $namespace-controller[namespace]
-
-    $namespace[with-use-mod~] |
-      assertions:should-be 98
+    $namespace-controller[get-first-exception] |
+      assertions:should-be $nil
   }
 }
