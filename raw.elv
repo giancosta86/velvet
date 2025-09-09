@@ -19,6 +19,6 @@ fn suite { |title block|
   console:section &emoji=🎭 (styled $title bold) {
     $block $-test~
 
-    echo ✅ All the tests for this section are OK!
+    echo ✅ This section is OK!
   }
 }
