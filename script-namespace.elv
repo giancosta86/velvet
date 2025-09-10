@@ -3,7 +3,7 @@ use ./assertions
 use ./describe-context
 use ./outcomes
 
-fn create-controller {
+fn create-controller { |script-path|
   var passed = (num 0)
   var failed = (num 0)
 
@@ -11,6 +11,14 @@ fn create-controller {
   var current-describe-context = $root-context
 
   var first-exception = $nil
+
+  fn virtual-src {
+    put [
+      &code=(slurp < $script-path)
+      &is-file=$true
+      &name=(path:abs $script-path)
+    ]
+  }
 
   fn describe { |describe-title block|
     var sub-context = (
@@ -47,6 +55,7 @@ fn create-controller {
   }
 
   var namespace = (ns [
+    &src~=$virtual-src~
     &describe~=$describe~
     &it~=$it~
     &assert~=$assertions:assert~

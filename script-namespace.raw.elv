@@ -9,8 +9,10 @@ use ./outcomes
 use ./raw
 use ./script-namespace
 
+var test-script-path = (path:join (path:dir (src)[name]) tests relative alpha.elv)
+
 fn create-test-controller {
-  script-namespace:create-controller
+  script-namespace:create-controller $test-script-path
 }
 
 raw:suite 'Script namespace controller upon creation' { |test~|
@@ -44,7 +46,25 @@ raw:suite 'Script namespace controller upon creation' { |test~|
 }
 
 raw:suite 'Script namespace upon creation' { |test~|
-  test 'Accessing the global functions' {
+  test 'Calling src from the namespace' {
+    var namespace-controller = (create-test-controller)
+
+    var namespace = $namespace-controller[namespace]
+
+    var namespace-src = ($namespace[src~])
+
+    put $namespace-src[is-file] |
+      assertions:should-be $true
+
+    put $namespace-src[name] |
+      assertions:should-be $test-script-path
+
+    str:trim-space $namespace-src[code] |
+      str:contains (all) 'use-mod' |
+      assertions:should-be $true
+  }
+
+  test 'Accessing the additional global functions' {
     var namespace-controller = (create-test-controller)
 
     var namespace = $namespace-controller[namespace]
