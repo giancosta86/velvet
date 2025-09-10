@@ -3,12 +3,12 @@ use ./assertions
 use ./describe-context
 use ./outcomes
 
-fn create-controller { |source-path|
-  var total-passed = (num 0)
-  var total-failed = (num 0)
+fn create-controller {
+  var passed = (num 0)
+  var failed = (num 0)
 
   var root-context = (describe-context:create)
-  var current-describe-context = $nil
+  var current-describe-context = $root-context
 
   var first-exception = $nil
 
@@ -23,26 +23,27 @@ fn create-controller { |source-path|
   }
 
   fn it { |test-title block|
-    #TODO! Should this constraint be removed?
-    if (not $current-describe-context) {
+    if (eq $current-describe-context $root-context) {
       fail 'Tests must be declared via "it" blocks within a hierarchy of "declare" blocks!'
     }
 
-    var test-outcome = ($current-describe-context[run-test] $test-title $block)
+    var test-result = ($current-describe-context[run-test] $test-title $block)
 
-    var outcome-handler = [
-      $outcomes:passed={
-        set total-passed = (+ $total-passed 1)
+    pprint $test-result >&2
+
+    [
+      &$outcomes:passed={
+        set passed = (+ $passed 1)
       }
 
-      $outcomes:failed={
-        set total-failed = (+ $total-failed 1)
+      &$outcomes:failed={
+        set failed = (+ $failed 1)
 
         if (eq $first-exception $nil) {
-          set first-exception = $test-outcome[status]
+          set first-exception = $test-result[status]
         }
       }
-    ][$test-outcome]
+    ][$test-result[outcome]]
   }
 
   var namespace = (ns [
@@ -56,14 +57,14 @@ fn create-controller { |source-path|
 
   fn get-stats {
     put [
-      &failed=$total-failed
-      &passed=$total-passed
-      &total=(+ $total-passed $total-failed)
+      &failed=$failed
+      &passed=$passed
+      &total=(+ $passed $failed)
     ]
   }
 
-  fn to-result-context {
-    $root-context[to-result-context]
+  fn to-result {
+    $root-context[to-result]
   }
 
   fn get-first-exception {
@@ -73,7 +74,7 @@ fn create-controller { |source-path|
   put [
     &namespace=$namespace
     &get-stats=$get-stats~
-    &to-result-context=$to-result-context~
+    &to-result=$to-result~
     &get-first-exception=$get-first-exception~
   ]
 }

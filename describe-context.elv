@@ -6,7 +6,7 @@ use github.com/giancosta86/aurora-elvish/seq
 use ./outcomes
 
 fn create {
-  var tests = [&]
+  var test-results = [&]
   var sub-contexts = [&]
 
   put [
@@ -25,7 +25,7 @@ fn create {
     }
 
     &run-test={ |test-title block|
-      if (has-key $tests $test-title) {
+      if (has-key $test-results $test-title) {
         fail 'Duplicated test: '''$test-title"'"
       }
 
@@ -35,27 +35,27 @@ fn create {
         lang:ternary (eq $capture-result[status] $ok) $outcomes:passed $outcomes:failed
       )
 
-      var test = [
+      var test-result = [
         &output=$capture-result[output]
         &status=$capture-result[status]
         &outcome=$outcome
       ]
 
-      set tests = (assoc $tests $test-title $test)
+      set test-results = (assoc $test-results $test-title $test-result)
+
+      put $test-result
     }
 
-    &to-result-context={
-      var converted-sub-contexts = (
+    &to-result={
+      var sub-results = (
         map:map $sub-contexts { |sub-title sub-context|
-          var result-context = ($sub-context[to-result-context])
-
-          put [$sub-title $result-context]
+          put [$sub-title ($sub-context[to-result])]
         }
       )
 
       put [
-        &tests=$tests
-        &sub-contexts=$converted-sub-contexts
+        &test-results=$test-results
+        &sub-results=$sub-results
       ]
     }
   ]

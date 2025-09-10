@@ -5,7 +5,7 @@ describe 'Basic standalone test' {
 
   describe 'in sub-describe' {
     it 'should work, too' {
-      echo 'Wiiii!'
+      echo 'Wiii!'
     }
 
     it 'should support yet another test' {

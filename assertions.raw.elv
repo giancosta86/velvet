@@ -28,8 +28,8 @@ raw:suite 'Assertions: expect-crash' { |test~|
       assertions:expect-crash {
         echo 'Wiii!'
       }
-    } catch ex {
-      var message = (exception:get-fail-message $ex)
+    } catch e {
+      var message = (exception:get-fail-message $e)
 
       assertions:assert (==s $message 'The given code block did not fail!')
     }

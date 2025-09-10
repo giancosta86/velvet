@@ -1,6 +1,7 @@
 use str
 use github.com/giancosta86/aurora-elvish/console
 use github.com/giancosta86/aurora-elvish/command
+use github.com/giancosta86/aurora-elvish/diff
 use github.com/giancosta86/aurora-elvish/string
 
 fn assert { |predicate|
@@ -30,11 +31,18 @@ fn -print-expected-and-actual { |inputs|
   var actual-description = $inputs[actual-description]
   var actual = $inputs[actual]
 
+  var formatted-expected = (pprint $expected | slurp)
+  var formatted-actual = (pprint $actual | slurp)
+
   console:print (styled $expected-description': ' green bold)
-  console:pprint $expected
+  console:echo $formatted-expected
 
   console:print (styled $actual-description': ' red bold)
-  console:pprint $actual
+  console:echo $formatted-actual
+
+  console:section (styled DIFF: yellow bold) {
+    diff:diff $formatted-actual $formatted-expected | tail -n +3 >&2
+  }
 }
 
 fn should-be { |&strict=$false expected|

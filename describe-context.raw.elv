@@ -3,52 +3,24 @@ use github.com/giancosta86/aurora-elvish/exception
 use github.com/giancosta86/aurora-elvish/map
 use ./assertions
 use ./describe-context
+use ./describe-result
+use ./outcomes
 use ./raw
 
+
 raw:suite 'Testing a describe context' { |test~|
-  fn simplify-test { |test|
-    put [
-      &output=$test[output]
-      &outcome=$test[outcome]
-    ]
-  }
-
-  fn simplify-result-context { |result-context|
-    var simplified-tests = (
-      map:map $result-context[tests] { |key test|
-        put [$key (simplify-test $test)]
-      }
-    )
-
-    var simplified-sub-contexts = (
-      map:map $result-context[sub-contexts] { |key sub-context|
-        put [$key (simplify-result-context $sub-context)]
-      }
-    )
-
-    put [
-      &tests=$simplified-tests
-      &sub-contexts=$simplified-sub-contexts
-    ]
-  }
-
-  fn expect-simplified-result-context { |actual-describe-context simplified-expected-context|
-    var simplified-actual-context = (
-      simplify-result-context ($actual-describe-context[to-result-context])
-    )
-
-    pprint $simplified-actual-context
-
-    put $simplified-actual-context |
-      assertions:should-be $simplified-expected-context
+  fn expect-simplified-describe-result { |describe-context expected-result|
+    $describe-context[to-result] |
+      describe-result:simplify (all) |
+      assertions:should-be $expected-result
   }
 
   test 'Creating empty root' {
     var root = (describe-context:create)
 
-    expect-simplified-result-context $root [
-      &tests=[&]
-      &sub-contexts=[&]
+    expect-simplified-describe-result $root [
+      &test-results=[&]
+      &sub-results=[&]
     ]
   }
 
@@ -57,12 +29,12 @@ raw:suite 'Testing a describe context' { |test~|
 
     $root[ensure-sub-context] Alpha
 
-    expect-simplified-result-context $root [
-      &tests=[&]
-      &sub-contexts=[
+    expect-simplified-describe-result $root [
+      &test-results=[&]
+      &sub-results=[
         &Alpha=[
-          &tests=[&]
-          &sub-contexts=[&]
+          &test-results=[&]
+          &sub-results=[&]
         ]
       ]
     ]
@@ -75,51 +47,72 @@ raw:suite 'Testing a describe context' { |test~|
       $root[ensure-sub-context] Alpha
     }
 
-    expect-simplified-result-context $root [
-      &tests=[&]
-      &sub-contexts=[
+    expect-simplified-describe-result $root [
+      &test-results=[&]
+      &sub-results=[
         &Alpha=[
-          &tests=[&]
-          &sub-contexts=[&]
+          &test-results=[&]
+          &sub-results=[&]
         ]
       ]
     ]
   }
 
-  test 'Running a successful test' {
+  test 'Running a passing test' {
     var root = (describe-context:create)
 
-    $root[run-test] T_OK {
-      echo Wiiii!
-    }
+    var test-result = (
+      $root[run-test] T_OK {
+        echo Wiii!
+      }
+    )
 
-    expect-simplified-result-context $root [
-      &tests=[
+    put $test-result |
+      assertions:should-be [
+        &outcome=passed
+        &output="Wiii!\n"
+        &status=$ok
+      ]
+
+    expect-simplified-describe-result $root [
+      &test-results=[
         &T_OK=[
-          &output="Wiiii!\n"
-          &outcome=passed
+          &output="Wiii!\n"
+          &outcome=$outcomes:passed
         ]
       ]
-      &sub-contexts=[&]
+      &sub-results=[&]
     ]
   }
 
-  test 'Running a failed test' {
+  test 'Running a failing test' {
     var root = (describe-context:create)
 
-    $root[run-test] T_FAIL {
-      echo Hello
-      fail Dodo
-    }
+    var test-result = (
+      $root[run-test] T_FAIL {
+        echo Hello
+        fail Dodo
+      }
+    )
 
-    expect-simplified-result-context $root [
-      &tests=[
+    put $test-result |
+      dissoc (all) status |
+      assertions:should-be [
+        &outcome=$outcomes:failed
+        &output="Hello\n"
+      ]
+
+    exception:is-exception $test-result[status] |
+      assertions:should-be $true
+
+    expect-simplified-describe-result $root [
+      &test-results=[
         &T_FAIL=[
           &output="Hello\n"
           &outcome=failed
         ]
       ]
-      &sub-contexts=[&]
+      &sub-results=[&]
     ]
   }
 
@@ -131,14 +124,14 @@ raw:suite 'Testing a describe context' { |test~|
       echo Ciop
     }
 
-    expect-simplified-result-context $root [
-      &tests=[
+    expect-simplified-describe-result $root [
+      &test-results=[
         &T_OK=[
           &output="Cip\nCiop\n"
           &outcome=passed
         ]
       ]
-      &sub-contexts=[&]
+      &sub-results=[&]
     ]
   }
 
@@ -150,22 +143,22 @@ raw:suite 'Testing a describe context' { |test~|
       echo Ciop >&2
     }
 
-    expect-simplified-result-context $root [
-      &tests=[
+    expect-simplified-describe-result $root [
+      &test-results=[
         &T_OK=[
           &output="Cip\nCiop\n"
           &outcome=passed
         ]
       ]
-      &sub-contexts=[&]
+      &sub-results=[&]
     ]
   }
 
-  test 'Running successful and failed tests' {
+  test 'Running passing and failing tests' {
     var root = (describe-context:create)
 
     $root[run-test] 'T_OK 1' {
-      echo Wiiii 1!
+      echo Wiii 1!
     }
 
     $root[run-test] 'T_FAIL 1' {
@@ -174,7 +167,7 @@ raw:suite 'Testing a describe context' { |test~|
     }
 
     $root[run-test] 'T_OK 2' {
-      echo Wiiii 2!
+      echo Wiii 2!
     }
 
     $root[run-test] 'T_FAIL 2' {
@@ -183,12 +176,12 @@ raw:suite 'Testing a describe context' { |test~|
     }
 
     $root[run-test] 'T_OK 3' {
-      echo Wiiii 3!
+      echo Wiii 3!
     }
 
-    expect-simplified-result-context $root [
-      &sub-contexts=[&]
-      &tests=[
+    expect-simplified-describe-result $root [
+      &sub-results=[&]
+      &test-results=[
         &'T_FAIL 1'=[
           &outcome=failed
           &output="Hello 1\n"
@@ -199,21 +192,21 @@ raw:suite 'Testing a describe context' { |test~|
         ]
         &'T_OK 1'=[
           &outcome=passed
-          &output="Wiiii 1!\n"
+          &output="Wiii 1!\n"
         ]
         &'T_OK 2'=[
           &outcome=passed
-          &output="Wiiii 2!\n"
+          &output="Wiii 2!\n"
         ]
         &'T_OK 3'=[
           &outcome=passed
-          &output="Wiiii 3!\n"
+          &output="Wiii 3!\n"
         ]
       ]
     ]
   }
 
-  test 'Converting to result context with test tree' {
+  test 'Converting to describe result with test tree' {
     var root = (describe-context:create)
     var alpha = ($root[ensure-sub-context] alpha)
     var beta = ($alpha[ensure-sub-context] beta)
@@ -226,26 +219,26 @@ raw:suite 'Testing a describe context' { |test~|
       echo World!
     }
 
-    expect-simplified-result-context $root [
-      &tests=[&]
-      &sub-contexts=[
+    expect-simplified-describe-result $root [
+      &test-results=[&]
+      &sub-results=[
         &alpha=[
-          &tests=[
+          &test-results=[
             &alpha-test=[
               &outcome=passed
               &output="Hello!\n"
             ]
           ]
 
-          &sub-contexts=[
+          &sub-results=[
             &beta=[
-              &tests=[
+              &test-results=[
                 &beta-test=[
                   &outcome=passed
                   &output="World!\n"
                 ]
               ]
-              &sub-contexts=[&]
+              &sub-results=[&]
             ]
           ]
         ]
@@ -257,13 +250,13 @@ raw:suite 'Testing a describe context' { |test~|
     var root = (describe-context:create)
 
     $root[run-test] 'T_OK' {
-      echo Wiiii!
+      echo Wiii!
     }
 
     var capture-result = (
       command:capture {
         $root[run-test] 'T_OK' {
-          echo Wiiii!
+          echo Wiii!
         }
       }
     )
