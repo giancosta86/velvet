@@ -3,9 +3,12 @@ use ./assertions
 use ./describe-context
 use ./outcomes
 
-fn create-controller { |script-path|
+fn run { |script-path|
   var passed = (num 0)
   var failed = (num 0)
+
+  var abs-script-path = (path:abs $script-path)
+  var script-code = (slurp < $script-path)
 
   var root-context = (describe-context:create)
   var current-describe-context = $root-context
@@ -14,9 +17,9 @@ fn create-controller { |script-path|
 
   fn virtual-src {
     put [
-      &code=(slurp < $script-path)
       &is-file=$true
-      &name=(path:abs $script-path)
+      &name=$abs-script-path
+      &code=$script-code
     ]
   }
 
@@ -27,7 +30,7 @@ fn create-controller { |script-path|
 
     tmp current-describe-context = $sub-context
 
-    $block
+    $block | only-bytes
   }
 
   fn it { |test-title block|
@@ -36,8 +39,6 @@ fn create-controller { |script-path|
     }
 
     var test-result = ($current-describe-context[run-test] $test-title $block)
-
-    pprint $test-result >&2
 
     [
       &$outcomes:passed={
@@ -64,26 +65,19 @@ fn create-controller { |script-path|
     &should-be~=$assertions:should-be~
   ])
 
-  fn get-stats {
-    put [
-      &failed=$failed
-      &passed=$passed
-      &total=(+ $passed $failed)
-    ]
-  }
+  eval &ns=$namespace $script-code
 
-  fn to-result {
-    $root-context[to-result]
-  }
+  var stats = [
+    &failed=$failed
+    &passed=$passed
+    &total=(+ $passed $failed)
+  ]
 
-  fn get-first-exception {
-    put $first-exception
-  }
+  var describe-result = ($root-context[to-result])
 
   put [
-    &namespace=$namespace
-    &get-stats=$get-stats~
-    &to-result=$to-result~
-    &get-first-exception=$get-first-exception~
+    &stats=$stats
+    &describe-result=$describe-result
+    &first-exception=$first-exception
   ]
 }

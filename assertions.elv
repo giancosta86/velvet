@@ -12,7 +12,7 @@ fn assert { |predicate|
 
 fn expect-crash { |block|
   try {
-    $block
+    $block | only-bytes
   } catch e {
     put $e
   } else {
@@ -25,20 +25,19 @@ fn fail-test {
 }
 
 fn -print-expected-and-actual { |inputs|
-  var expected-description = $inputs[expected-description]
-  var expected = $inputs[expected]
-
   var actual-description = $inputs[actual-description]
   var actual = $inputs[actual]
-
-  var formatted-expected = (pprint $expected | slurp)
   var formatted-actual = (pprint $actual | slurp)
 
-  console:print (styled $expected-description': ' green bold)
-  console:echo $formatted-expected
+  var expected-description = $inputs[expected-description]
+  var expected = $inputs[expected]
+  var formatted-expected = (pprint $expected | slurp)
 
   console:print (styled $actual-description': ' red bold)
   console:echo $formatted-actual
+
+  console:print (styled $expected-description': ' green bold)
+  console:echo $formatted-expected
 
   console:section (styled DIFF: yellow bold) {
     diff:diff $formatted-actual $formatted-expected | tail -n +3 >&2

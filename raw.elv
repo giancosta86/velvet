@@ -17,7 +17,7 @@ fn suite { |title block|
   console:echo
 
   console:section &emoji=🎭 (styled $title bold) {
-    $block $-test~
+    $block $-test~ | only-bytes
 
     echo ✅ This section is OK!
   }
