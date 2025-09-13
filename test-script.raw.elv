@@ -34,22 +34,20 @@ raw:suite 'Running empty script' { |test~|
         &sub-results=[&]
       ]
   }
-
-  test 'Getting the first exception' {
-    put $script-result[first-exception] |
-      assertions:should-be $nil
-  }
 }
 
-raw:suite 'Running script with no code' { |test~|
+raw:suite 'Running script with metainfo checks' { |test~|
   var script-result = (run-test-script metainfo)
 
-  test 'All checks are OK' {
-    put $script-result[first-exception] |
-      assertions:should-be $nil
+  test 'Retrieving the stats' {
+    put $script-result[stats] |
+      assertions:should-be [
+        &total=4
+        &passed=4
+        &failed=0
+      ]
   }
 }
-
 
 raw:suite 'Running script with passing test' { |test~|
   var script-result = (run-test-script single-ok)
@@ -80,11 +78,6 @@ raw:suite 'Running script with passing test' { |test~|
           ]
         ]
       ]
-  }
-
-  test 'Getting the first exception' {
-    put $script-result[first-exception] |
-      assertions:should-be $nil
   }
 }
 
@@ -118,12 +111,6 @@ raw:suite 'Running script with failing test' { |test~|
           ]
         ]
       ]
-  }
-
-  test 'Getting the first exception' {
-    put $script-result[first-exception] |
-      exception:get-fail-message (all) |
-      assertions:should-be DODO
   }
 }
 
@@ -172,11 +159,5 @@ raw:suite 'Running script with mixed outcomes' { |test~|
           ]
         ]
       ]
-  }
-
-  test 'Getting the first exception' {
-    put $script-result[first-exception] |
-      exception:get-fail-message (all) |
-      assertions:should-be DODUS
   }
 }

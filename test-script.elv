@@ -13,8 +13,6 @@ fn run { |script-path|
   var root-context = (describe-context:create)
   var current-describe-context = $root-context
 
-  var first-exception = $nil
-
   fn virtual-src {
     put [
       &is-file=$true
@@ -47,10 +45,6 @@ fn run { |script-path|
 
       &$outcomes:failed={
         set failed = (+ $failed 1)
-
-        if (eq $first-exception $nil) {
-          set first-exception = $test-result[status]
-        }
       }
     ][$test-result[outcome]]
   }
@@ -78,6 +72,5 @@ fn run { |script-path|
   put [
     &stats=$stats
     &describe-result=$describe-result
-    &first-exception=$first-exception
   ]
 }
