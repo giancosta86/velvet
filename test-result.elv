@@ -1,3 +1,3 @@
 fn simplify { |test-result|
-  dissoc $test-result status
+  dissoc $test-result exception-log
 }

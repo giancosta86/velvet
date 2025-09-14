@@ -7,8 +7,8 @@ raw:suite 'Test result' { |test~|
   test 'Simplification for passing test' {
     test-result:simplify [
       &output="Lorem ipsum\n"
-      &status=$ok
       &outcome=$outcomes:passed
+      &exception-log=$nil
     ] |
       assertions:should-be [
         &output="Lorem ipsum\n"
@@ -19,8 +19,8 @@ raw:suite 'Test result' { |test~|
   test 'Simplification for failing test' {
     test-result:simplify [
       &output="Lorem ipsum\n"
-      &status=?(fail DODO)
       &outcome=$outcomes:failed
+      &exception-log=(show ?(fail DODO) | slurp)
     ] |
       assertions:should-be [
         &output="Lorem ipsum\n"

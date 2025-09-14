@@ -71,7 +71,7 @@ raw:suite 'Running script with passing test' { |test~|
               &'should work'=[
                 &outcome=$outcomes:passed
                 &output="Wiii!\n"
-                &status=$ok
+                &exception-log=$nil
               ]
             ]
             &sub-results=[&]

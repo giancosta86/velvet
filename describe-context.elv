@@ -31,14 +31,21 @@ fn create {
 
       var capture-result = (command:capture $block)
 
-      var outcome = (
-        lang:ternary (eq $capture-result[status] $ok) $outcomes:passed $outcomes:failed
-      )
+      var outcome
+      var exception-log
+
+      if (eq $capture-result[status] $ok) {
+        set outcome = $outcomes:passed
+        set exception-log = $nil
+      } else {
+        set outcome = $outcomes:failed
+        set exception-log = (show $capture-result[status] | slurp)
+      }
 
       var test-result = [
         &output=$capture-result[output]
-        &status=$capture-result[status]
         &outcome=$outcome
+        &exception-log=$exception-log
       ]
 
       set test-results = (assoc $test-results $test-title $test-result)

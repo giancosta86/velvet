@@ -20,8 +20,8 @@ raw:suite 'Describe result' { |test~|
       &test-results=[
         &Yogi=[
           &output="Wiii!"
-          &status=$ok
           &outcome=$outcomes:passed
+          &exception-log=$nil
         ]
       ]
       &sub-results=[&]
@@ -45,8 +45,8 @@ raw:suite 'Describe result' { |test~|
       &test-results=[
         &Yogi=[
           &output="Wiii!"
-          &status=$ok
           &outcome=$outcomes:passed
+          &exception-log=$nil
         ]
       ]
       &sub-results=[
@@ -54,8 +54,8 @@ raw:suite 'Describe result' { |test~|
           &test-results=[
             &Bubu=[
               &output="Wooo!"
-              &status=?(fail DODO)
               &outcome=$outcomes:failed
+              &exception-log=(show ?(fail DODO) | slurp)
             ]
           ]
           &sub-results=[&]

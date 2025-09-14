@@ -71,7 +71,7 @@ raw:suite 'Testing a describe context' { |test~|
       assertions:should-be [
         &outcome=$outcomes:passed
         &output="Wiii!\n"
-        &status=$ok
+        &exception-log=$nil
       ]
 
     expect-simplified-describe-result $root [
@@ -96,14 +96,15 @@ raw:suite 'Testing a describe context' { |test~|
     )
 
     put $test-result |
-      dissoc (all) status |
+      dissoc (all) exception-log |
       assertions:should-be [
         &outcome=$outcomes:failed
         &output="Hello\n"
       ]
 
-    exception:is-exception $test-result[status] |
-      assertions:should-be $true
+    put $test-result[exception-log] |
+      eq (all) $nil |
+      assertions:should-be $false
 
     expect-simplified-describe-result $root [
       &test-results=[
