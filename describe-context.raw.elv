@@ -69,7 +69,7 @@ raw:suite 'Testing a describe context' { |test~|
 
     put $test-result |
       assertions:should-be [
-        &outcome=passed
+        &outcome=$outcomes:passed
         &output="Wiii!\n"
         &status=$ok
       ]
@@ -109,7 +109,7 @@ raw:suite 'Testing a describe context' { |test~|
       &test-results=[
         &T_FAIL=[
           &output="Hello\n"
-          &outcome=failed
+          &outcome=$outcomes:failed
         ]
       ]
       &sub-results=[&]
@@ -128,7 +128,7 @@ raw:suite 'Testing a describe context' { |test~|
       &test-results=[
         &T_OK=[
           &output="Cip\nCiop\n"
-          &outcome=passed
+          &outcome=$outcomes:passed
         ]
       ]
       &sub-results=[&]
@@ -147,7 +147,7 @@ raw:suite 'Testing a describe context' { |test~|
       &test-results=[
         &T_OK=[
           &output="Cip\nCiop\n"
-          &outcome=passed
+          &outcome=$outcomes:passed
         ]
       ]
       &sub-results=[&]
@@ -183,23 +183,23 @@ raw:suite 'Testing a describe context' { |test~|
       &sub-results=[&]
       &test-results=[
         &'T_FAIL 1'=[
-          &outcome=failed
+          &outcome=$outcomes:failed
           &output="Hello 1\n"
         ]
         &'T_FAIL 2'=[
-          &outcome=failed
+          &outcome=$outcomes:failed
           &output="Hello 2\n"
         ]
         &'T_OK 1'=[
-          &outcome=passed
+          &outcome=$outcomes:passed
           &output="Wiii 1!\n"
         ]
         &'T_OK 2'=[
-          &outcome=passed
+          &outcome=$outcomes:passed
           &output="Wiii 2!\n"
         ]
         &'T_OK 3'=[
-          &outcome=passed
+          &outcome=$outcomes:passed
           &output="Wiii 3!\n"
         ]
       ]
@@ -225,7 +225,7 @@ raw:suite 'Testing a describe context' { |test~|
         &alpha=[
           &test-results=[
             &alpha-test=[
-              &outcome=passed
+              &outcome=$outcomes:passed
               &output="Hello!\n"
             ]
           ]
@@ -234,7 +234,7 @@ raw:suite 'Testing a describe context' { |test~|
             &beta=[
               &test-results=[
                 &beta-test=[
-                  &outcome=passed
+                  &outcome=$outcomes:passed
                   &output="World!\n"
                 ]
               ]

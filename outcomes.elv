@@ -1,3 +1,3 @@
-var passed = 'passed'
+var passed = 'P'
 
-var failed = 'failed'
+var failed = 'F'
