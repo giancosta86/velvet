@@ -10,7 +10,9 @@ use ./raw
 use ./test-script
 
 fn run-test-script { |basename|
-  var test-script-path = (path:join (path:dir (src)[name]) tests test-scripts $basename'.elv')
+  var this-script-dir = (path:dir (src)[name])
+
+  var test-script-path = (path:join $this-script-dir tests test-scripts $basename'.elv')
 
   test-script:run $test-script-path
 }
