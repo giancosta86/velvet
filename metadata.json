@@ -5,5 +5,5 @@
 
   "homepage": "https://github.com/giancosta86/velvet",
 
-  "dependencies": ["github.com/giancosta86/aurora-elvish"]
+  "dependencies": []
 }
