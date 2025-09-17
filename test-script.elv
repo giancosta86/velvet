@@ -2,6 +2,7 @@ use path
 use ./assertions
 use ./describe-context
 use ./outcomes
+use ./stats
 
 fn run { |script-path|
   var passed = (num 0)
@@ -61,11 +62,10 @@ fn run { |script-path|
 
   eval &ns=$namespace $script-code
 
-  var stats = [
+  var stats = (stats:create [
     &failed=$failed
     &passed=$passed
-    &total=(+ $passed $failed)
-  ]
+  ])
 
   var describe-result = ($root-context[to-result])
 
