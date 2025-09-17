@@ -60,7 +60,7 @@ raw:suite 'Testing a describe context' { |test~|
     var root = (describe-context:create)
 
     var test-result = (
-      $root[run-test] T_OK {
+      $root[run-test] T-OK {
         echo Wiii!
       }
     )
@@ -74,7 +74,7 @@ raw:suite 'Testing a describe context' { |test~|
 
     expect-simplified-describe-result $root [
       &test-results=[
-        &T_OK=[
+        &T-OK=[
           &output="Wiii!\n"
           &outcome=$outcomes:passed
         ]
@@ -87,7 +87,7 @@ raw:suite 'Testing a describe context' { |test~|
     var root = (describe-context:create)
 
     var test-result = (
-      $root[run-test] T_FAIL {
+      $root[run-test] T-FAIL {
         echo Hello
         fail Dodo
       }
@@ -106,7 +106,7 @@ raw:suite 'Testing a describe context' { |test~|
 
     expect-simplified-describe-result $root [
       &test-results=[
-        &T_FAIL=[
+        &T-FAIL=[
           &output="Hello\n"
           &outcome=$outcomes:failed
         ]
@@ -118,14 +118,14 @@ raw:suite 'Testing a describe context' { |test~|
   test 'Running a test with multiple output lines' {
     var root = (describe-context:create)
 
-    $root[run-test] T_OK {
+    $root[run-test] T-OK {
       echo Cip
       echo Ciop
     }
 
     expect-simplified-describe-result $root [
       &test-results=[
-        &T_OK=[
+        &T-OK=[
           &output="Cip\nCiop\n"
           &outcome=$outcomes:passed
         ]
@@ -137,14 +137,14 @@ raw:suite 'Testing a describe context' { |test~|
   test 'Running a test with both stdout and stderr' {
     var root = (describe-context:create)
 
-    $root[run-test] T_OK {
+    $root[run-test] T-OK {
       echo Cip
       echo Ciop >&2
     }
 
     expect-simplified-describe-result $root [
       &test-results=[
-        &T_OK=[
+        &T-OK=[
           &output="Cip\nCiop\n"
           &outcome=$outcomes:passed
         ]
@@ -156,48 +156,48 @@ raw:suite 'Testing a describe context' { |test~|
   test 'Running passing and failing tests' {
     var root = (describe-context:create)
 
-    $root[run-test] 'T_OK 1' {
+    $root[run-test] 'T-OK 1' {
       echo Wiii 1!
     }
 
-    $root[run-test] 'T_FAIL 1' {
+    $root[run-test] 'T-FAIL 1' {
       echo Hello 1
       fail Dodo1
     }
 
-    $root[run-test] 'T_OK 2' {
+    $root[run-test] 'T-OK 2' {
       echo Wiii 2!
     }
 
-    $root[run-test] 'T_FAIL 2' {
+    $root[run-test] 'T-FAIL 2' {
       echo Hello 2
       fail Dodo2
     }
 
-    $root[run-test] 'T_OK 3' {
+    $root[run-test] 'T-OK 3' {
       echo Wiii 3!
     }
 
     expect-simplified-describe-result $root [
       &sub-results=[&]
       &test-results=[
-        &'T_FAIL 1'=[
+        &'T-FAIL 1'=[
           &outcome=$outcomes:failed
           &output="Hello 1\n"
         ]
-        &'T_FAIL 2'=[
+        &'T-FAIL 2'=[
           &outcome=$outcomes:failed
           &output="Hello 2\n"
         ]
-        &'T_OK 1'=[
+        &'T-OK 1'=[
           &outcome=$outcomes:passed
           &output="Wiii 1!\n"
         ]
-        &'T_OK 2'=[
+        &'T-OK 2'=[
           &outcome=$outcomes:passed
           &output="Wiii 2!\n"
         ]
-        &'T_OK 3'=[
+        &'T-OK 3'=[
           &outcome=$outcomes:passed
           &output="Wiii 3!\n"
         ]
@@ -248,11 +248,11 @@ raw:suite 'Testing a describe context' { |test~|
   test 'Running test with the same name' {
     var root = (describe-context:create)
 
-    $root[run-test] 'T_OK' {
+    $root[run-test] 'T-OK' {
       echo Wiii!
     }
 
-    $root[run-test] 'T_OK' {
+    $root[run-test] 'T-OK' {
       echo Wiii!
     }
 
@@ -262,14 +262,14 @@ raw:suite 'Testing a describe context' { |test~|
       assertions:should-be [
         &sub-results=  [&]
         &test-results= [
-          &T_OK=       [
+          &T-OK=       [
             &outcome=  F
             &output=   ''
             ]
           ]
         ]
 
-    str:contains $describe-result[test-results][T_OK][exception-log] DUPLICATED |
+    str:contains $describe-result[test-results][T-OK][exception-log] DUPLICATED |
       assertions:should-be $true
   }
 }
