@@ -1,9 +1,9 @@
-use github.com/giancosta86/aurora-elvish/command
 use github.com/giancosta86/aurora-elvish/exception
 use github.com/giancosta86/aurora-elvish/lang
 use github.com/giancosta86/aurora-elvish/map
 use github.com/giancosta86/aurora-elvish/seq
 use ./outcomes
+use ./test-result
 
 fn create {
   var test-results = [&]
@@ -25,28 +25,13 @@ fn create {
     }
 
     &run-test={ |test-title block|
-      if (has-key $test-results $test-title) {
-        fail 'Duplicated test: '''$test-title"'"
-      }
-
-      var capture-result = (command:capture $block)
-
-      var outcome
-      var exception-log
-
-      if (eq $capture-result[status] $ok) {
-        set outcome = $outcomes:passed
-        set exception-log = $nil
-      } else {
-        set outcome = $outcomes:failed
-        set exception-log = (show $capture-result[status] | slurp)
-      }
-
-      var test-result = [
-        &output=$capture-result[output]
-        &outcome=$outcome
-        &exception-log=$exception-log
-      ]
+      var test-result = (
+        if (has-key $test-results $test-title) {
+          test-result:create-for-duplicated-test
+        } else {
+          test-result:from-block $block
+        }
+      )
 
       set test-results = (assoc $test-results $test-title $test-result)
 
@@ -66,4 +51,13 @@ fn create {
       ]
     }
   ]
+}
+
+
+fn merge { |left right|
+  var result-tests = $left[tests]
+
+  keys $right[tests] | each { |test-name|
+
+  }
 }

@@ -1,6 +1,4 @@
-use github.com/giancosta86/aurora-elvish/command
-use github.com/giancosta86/aurora-elvish/exception
-use github.com/giancosta86/aurora-elvish/map
+use str
 use ./assertions
 use ./describe-context
 use ./describe-result
@@ -254,15 +252,24 @@ raw:suite 'Testing a describe context' { |test~|
       echo Wiii!
     }
 
-    var capture-result = (
-      command:capture {
-        $root[run-test] 'T_OK' {
-          echo Wiii!
-        }
-      }
-    )
+    $root[run-test] 'T_OK' {
+      echo Wiii!
+    }
 
-    exception:get-fail-message $capture-result[status] |
-      assertions:should-be 'Duplicated test: ''T_OK'''
+    var describe-result = ($root[to-result])
+
+    describe-result:simplify $describe-result |
+      assertions:should-be [
+        &sub-results=  [&]
+        &test-results= [
+          &T_OK=       [
+            &outcome=  F
+            &output=   ''
+            ]
+          ]
+        ]
+
+    str:contains $describe-result[test-results][T_OK][exception-log] DUPLICATED |
+      assertions:should-be $true
   }
 }
