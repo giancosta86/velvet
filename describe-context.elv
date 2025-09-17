@@ -52,12 +52,3 @@ fn create {
     }
   ]
 }
-
-
-fn merge { |left right|
-  var result-tests = $left[tests]
-
-  keys $right[tests] | each { |test-name|
-
-  }
-}

@@ -19,3 +19,50 @@ fn simplify { |describe-result|
     &sub-results=$simplified-sub-results
   ]
 }
+
+fn -merge-test-results { |left right|
+  var test-results = $left
+
+  keys $right | each { |test-name|
+    var actual-test-result = (
+      if (has-key $left $test-name)  {
+        test-result:create-for-duplicated-test
+      } else {
+        put $right[$test-name]
+      }
+    )
+
+    set test-results = (assoc $test-results $test-name $actual-test-result)
+  }
+
+  put $test-results
+}
+
+fn -merge-sub-results { |left right|
+  var sub-results = $left
+
+  keys $right | each { |sub-result-name|
+    var actual-sub-result = (
+      if (has-key $left $sub-result-name)  {
+        merge $left[$sub-result-name] $right[$sub-result-name]
+      } else {
+        put $right[$sub-result-name]
+      }
+    )
+
+    set sub-results = (assoc $sub-results $sub-result-name $actual-sub-result)
+  }
+
+  put $sub-results
+}
+
+fn merge { |left right|
+  var test-results = (-merge-test-results $left[test-results] $right[test-results])
+
+  var sub-results = (-merge-sub-results $left[sub-results] $right[sub-results])
+
+  put [
+    &test-results=$test-results
+    &sub-results=$sub-results
+  ]
+}
