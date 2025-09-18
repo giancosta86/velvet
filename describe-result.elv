@@ -26,7 +26,7 @@ fn -merge-test-results { |left right|
   keys $right | each { |test-name|
     var actual-test-result = (
       if (has-key $left $test-name)  {
-        test-result:create-for-duplicated-test
+        test-result:create-for-duplicated
       } else {
         put $right[$test-name]
       }

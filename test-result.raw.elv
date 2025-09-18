@@ -63,7 +63,7 @@ raw:suite 'Test result simplification' { |test~|
 
 raw:suite 'Duplicated test result' { |test~|
   test 'Creation' {
-    var test-result = (test-result:create-for-duplicated-test)
+    var test-result = (test-result:create-for-duplicated)
 
     test-result:simplify $test-result |
       assertions:should-be [

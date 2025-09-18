@@ -26,7 +26,7 @@ fn simplify { |test-result|
   dissoc $test-result exception-log
 }
 
-fn create-for-duplicated-test {
+fn create-for-duplicated {
   from-block {
     fail 'DUPLICATED TEST!'
   }

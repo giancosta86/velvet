@@ -27,7 +27,7 @@ fn create {
     &run-test={ |test-title block|
       var test-result = (
         if (has-key $test-results $test-title) {
-          test-result:create-for-duplicated-test
+          test-result:create-for-duplicated
         } else {
           test-result:from-block $block
         }
