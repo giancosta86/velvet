@@ -1,8 +1,7 @@
 use str
 use github.com/giancosta86/aurora-elvish/console
 use github.com/giancosta86/aurora-elvish/lang
-
-#TODO! Handle tests not within a describe block, if they are allowed
+use ./outcomes
 
 fn -print-indentation { |level|
   console:print (str:repeat ' ' (* $level 4))
@@ -40,7 +39,7 @@ fn -display-result-context { |result-context level|
     }
 }
 
-fn display { |result-context|
+fn display { |describe-result|
   console:echo
 
   #TODO! Remove the section with emoji?
