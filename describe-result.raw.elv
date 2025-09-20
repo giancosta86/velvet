@@ -235,4 +235,97 @@ raw:suite 'Describe result merging' { |test~|
         &sub-results=[&]
       ]
   }
+
+  test 'When there are multiple levels of tests' {
+    var left = [
+      &test-results=[
+        &Alpha=$passed-test
+      ]
+      &sub-results=[
+        &'First level'=[
+          &test-results=[
+            &Gamma=$passed-test
+          ]
+          &sub-results=[
+            &'Second level'=[
+              &test-results=[
+                &Delta=$passed-test
+                &Epsilon=$passed-test
+              ]
+              &sub-results=[&]
+            ]
+          ]
+        ]
+      ]
+    ]
+
+    var right = [
+      &test-results=[
+        &Sigma=$passed-test
+      ]
+      &sub-results=[
+        &'First level'=[
+          &test-results=[&]
+          &sub-results=[
+            &'Second level'=[
+              &test-results=[
+                &Delta=$passed-test
+                &Sigma=$passed-test
+                &Tau=$passed-test
+              ]
+              &sub-results=[&]
+            ]
+          ]
+        ]
+      ]
+    ]
+
+    describe-result:merge $left $right |
+      describe-result:simplify (all) |
+      assertions:should-be [
+        &test-results=[
+          &Alpha=[
+            &outcome=$outcomes:passed
+            &output=Wiii!
+          ]
+          &Sigma=[
+            &outcome=$outcomes:passed
+            &output=Wiii!
+          ]
+        ]
+        &sub-results=[
+          &'First level'=[
+            &test-results=[
+              &Gamma=[
+                &outcome=$outcomes:passed
+                &output=Wiii!
+              ]
+            ]
+            &sub-results=[
+              &'Second level'=[
+                &test-results=[
+                  &Delta=[
+                    &outcome=$outcomes:failed
+                    &output=''
+                  ]
+                  &Epsilon=[
+                    &outcome=$outcomes:passed
+                    &output=Wiii!
+                  ]
+                  &Sigma=[
+                    &outcome=$outcomes:passed
+                    &output=Wiii!
+                  ]
+                  &Tau=[
+                    &outcome=$outcomes:passed
+                    &output=Wiii!
+                  ]
+                ]
+                &sub-results=[&]
+              ]
+            ]
+          ]
+        ]
+      ]
+  }
 }
