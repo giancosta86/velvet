@@ -1,51 +1,65 @@
 use str
-use github.com/giancosta86/aurora-elvish/console
-use github.com/giancosta86/aurora-elvish/lang
-use ./outcomes
+use ../outcomes
 
 fn -print-indentation { |level|
-  console:print (str:repeat ' ' (* $level 4))
+  print (str:repeat ' ' (* $level 4))
 }
 
-fn -display-outcome { |test-title outcome describe-context-level|
-  var is-ok = (eq $outcome $ok)
-  var color = (lang:ternary $is-ok green red)
-  var emoji = (lang:ternary $is-ok ✅ ❌)
+fn -print-test-result { |test-title test-result level|
+  var outcome = $test-result[outcome]
 
-  -print-indentation (+ $describe-context-level 1)
-  console:echo (styled $test-title $color bold) $emoji
+  var color
+  var emoji
+
+  if (eq $outcome $outcomes:passed) {
+    set color = green
+    set emoji = ✅
+  } elif (eq $outcome $outcomes:failed) {
+    set color = red
+    set emoji = ❌
+  } else {
+    fail 'Unknown outcome'
+  }
+
+  -print-indentation $level
+  echo (styled $test-title $color bold) $emoji
+
+  if (eq $outcome $outcomes:failed) {
+    echo $test-result[output]
+
+    if $test-result[exception-log] {
+      echo $test-result[exception-log]
+    }
+  }
 }
 
-fn -display-result-context { |result-context level|
-  keys  $result-context |
+fn -display { |describe-result level|
+  keys $describe-result[test-results] |
     order &key=$str:to-lower~ |
-    each { |describe-title|
-      var context = $result-context[$describe-title]
+    each { |test-name|
+      var test-result = $describe-result[test-results][$test-name]
 
+      -print-test-result $test-name $test-result $level
+    }
+
+  keys $describe-result[sub-results] |
+    order &key=$str:to-lower~ |
+    each { |sub-result-name|
       -print-indentation $level
-      console:echo (styled $describe-title white bold)
+      echo $sub-result-name
 
-      var outcomes = $context[outcomes]
+      var sub-result = $describe-result[sub-results][$sub-result-name]
 
-      keys $outcomes |
-        order &key=$str:to-lower~ |
-        each { |test-title|
-          var outcome = $outcomes[$test-title]
-
-          -display-outcome $test-title $outcome $level
-        }
-
-      -display-result-context $context[sub-contexts] (+ $level 1)
+      -display $sub-result (+ $level 1)
     }
 }
 
 fn display { |describe-result|
-  console:echo
+  var items-count = (+ (count $describe-result[test-results]) (count $describe-result[sub-results]))
 
-  #TODO! Remove the section with emoji?
-  console:section &emoji=📋 (styled 'Test outcomes' blue bold) {
-    -display-result-context $result-context 0
+  if (== $items-count 0) {
+    echo 💬 No test structure found.
+  } else {
+    -display $describe-result 0
   }
-
-  console:echo
 }
