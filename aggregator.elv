@@ -2,7 +2,7 @@ use ./describe-result
 use ./test-script
 
 fn run-test-scripts { |@test-scripts|
-  var describe-results = [(all $@test-scripts | peach { |test-script|
+  var describe-results = [(all $test-scripts | peach { |test-script|
     test-script:run $test-script
   })]
 

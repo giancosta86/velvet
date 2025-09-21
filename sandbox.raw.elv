@@ -17,9 +17,7 @@ fn run-test-sandbox { |basename|
 
 raw:suite 'Running in sandbox' { |test~|
   test 'Passing test' {
-    var sandbox-result = (run-test-sandbox single-ok)
-
-    put $sandbox-result[describe-result] |
+    run-test-sandbox single-ok |
       assertions:should-be [
         &test-results=[&]
         &sub-results=[
@@ -35,19 +33,12 @@ raw:suite 'Running in sandbox' { |test~|
           ]
         ]
       ]
-
-    put $sandbox-result[stats] |
-      assertions:should-be [
-        &failed=0
-        &passed=1
-        &total=1
-      ]
   }
 
   test 'Failing test' {
-    var sandbox-result = (run-test-sandbox single-failing)
+    var describe-result = (run-test-sandbox single-failing)
 
-    put $sandbox-result[describe-result] |
+    put $describe-result |
       describe-result:simplify (all) |
       assertions:should-be [
         &test-results=[&]
@@ -64,19 +55,12 @@ raw:suite 'Running in sandbox' { |test~|
         ]
       ]
 
-    var exception-log = $sandbox-result[describe-result][sub-results]['My description'][test-results]['should fail'][exception-log]
+    var exception-log = $describe-result[sub-results]['My description'][test-results]['should fail'][exception-log]
 
     eq $exception-log $nil |
       assertions:should-be $false
 
     str:contains $exception-log : |
       assertions:should-be $true
-
-    put $sandbox-result[stats] |
-      assertions:should-be [
-        &failed=1
-        &passed=0
-        &total=1
-      ]
   }
 }

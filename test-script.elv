@@ -2,12 +2,8 @@ use path
 use ./assertions
 use ./describe-context
 use ./outcomes
-use ./stats
 
 fn run { |script-path|
-  var passed = (num 0)
-  var failed = (num 0)
-
   var abs-script-path = (path:abs $script-path)
   var script-code = (slurp < $script-path)
 
@@ -37,17 +33,7 @@ fn run { |script-path|
       fail 'Tests must be declared via "it" blocks within a hierarchy of "declare" blocks!'
     }
 
-    var test-result = ($current-describe-context[run-test] $test-title $block)
-
-    [
-      &$outcomes:passed={
-        set passed = (+ $passed 1)
-      }
-
-      &$outcomes:failed={
-        set failed = (+ $failed 1)
-      }
-    ][$test-result[outcome]]
+    $current-describe-context[run-test] $test-title $block
   }
 
   var namespace = (ns [
@@ -62,15 +48,5 @@ fn run { |script-path|
 
   eval &ns=$namespace $script-code
 
-  var stats = (stats:create [
-    &failed=$failed
-    &passed=$passed
-  ])
-
-  var describe-result = ($root-context[to-result])
-
-  put [
-    &stats=$stats
-    &describe-result=$describe-result
-  ]
+  $root-context[to-result]
 }

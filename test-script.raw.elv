@@ -7,6 +7,7 @@ use ./describe-result
 use ./assertions
 use ./outcomes
 use ./raw
+use ./stats
 use ./test-script
 
 fn run-test-script { |basename|
@@ -17,54 +18,24 @@ fn run-test-script { |basename|
   test-script:run $test-script-path
 }
 
-raw:suite 'Running empty script' { |test~|
-  var script-result = (run-test-script empty)
-
-  test 'Retrieving the stats' {
-    put $script-result[stats] |
-      assertions:should-be [
-        &total=0
-        &passed=0
-        &failed=0
-      ]
-  }
-
-  test 'Retrieving the describe result' {
-    put $script-result[describe-result] |
+raw:suite 'Running test script' { |test~|
+  test 'Empty' {
+    run-test-script empty |
       assertions:should-be [
         &test-results=[&]
         &sub-results=[&]
       ]
   }
-}
 
-raw:suite 'Running script with metainfo checks' { |test~|
-  var script-result = (run-test-script metainfo)
-
-  test 'Retrieving the stats' {
-    put $script-result[stats] |
-      assertions:should-be [
-        &total=4
-        &passed=4
-        &failed=0
-      ]
-  }
-}
-
-raw:suite 'Running script with passing test' { |test~|
-  var script-result = (run-test-script single-ok)
-
-  test 'Retrieving the stats' {
-    put $script-result[stats] |
-      assertions:should-be [
-        &total=1
-        &passed=1
-        &failed=0
-      ]
+  test 'With metainfo checks' {
+    run-test-script metainfo |
+      stats:from-describe-result (all) |
+      put (all)[failed] |
+      assertions:should-be 0
   }
 
-  test 'Retrieving the describe result' {
-    put $script-result[describe-result] |
+  test 'With single passing test' {
+    run-test-script single-ok |
       assertions:should-be [
         &test-results= [&]
         &sub-results= [
@@ -81,23 +52,9 @@ raw:suite 'Running script with passing test' { |test~|
         ]
       ]
   }
-}
 
-
-raw:suite 'Running script with failing test' { |test~|
-  var script-result = (run-test-script single-failing)
-
-  test 'Retrieving the stats' {
-    put $script-result[stats] |
-      assertions:should-be [
-        &total=1
-        &passed=0
-        &failed=1
-      ]
-  }
-
-  test 'Retrieving the describe result' {
-    put $script-result[describe-result] |
+  test 'With single failing test' {
+    run-test-script single-failing |
       describe-result:simplify (all) |
       assertions:should-be [
         &test-results= [&]
@@ -114,23 +71,9 @@ raw:suite 'Running script with failing test' { |test~|
         ]
       ]
   }
-}
 
-
-raw:suite 'Running script with mixed outcomes' { |test~|
-  var script-result = (run-test-script mixed-outcomes)
-
-  test 'Retrieving the stats' {
-    put $script-result[stats] |
-      assertions:should-be [
-        &total=2
-        &passed=1
-        &failed=1
-      ]
-  }
-
-  test 'Retrieving the describe result' {
-    put $script-result[describe-result] |
+  test 'With mixed outcomes' {
+    run-test-script mixed-outcomes |
       describe-result:simplify (all) |
       assertions:should-be [
         &test-results= [&]
