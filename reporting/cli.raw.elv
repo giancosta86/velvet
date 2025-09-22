@@ -1,6 +1,4 @@
 use path
-use github.com/giancosta86/aurora-elvish/command
-use github.com/giancosta86/aurora-elvish/exception
 use ../aggregator
 use ../assertions
 use ../outcomes

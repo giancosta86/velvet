@@ -1,5 +1,5 @@
 use str
-use github.com/giancosta86/aurora-elvish/lang
+use ../../utils/lang
 
 describe 'The script source' {
   var script-src = (src)

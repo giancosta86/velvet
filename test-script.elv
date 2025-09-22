@@ -46,6 +46,7 @@ fn run { |script-path|
     &should-be~=$assertions:should-be~
   ])
 
+  tmp pwd = (path:dir $abs-script-path)
   eval &ns=$namespace $script-code
 
   $root-context[to-result]
