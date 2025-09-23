@@ -10,7 +10,7 @@ fn run-test-sandbox { |basename|
 
   var sandbox-path = (path:join $this-script-dir sandbox.elv)
 
-  var test-script-path = (path:join $this-script-dir tests test-scripts $basename'.elv')
+  var test-script-path = (path:join $this-script-dir tests test-scripts $basename'.test.elv')
 
   elvish -norc $sandbox-path $test-script-path | from-json
 }

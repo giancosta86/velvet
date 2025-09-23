@@ -10,8 +10,7 @@ describe 'The script source' {
   }
 
   it 'should contain the script path' {
-    put $script-src[name] |
-      str:contains (all) metainfo.elv |
+    str:has-suffix $script-src[name] metainfo.test.elv |
       should-be $true
   }
 

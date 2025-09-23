@@ -13,7 +13,7 @@ use ./test-script
 fn run-test-script { |basename|
   var this-script-dir = (path:dir (src)[name])
 
-  var test-script-path = (path:join $this-script-dir tests test-scripts $basename'.elv')
+  var test-script-path = (path:join $this-script-dir tests test-scripts $basename'.test.elv')
 
   test-script:run $test-script-path
 }
