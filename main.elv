@@ -1,7 +1,7 @@
 use ./reporting/cli
 
 fn get-test-scripts {
-  put **[nomatch-ok].test.elv
+  put [**[nomatch-ok].test.elv]
 }
 
 fn has-test-scripts {
