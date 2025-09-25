@@ -1,14 +1,9 @@
 use str
-use ./lang
 
-fn section { |&emoji=🔎 description string-or-block|
-  echo $emoji' '$description":"
+fn section { |&emoji=🔎 description block|
+  echo $emoji' '$description":" >&2
 
-  if (lang:is-function $string-or-block) {
-    $string-or-block > &2
-  } else {
-    echo $string-or-block
-  }
+  $block > &2
 
-  echo (str:repeat $emoji 3)
+  echo (str:repeat $emoji 3) >&2
 }
