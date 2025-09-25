@@ -2,7 +2,7 @@ use ./aggregator
 use ./assertions
 use ./describe-result
 use ./outcomes
-use ./raw
+use ./utils/raw
 
 raw:suite 'Aggregator' { |test~|
   fn get-test-script { |basename|

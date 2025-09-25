@@ -1,6 +1,6 @@
 use str
 
-fn section { |&emoji=🔎 description block|
+fn show-block { |&emoji=🔎 description block|
   echo $emoji' '$description >&2
 
   $block > &2

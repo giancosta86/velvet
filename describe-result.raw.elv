@@ -2,7 +2,7 @@ use ./assertions
 use ./describe-context
 use ./describe-result
 use ./outcomes
-use ./raw
+use ./utils/raw
 use ./test-result
 
 raw:suite 'Describe result' { |test~|

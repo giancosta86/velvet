@@ -1,5 +1,5 @@
 use ./assertions
-use ./raw
+use ./utils/raw
 use ./utils/exception
 
 raw:suite 'Assertions: assert' { |test~|

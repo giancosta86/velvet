@@ -1,7 +1,7 @@
 use os
 use path
-use ./utils/command
-use ./utils/console
+use ./command
+use ./console
 
 fn -test { |title block|
   echo ▶ $title
@@ -17,7 +17,7 @@ fn -test { |title block|
 fn suite { |title block|
   echo
 
-  console:section &emoji=🎭 (styled $title bold) {
+  console:show-block &emoji=🎭 (styled $title bold) {
     $block $-test~ | only-bytes
 
     echo ✅ This section is OK!

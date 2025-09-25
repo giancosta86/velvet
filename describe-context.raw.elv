@@ -3,7 +3,7 @@ use ./assertions
 use ./describe-context
 use ./describe-result
 use ./outcomes
-use ./raw
+use ./utils/raw
 
 raw:suite 'Testing a describe context' { |test~|
   fn expect-simplified-describe-result { |describe-context expected-result|

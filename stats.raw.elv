@@ -1,6 +1,6 @@
 use ./assertions
 use ./outcomes
-use ./raw
+use ./utils/raw
 use ./stats
 
 raw:suite 'Stats' { |test~|

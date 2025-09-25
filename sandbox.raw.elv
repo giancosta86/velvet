@@ -3,7 +3,7 @@ use str
 use ./assertions
 use ./describe-result
 use ./outcomes
-use ./raw
+use ./utils/raw
 
 fn run-test-sandbox { |basename|
   var this-script-dir = (path:dir (src)[name])

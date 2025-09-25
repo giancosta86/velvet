@@ -3,8 +3,8 @@ use str
 use ../aggregator
 use ../assertions
 use ../outcomes
-use ../raw
 use ../stats
+use ../utils/raw
 use ./cli
 
 raw:suite 'CLI reporting' { |test~|

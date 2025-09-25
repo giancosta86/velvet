@@ -4,7 +4,7 @@ use ./describe-context
 use ./describe-result
 use ./assertions
 use ./outcomes
-use ./raw
+use ./utils/raw
 use ./stats
 use ./test-script
 

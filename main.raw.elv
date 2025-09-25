@@ -2,7 +2,7 @@ use ./assertions
 use ./describe-result
 use ./main
 use ./outcomes
-use ./raw
+use ./utils/raw
 
 raw:suite 'Getting test script' { |test~|
   test 'In directory with no tests' {

@@ -1,7 +1,7 @@
 use str
 use ./assertions
 use ./outcomes
-use ./raw
+use ./utils/raw
 use ./test-result
 
 raw:suite 'Test result from block' { |test~|

@@ -39,7 +39,7 @@ fn -print-expected-and-actual { |inputs|
   print (styled $expected-description': ' green bold) >&2
   echo $formatted-expected >&2
 
-  console:section (styled DIFF: yellow bold) {
+  console:show-block (styled DIFF: yellow bold) {
     diff:diff $formatted-actual $formatted-expected | tail -n +3 >&2
   }
 }
