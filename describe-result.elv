@@ -1,5 +1,5 @@
-use github.com/giancosta86/aurora-elvish/map
 use ./test-result
+use ./utils/map
 
 fn simplify { |describe-result|
   var simplified-test-results = (

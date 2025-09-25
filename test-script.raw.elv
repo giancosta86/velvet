@@ -1,7 +1,5 @@
 use path
 use str
-use github.com/giancosta86/aurora-elvish/command
-use github.com/giancosta86/aurora-elvish/exception
 use ./describe-context
 use ./describe-result
 use ./assertions

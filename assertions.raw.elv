@@ -1,7 +1,6 @@
-use github.com/giancosta86/aurora-elvish/command
-use github.com/giancosta86/aurora-elvish/exception
 use ./assertions
 use ./raw
+use ./utils/exception
 
 raw:suite 'Assertions: assert' { |test~|
   test 'When the condition is true' {

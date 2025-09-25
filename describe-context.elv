@@ -1,9 +1,6 @@
-use github.com/giancosta86/aurora-elvish/exception
-use github.com/giancosta86/aurora-elvish/lang
-use github.com/giancosta86/aurora-elvish/map
-use github.com/giancosta86/aurora-elvish/seq
 use ./outcomes
 use ./test-result
+use ./utils/map
 
 fn create {
   var test-results = [&]

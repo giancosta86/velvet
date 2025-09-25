@@ -1,8 +1,7 @@
 use str
-use github.com/giancosta86/aurora-elvish/console
-use github.com/giancosta86/aurora-elvish/command
-use github.com/giancosta86/aurora-elvish/diff
-use github.com/giancosta86/aurora-elvish/string
+use ./utils/console
+use ./utils/diff
+use ./utils/string
 
 fn assert { |predicate|
   if (not $predicate) {
@@ -33,11 +32,12 @@ fn -print-expected-and-actual { |inputs|
   var expected = $inputs[expected]
   var formatted-expected = (pprint $expected | slurp)
 
-  console:print (styled $actual-description': ' red bold)
-  console:echo $formatted-actual
+  #TODO: why are these >&2 still needed?
+  print (styled $actual-description': ' red bold) >&2
+  echo $formatted-actual >&2
 
-  console:print (styled $expected-description': ' green bold)
-  console:echo $formatted-expected
+  print (styled $expected-description': ' green bold) >&2
+  echo $formatted-expected >&2
 
   console:section (styled DIFF: yellow bold) {
     diff:diff $formatted-actual $formatted-expected | tail -n +3 >&2

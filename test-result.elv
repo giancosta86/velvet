@@ -1,5 +1,5 @@
-use github.com/giancosta86/aurora-elvish/command
 use ./outcomes
+use ./utils/command
 
 fn from-block { |block|
   var capture-result = (command:capture $block)

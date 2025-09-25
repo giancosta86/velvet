@@ -1,10 +1,10 @@
 use os
 use path
-use github.com/giancosta86/aurora-elvish/console
-use github.com/giancosta86/aurora-elvish/command
+use ./utils/command
+use ./utils/console
 
 fn -test { |title block|
-  console:echo ▶ $title
+  echo ▶ $title
 
   var capture-result = (command:capture $block)
 
@@ -15,7 +15,7 @@ fn -test { |title block|
 }
 
 fn suite { |title block|
-  console:echo
+  echo
 
   console:section &emoji=🎭 (styled $title bold) {
     $block $-test~ | only-bytes
