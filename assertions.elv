@@ -32,15 +32,14 @@ fn -print-expected-and-actual { |inputs|
   var expected = $inputs[expected]
   var formatted-expected = (pprint $expected | slurp)
 
-  #TODO: why are these >&2 still needed?
-  print (styled $actual-description': ' red bold) >&2
-  echo $formatted-actual >&2
+  console:print (styled $actual-description': ' red bold)
+  console:echo $formatted-actual
 
-  print (styled $expected-description': ' green bold) >&2
-  echo $formatted-expected >&2
+  console:print (styled $expected-description': ' green bold)
+  console:echo $formatted-expected
 
   console:show-block (styled DIFF: yellow bold) {
-    diff:diff $formatted-actual $formatted-expected | tail -n +3 >&2
+    diff:diff $formatted-actual $formatted-expected | tail -n +3
   }
 }
 
