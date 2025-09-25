@@ -23,11 +23,3 @@ fn suite { |title block|
     echo ✅ This section is OK!
   }
 }
-
-fn run-all {
-  put **.raw.elv | each { |raw-test-path|
-    tmp pwd = (path:dir $raw-test-path)
-
-    elvish -norc (path:base $raw-test-path)
-  }
-}

@@ -42,7 +42,6 @@ raw:suite 'Getting test script' { |test~|
   }
 }
 
-
 raw:suite 'Checking test scripts' { |test~|
   test 'In directory with no tests' {
     tmp pwd = ./utils
@@ -74,20 +73,35 @@ raw:suite 'Running test scripts' { |test~|
 
   test 'Running no scripts' {
     var actual-describe-result
+    var actual-stats
 
-    main:test &test-scripts=[] &reporters=[{ |describe-result| set actual-describe-result = $describe-result }]
+    main:test &test-scripts=[] &reporters=[{ |describe-result stats|
+      set actual-describe-result = $describe-result
+      set actual-stats = $stats
+    }]
 
     put $actual-describe-result |
       assertions:should-be [
         &test-results=[&]
         &sub-results=[&]
       ]
+
+    put $actual-stats |
+      assertions:should-be [
+        &total=0
+        &passed=0
+        &failed=0
+      ]
   }
 
   test 'Running one script' {
     var actual-describe-result
+    var actual-stats
 
-    main:test &test-scripts=[(get-test-script alpha)] &reporters=[{ |describe-result| set actual-describe-result = $describe-result }]
+    main:test &test-scripts=[(get-test-script alpha)] &reporters=[{ |describe-result stats|
+      set actual-describe-result = $describe-result
+      set actual-stats = $stats
+    }]
 
     put $actual-describe-result |
       assertions:should-be [
@@ -105,12 +119,23 @@ raw:suite 'Running test scripts' { |test~|
           ]
         ]
       ]
+
+    put $actual-stats |
+      assertions:should-be [
+        &total=1
+        &passed=1
+        &failed=0
+      ]
   }
 
   test 'Running two scripts' {
     var actual-describe-result
+    var actual-stats
 
-    main:test &test-scripts=[(get-test-script alpha) (get-test-script beta)] &reporters=[{ |describe-result| set actual-describe-result = $describe-result }]
+    main:test &test-scripts=[(get-test-script alpha) (get-test-script beta)] &reporters=[{ |describe-result stats|
+      set actual-describe-result = $describe-result
+      set actual-stats = $stats
+    }]
 
 
     put $actual-describe-result |
@@ -156,14 +181,25 @@ raw:suite 'Running test scripts' { |test~|
           ]
         ]
       ]
+
+    put $actual-stats |
+      assertions:should-be [
+        &total=3
+        &passed=3
+        &failed=0
+      ]
   }
 
   test 'Running all scripts via inference' {
     tmp pwd = ./tests/aggregator
 
     var actual-describe-result
+    var actual-stats
 
-    main:test &reporters=[{ |describe-result| set actual-describe-result = $describe-result }]
+    main:test &reporters=[{ |describe-result stats|
+      set actual-describe-result = $describe-result
+      set actual-stats = $stats
+    }]
 
     put $actual-describe-result |
       describe-result:simplify (all) |
@@ -222,6 +258,13 @@ raw:suite 'Running test scripts' { |test~|
             &sub-results=[&]
           ]
         ]
+      ]
+
+    put $actual-stats |
+      assertions:should-be [
+        &total=6
+        &passed=4
+        &failed=2
       ]
   }
 }

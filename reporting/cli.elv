@@ -33,7 +33,7 @@ fn -print-test-result { |test-title test-result level|
   }
 }
 
-fn -display { |describe-result level|
+fn -display-describe-result { |describe-result level|
   keys $describe-result[test-results] |
     order &key=$str:to-lower~ |
     each { |test-name|
@@ -50,16 +50,19 @@ fn -display { |describe-result level|
 
       var sub-result = $describe-result[sub-results][$sub-result-name]
 
-      -display $sub-result (+ $level 1)
+      -display-describe-result $sub-result (+ $level 1)
     }
 }
 
-fn display { |describe-result|
+fn display { |describe-result stats|
   var items-count = (+ (count $describe-result[test-results]) (count $describe-result[sub-results]))
 
   if (== $items-count 0) {
     echo 💬 No test structure found.
-  } else {
-    -display $describe-result 0
+    return
   }
+
+  -display-describe-result $describe-result 0
+
+  echo (styled 'Total tests: '$stats[total]'.' bold) (styled 'Passed: '$stats[passed]'.' green bold) (styled 'Failed: '$stats[failed]'.' red bold)
 }
