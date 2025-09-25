@@ -1,7 +1,7 @@
 use str
 
 fn section { |&emoji=🔎 description block|
-  echo $emoji' '$description":" >&2
+  echo $emoji' '$description >&2
 
   $block > &2
 
