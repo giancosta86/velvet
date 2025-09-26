@@ -1,5 +1,15 @@
-fn suite { |description block|
-  echo '⚛️ ' (styled $description bold)
+fn -test { |title test-block|
+  echo ▶ $title
 
-  $block
+  $test-block
+}
+
+fn suite { |&emoji='⚛️ ' description suite-block|
+  echo
+
+  echo $emoji (styled $description bold)
+
+  $suite-block $-test~ | only-bytes
+
+  echo $emoji''✅
 }

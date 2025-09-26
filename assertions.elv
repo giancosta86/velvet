@@ -1,5 +1,4 @@
 use str
-use ./utils/console
 use ./utils/diff
 use ./utils/string
 
@@ -26,15 +25,17 @@ fn -print-expected-and-actual { |inputs|
   var expected = $inputs[expected]
   var formatted-expected = (pprint $expected | slurp)
 
-  console:print (styled $actual-description': ' red bold)
-  console:echo $formatted-actual
+  {
+    print (styled $actual-description': ' red bold)
+    echo $formatted-actual
 
-  console:print (styled $expected-description': ' green bold)
-  console:echo $formatted-expected
+    print (styled $expected-description': ' green bold)
+    echo $formatted-expected
 
-  console:show-block (styled DIFF: yellow bold) {
+    echo 🔎 (styled DIFF: yellow bold)
     diff:diff $formatted-actual $formatted-expected | tail -n +3
-  }
+    echo 🔎🔎🔎
+  } >&2
 }
 
 fn should-be { |&strict=$false expected|

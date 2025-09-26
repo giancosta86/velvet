@@ -1,6 +1,5 @@
 all [
   assertion
-  command
 ] | each { |basic-script-basename|
   elvish -norc ./utils/$basic-script-basename'.atomic.elv'
 }
