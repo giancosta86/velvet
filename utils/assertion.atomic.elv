@@ -10,7 +10,7 @@ atomic:suite 'Atomic assertion' {
   } catch e {
     var message = $e[reason][content]
 
-    if (!=s $message 'Assertion failed!') {
+    if (!=s $message 'ASSERTION FAILED!') {
       fail 'The expected failure did not occur!'
     }
   }
