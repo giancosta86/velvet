@@ -1,6 +1,4 @@
-use os
-
-fn take-bytes { |block|
+fn -take-bytes { |block|
   $block 2>&1 | only-bytes | slurp
 }
 
@@ -8,7 +6,7 @@ fn capture { |block|
   var status = $ok
 
   var output = (
-    take-bytes {
+    -take-bytes {
       try {
         $block
       } catch e {

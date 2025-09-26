@@ -3,12 +3,6 @@ use ./utils/console
 use ./utils/diff
 use ./utils/string
 
-fn assert { |predicate|
-  if (not $predicate) {
-    fail 'Assertion failed!'
-  }
-}
-
 fn expect-crash { |block|
   try {
     $block | only-bytes

@@ -1,25 +1,7 @@
 use ./assertions
+use ./utils/assertion
 use ./utils/raw
 use ./utils/exception
-
-raw:suite 'Assertions: assert' { |test~|
-  test 'When the condition is true' {
-    assertions:assert $true
-  }
-
-  test 'When the condition is false' {
-    try {
-      assertions:assert $false
-      fail 'The assertion must fail!'
-    } catch e {
-      var message = (exception:get-fail-message $e)
-
-      if (!=s $message 'Assertion failed!') {
-        fail 'The expected failure did not occur!'
-      }
-    }
-  }
-}
 
 raw:suite 'Assertions: expect-crash' { |test~|
   test 'When there is no exception' {
@@ -30,7 +12,7 @@ raw:suite 'Assertions: expect-crash' { |test~|
     } catch e {
       var message = (exception:get-fail-message $e)
 
-      assertions:assert (==s $message 'The given code block did not fail!')
+      assertion:assert (==s $message 'The given code block did not fail!')
     }
   }
 
@@ -45,7 +27,7 @@ raw:suite 'Assertions: expect-crash' { |test~|
       exception:get-fail-message $ex
     )
 
-    assertions:assert (eq $message 'Dodo')
+    assertion:assert (eq $message 'Dodo')
   }
 }
 
@@ -64,7 +46,7 @@ raw:suite 'Assertions: should-be' { |test~|
         exception:get-fail-message (all)
     )
 
-    assertions:assert (eq $message 'strict should-be assertion failed')
+    assertion:assert (eq $message 'strict should-be assertion failed')
   }
 
   test 'Expected string, actual same-valued number, strict equal' {
@@ -76,7 +58,7 @@ raw:suite 'Assertions: should-be' { |test~|
         exception:get-fail-message (all)
     )
 
-    assertions:assert (eq $message 'strict should-be assertion failed')
+    assertion:assert (eq $message 'strict should-be assertion failed')
   }
 
   test 'Expected string, actual same string, non-strict equal' {
@@ -93,7 +75,7 @@ raw:suite 'Assertions: should-be' { |test~|
         exception:get-fail-message (all)
     )
 
-    assertions:assert (eq $message 'should-be assertion failed')
+    assertion:assert (eq $message 'should-be assertion failed')
   }
 
   test 'Expected string, actual same-valued number, non-strict equal' {
