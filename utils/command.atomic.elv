@@ -1,6 +1,7 @@
 use str
 use ./assertion
 use ./command
+use ./exception
 
 echo ⚛ Command capturing
 
@@ -54,9 +55,9 @@ echo ⚛ Command capturing
 
   assertion:assert (==s $result[output] Cip)
 
-  assertion:assert (not-eq $result[status] $ok)
-
-  assertion:assert (str:contains $result[status][reason][content] DODO)
+  exception:get-fail-message $result[status] |
+    str:contains (all) DODO |
+    assertion:assert (all)
 }
 
 {
@@ -69,9 +70,9 @@ echo ⚛ Command capturing
 
   assertion:assert (==s $result[output] Ciop)
 
-  assertion:assert (not-eq $result[status] $ok)
-
-  assertion:assert (str:contains $result[status][reason][content] DODO)
+  exception:get-fail-message $result[status] |
+    str:contains (all) DODO |
+    assertion:assert (all)
 }
 
 {
@@ -85,9 +86,9 @@ echo ⚛ Command capturing
 
   assertion:assert (==s $result[output] CipCiop)
 
-  assertion:assert (not-eq $result[status] $ok)
-
-  assertion:assert (str:contains $result[status][reason][content] DODO)
+  exception:get-fail-message $result[status] |
+    str:contains (all) DODO |
+    assertion:assert (all)
 }
 
 echo ⚛ ✅

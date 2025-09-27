@@ -1,7 +1,14 @@
+fn run-script { |script-path|
+  elvish -norc $script-path
+}
+
 all [
   assertion
-] | each { |basic-script-basename|
-  elvish -norc ./utils/$basic-script-basename'.atomic.elv'
+  exception
+  command
+  raw
+] | each { |atomic-script-basename|
+  run-script utils/$atomic-script-basename'.atomic.elv'
 }
 
 all [
@@ -16,5 +23,5 @@ all [
   aggregator
   main
 ] | each { |raw-script-basename|
-    elvish -norc $raw-script-basename'.raw.elv'
+    run-script $raw-script-basename'.raw.elv'
   }
