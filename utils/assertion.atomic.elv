@@ -3,13 +3,13 @@ use ./assertion
 echo ⚛ 'Atomic assertion'
 
 {
-  echo ▶ 'Asserting a true value'
+  echo ▶ 'Asserting $true'
 
   assertion:assert $true
 }
 
 {
-  echo ▶ 'Asserting a false value'
+  echo ▶ 'Asserting $false'
 
   try {
     assertion:assert $false
