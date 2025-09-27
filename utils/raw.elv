@@ -1,21 +1,24 @@
 use os
 use path
-use ./atomic
 use ./command
 
-fn suite { |title suite-block|
-  atomic:suite &emoji=🎭 $title { |atomic-test~|
-    var raw-test = { |title test-block|
-      atomic-test $title {
-        var capture-result = (command:capture $test-block)
+fn -test { |title test-block|
+  echo ▶ $title
 
-        if (not-eq $capture-result[status] $ok) {
-          echo $capture-result[output]
-          fail $capture-result[status]
-        }
-      }
-    }
+  var capture-result = (command:capture $test-block)
 
-    $suite-block $raw-test
+  if (not-eq $capture-result[status] $ok) {
+    echo $capture-result[output]
+    fail $capture-result[status]
   }
+}
+
+fn suite { |&emoji=🎭 description suite-block|
+  echo
+
+  echo $emoji (styled $description bold)
+
+  $suite-block $-test~ | only-bytes
+
+  echo $emoji''✅
 }
