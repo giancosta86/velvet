@@ -1,15 +1,15 @@
 use ./assertion
 
-echo ⚛ 'Atomic assertion'
+echo ⚛ Atomic assertion
 
 {
-  echo ▶ 'Asserting $true'
+  echo ▶ Asserting $true
 
   assertion:assert $true
 }
 
 {
-  echo ▶ 'Asserting $false'
+  echo ▶ Asserting $false
 
   try {
     assertion:assert $false
@@ -24,3 +24,4 @@ echo ⚛ 'Atomic assertion'
 }
 
 echo ⚛ ✅
+echo
