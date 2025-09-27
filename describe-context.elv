@@ -8,10 +8,8 @@ fn create {
 
   put [
     &ensure-sub-context={ |sub-title|
-      var existing-context = (map:get-value $sub-contexts $sub-title)
-
-      if $existing-context {
-        put $existing-context
+      if (has-key $sub-contexts $sub-title) {
+        put $sub-contexts[$sub-title]
       } else {
         var new-context = (create)
 

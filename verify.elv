@@ -12,6 +12,12 @@ all [
 }
 
 all [
+  fs
+] | each { |raw-script-basename|
+  run-script utils/$raw-script-basename'.raw.elv'
+}
+
+all [
   assertions
   test-result
   describe-result

@@ -7,7 +7,3 @@ fn temp-file-path { |&dir='' @pattern|
 
   put $temp-file[name]
 }
-
-fn rimraf { |path|
-  rm -rf $path
-}

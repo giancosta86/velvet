@@ -1,3 +1,4 @@
+use os
 use ./fs
 
 fn diff { |&throw=$false left right|
@@ -14,8 +15,8 @@ fn diff { |&throw=$false left right|
   } catch e {
     set exception = $e
   } finally {
-    fs:rimraf $left-path
-    fs:rimraf $right-path
+    os:remove-all $left-path
+    os:remove-all $right-path
   }
 
   if (and $exception $throw) {
