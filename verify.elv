@@ -14,7 +14,9 @@ all [
 all [
   lang
   fs
+  map
   string
+  diff
 ] | each { |raw-script-basename|
   run-script utils/$raw-script-basename'.raw.elv'
 }
