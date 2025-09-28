@@ -12,7 +12,9 @@ all [
 }
 
 all [
+  lang
   fs
+  string
 ] | each { |raw-script-basename|
   run-script utils/$raw-script-basename'.raw.elv'
 }
