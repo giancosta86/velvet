@@ -1,3 +1,4 @@
+use str
 use ./assertions
 use ./describe-context
 use ./describe-result
@@ -6,7 +7,7 @@ use ./utils/raw
 use ./test-result
 
 raw:suite 'Describe result' { |test~|
-  test 'Basic simplification' {
+  test 'On empty result' {
     var source = [
       &test-results=[&]
       &sub-results=[&]
@@ -20,7 +21,7 @@ raw:suite 'Describe result' { |test~|
     var source = [
       &test-results=[
         &Yogi=[
-          &output="Wiii!"
+          &output=Wiii!
           &outcome=$outcomes:passed
           &exception-log=$nil
         ]
@@ -32,16 +33,15 @@ raw:suite 'Describe result' { |test~|
       assertions:should-be [
         &test-results=[
           &Yogi=[
-            &output="Wiii!"
+            &output=Wiii!
             &outcome=$outcomes:passed
           ]
         ]
-
         &sub-results=[&]
       ]
   }
 
-  test 'Simplification with test in sub-result' {
+  test 'Simplification with additional test in sub-result' {
     var source = [
       &test-results=[
         &Yogi=[
@@ -147,7 +147,7 @@ raw:suite 'Describe result merging' { |test~|
 
     var right = [
       &test-results=[
-        &Alpha=$passed-test
+        &Beta=$failed-test
       ]
       &sub-results=[&]
     ]
@@ -155,13 +155,13 @@ raw:suite 'Describe result merging' { |test~|
     describe-result:merge $left $right |
       assertions:should-be [
         &test-results=[
-          &Alpha=$passed-test
+          &Beta=$failed-test
         ]
         &sub-results=[&]
       ]
   }
 
-  test 'When both left and right have just a test' {
+  test 'When both left and right have just a test each' {
     var left = [
       &test-results=[
         &Alpha=$passed-test
@@ -186,7 +186,7 @@ raw:suite 'Describe result merging' { |test~|
       ]
   }
 
-  test 'When a test name is duplicated with the same outcome' {
+  test 'When a test name is duplicated at the same level, with same outcome' {
     var left = [
       &test-results=[
         &Alpha=$passed-test
@@ -205,13 +205,16 @@ raw:suite 'Describe result merging' { |test~|
       describe-result:simplify (all) |
       assertions:should-be [
         &test-results=[
-          &Alpha=(test-result:create-for-duplicated | test-result:simplify (all))
+          &Alpha=(
+            test-result:create-for-duplicated |
+              test-result:simplify (all)
+          )
         ]
         &sub-results=[&]
       ]
   }
 
-  test 'When a test name is duplicated with different outcomes' {
+  test 'When a test name is duplicated at the same level, with different outcomes' {
     var left = [
       &test-results=[
         &Alpha=$passed-test
@@ -230,7 +233,10 @@ raw:suite 'Describe result merging' { |test~|
       describe-result:simplify (all) |
       assertions:should-be [
         &test-results=[
-          &Alpha=(test-result:create-for-duplicated | test-result:simplify (all))
+          &Alpha=(
+            test-result:create-for-duplicated |
+              test-result:simplify (all)
+          )
         ]
         &sub-results=[&]
       ]
@@ -280,26 +286,19 @@ raw:suite 'Describe result merging' { |test~|
       ]
     ]
 
-    describe-result:merge $left $right |
+    var merge-result = (describe-result:merge $left $right)
+
+    put $merge-result |
       describe-result:simplify (all) |
       assertions:should-be [
         &test-results=[
-          &Alpha=[
-            &outcome=$outcomes:passed
-            &output=Wiii!
-          ]
-          &Sigma=[
-            &outcome=$outcomes:passed
-            &output=Wiii!
-          ]
+          &Alpha=$passed-test
+          &Sigma=$passed-test
         ]
         &sub-results=[
           &'First level'=[
             &test-results=[
-              &Gamma=[
-                &outcome=$outcomes:passed
-                &output=Wiii!
-              ]
+              &Gamma=$passed-test
             ]
             &sub-results=[
               &'Second level'=[
@@ -308,18 +307,9 @@ raw:suite 'Describe result merging' { |test~|
                     &outcome=$outcomes:failed
                     &output=''
                   ]
-                  &Epsilon=[
-                    &outcome=$outcomes:passed
-                    &output=Wiii!
-                  ]
-                  &Sigma=[
-                    &outcome=$outcomes:passed
-                    &output=Wiii!
-                  ]
-                  &Tau=[
-                    &outcome=$outcomes:passed
-                    &output=Wiii!
-                  ]
+                  &Epsilon=$passed-test
+                  &Sigma=$passed-test
+                  &Tau=$passed-test
                 ]
                 &sub-results=[&]
               ]
@@ -327,5 +317,10 @@ raw:suite 'Describe result merging' { |test~|
           ]
         ]
       ]
+
+    var delta = $merge-result[sub-results]['First level'][sub-results]['Second level'][test-results][Delta]
+
+    str:contains $delta[exception-log] 'DUPLICATED TEST!' |
+      assertions:should-be $true
   }
 }

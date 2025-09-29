@@ -24,13 +24,14 @@ var -merge-test-results~
 var -merge-sub-results~
 
 fn merge { |left right|
-  var test-results = (-merge-test-results $left[test-results] $right[test-results])
-
-  var sub-results = (-merge-sub-results $left[sub-results] $right[sub-results])
-
   put [
-    &test-results=$test-results
-    &sub-results=$sub-results
+    &test-results=(
+      -merge-test-results $left[test-results] $right[test-results]
+    )
+
+    &sub-results=(
+      -merge-sub-results $left[sub-results] $right[sub-results]
+    )
   ]
 }
 
