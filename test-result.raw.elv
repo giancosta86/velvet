@@ -5,13 +5,15 @@ use ./utils/raw
 use ./test-result
 
 raw:suite 'Test result from block' { |test~|
-  test 'For flawless block' {
+  test 'For passing block' {
     test-result:from-block {
       echo "Wiii!"
+      echo "Wiii2!" >&2
+      put 90
     } |
       assertions:should-be [
         &outcome=$outcomes:passed
-        &output="Wiii!\n"
+        &output="Wiii!\nWiii2!\n"
         &exception-log=$nil
       ]
   }
@@ -19,7 +21,9 @@ raw:suite 'Test result from block' { |test~|
   test 'For crashing block' {
     var test-result = (
       test-result:from-block {
-        echo 'Wooo!'
+        echo "Wiii!"
+        echo "Wiii2!" >&2
+        put 90
         fail 'DODUS'
       }
      )
@@ -28,7 +32,7 @@ raw:suite 'Test result from block' { |test~|
       assertions:should-be $outcomes:failed
 
     put $test-result[output] |
-      assertions:should-be "Wooo!\n"
+      assertions:should-be "Wiii!\nWiii2!\n"
 
     eq $test-result[exception-log] $nil |
       assertions:should-be $false
