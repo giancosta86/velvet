@@ -8,41 +8,38 @@ echo ⚛ Command capturing
 {
   echo ▶ Capturing stdout without exceptions
 
-  var result = (command:capture {
+  command:capture {
     print Cip
-  })
-
-  assertion:assert (eq $result [
-    &output=Cip
-    &status=$ok
-  ])
+  } |
+    assertion:assert (eq (all) [
+      &output=Cip
+      &status=$ok
+    ])
 }
 
 {
   echo ▶ Capturing stderr without exceptions
 
-  var result = (command:capture {
+  command:capture {
     print Ciop >&2
-  })
-
-  assertion:assert (eq $result [
-    &output=Ciop
-    &status=$ok
-  ])
+  } |
+    assertion:assert (eq (all) [
+      &output=Ciop
+      &status=$ok
+    ])
 }
 
 {
   echo ▶ Capturing both stdout and stderr without exceptions
 
-  var result = (command:capture {
+  command:capture {
     print Cip
     print Ciop >&2
-  })
-
-  assertion:assert (eq $result [
-    &output=CipCiop
-    &status=$ok
-  ])
+  } |
+    assertion:assert (eq (all) [
+      &output=CipCiop
+      &status=$ok
+    ])
 }
 
 {

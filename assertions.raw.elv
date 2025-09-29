@@ -1,109 +1,79 @@
 use ./assertions
 use ./utils/assertion
-use ./utils/raw
 use ./utils/exception
+use ./utils/raw
 
 raw:suite 'Assertions: expect-crash' { |test~|
-  test 'When there is no exception' {
+  test 'When no exception is thrown' {
     try {
       assertions:expect-crash {
-        echo 'Wiii!'
+        echo Wiii!
+        echo Wiii2! >&2
+        put 90
       }
     } catch e {
-      var message = (exception:get-fail-message $e)
-
-      assertion:assert (==s $message 'The given code block did not fail!')
+      exception:get-fail-message $e |
+        assertion:assert (==s (all) 'The given code block did not fail!')
     }
   }
 
   test 'When there is an exception' {
-    var ex = (
-      assertions:expect-crash {
-        fail 'Dodo'
-      }
-    )
-
-    var message = (
-      exception:get-fail-message $ex
-    )
-
-    assertion:assert (eq $message 'Dodo')
+    assertions:expect-crash {
+      echo Wooo!
+      echo Wooo2! >&2
+      put 90
+      fail DODO
+    } |
+      exception:get-fail-message (all) |
+      assertion:assert (==s (all) 'DODO')
   }
 }
 
-raw:suite 'Assertions: should-be' { |test~|
-  test 'Expected string, actual same string, strict equal' {
+raw:suite 'Assertions: should-be (strict)' { |test~|
+  test 'Equal strings' {
     put Alpha |
-      assertions:should-be &strict=$true Alpha
+      assertions:should-be &strict Alpha
   }
 
-  test 'Expected string, actual different string, strict equal' {
-    var message = (
-      assertions:expect-crash {
-        put Alpha |
-          assertions:should-be &strict=$true Beta
-      } |
-        exception:get-fail-message (all)
-    )
-
-    assertion:assert (eq $message 'strict should-be assertion failed')
+  test 'Different strings' {
+    assertions:expect-crash {
+      put Alpha |
+        assertions:should-be &strict Beta
+    } |
+      exception:get-fail-message (all) |
+      assertion:assert (==s (all) 'strict should-be assertion failed')
   }
 
-  test 'Expected string, actual same-valued number, strict equal' {
-    var message = (
-      assertions:expect-crash {
-        put 90 |
-          assertions:should-be &strict=$true (num 90)
-      } |
-        exception:get-fail-message (all)
-    )
-
-    assertion:assert (eq $message 'strict should-be assertion failed')
-  }
-
-  test 'Expected string, actual same string, non-strict equal' {
-    put Alpha |
-      assertions:should-be &strict=$false Alpha
-  }
-
-  test 'Expected string, actual different string, non-strict equal' {
-    var message = (
-      assertions:expect-crash {
-        put Alpha |
-          assertions:should-be &strict=$false Beta
-      } |
-        exception:get-fail-message (all)
-    )
-
-    assertion:assert (eq $message 'should-be assertion failed')
-  }
-
-  test 'Expected string, actual same-valued number, non-strict equal' {
-    put 90 |
-      assertions:should-be &strict=$false (num 90)
-  }
-
-  test 'Expected number, actual same number, strict equal' {
+  test 'Equal numbers' {
     put (num 90) |
-      assertions:should-be &strict=$true (num 90)
+      assertions:should-be &strict (num 90)
   }
 
-  test 'Expected boolean, actual value, strict equal' {
+  test 'String and number having same value' {
+    assertions:expect-crash {
+      put 90 |
+        assertions:should-be &strict (num 90)
+    } |
+      exception:get-fail-message (all) |
+      assertion:assert (==s (all) 'strict should-be assertion failed')
+  }
+
+  test 'Equal booleans' {
     put $false |
-      assertions:should-be &strict=$true $false
+      assertions:should-be &strict $false
 
     put $true |
-      assertions:should-be &strict=$true $true
+      assertions:should-be &strict $true
   }
 
-  test 'Expected multi-level list, actual same list, strict equal' {
+  test 'Equal multi-level lists' {
     var test-list = [Alpha [Beta [Gamma Delta] Epsilon] Zeta Eta Theta]
 
     put $test-list |
-      assertions:should-be &strict=$true $test-list
+      assertions:should-be &strict $test-list
   }
 
-  test 'Expected multi-level map, actual same map, strict equal' {
+  test 'Equal multi-level maps' {
     var test-map = [
       &alpha=90
       &beta=92
@@ -117,7 +87,28 @@ raw:suite 'Assertions: should-be' { |test~|
     ]
 
     put $test-map |
-      assertions:should-be &strict=$true $test-map
+      assertions:should-be &strict $test-map
+  }
+}
+
+raw:suite 'Assertions: should-be (non-strict)' { |test~|
+  test 'Equal strings' {
+    put Alpha |
+      assertions:should-be &strict=$false Alpha
+  }
+
+  test 'Different strings' {
+    assertions:expect-crash {
+      put Alpha |
+        assertions:should-be &strict=$false Beta
+    } |
+      exception:get-fail-message (all) |
+      assertion:assert (eq (all) 'should-be assertion failed')
+  }
+
+  test 'String and number having same value' {
+    put 90 |
+      assertions:should-be &strict=$false (num 90)
   }
 }
 

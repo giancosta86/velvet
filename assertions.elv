@@ -4,16 +4,12 @@ use ./utils/string
 
 fn expect-crash { |block|
   try {
-    $block | only-bytes
+    $block | only-bytes >&2
   } catch e {
     put $e
   } else {
     fail 'The given code block did not fail!'
   }
-}
-
-fn fail-test {
-  fail 'TEST SET TO FAIL'
 }
 
 fn -print-expected-and-actual { |inputs|
@@ -25,17 +21,15 @@ fn -print-expected-and-actual { |inputs|
   var expected = $inputs[expected]
   var formatted-expected = (pprint $expected | slurp)
 
-  {
-    print (styled $actual-description': ' red bold)
-    echo $formatted-actual
+  print (styled $actual-description': ' red bold)
+  echo $formatted-actual
 
-    print (styled $expected-description': ' green bold)
-    echo $formatted-expected
+  print (styled $expected-description': ' green bold)
+  echo $formatted-expected
 
-    echo 🔎 (styled DIFF: yellow bold)
-    diff:diff $formatted-actual $formatted-expected | tail -n +3
-    echo 🔎🔎🔎
-  } >&2
+  echo 🔎 (styled DIFF: yellow bold)
+  diff:diff $formatted-actual $formatted-expected | tail -n +3
+  echo 🔎🔎🔎
 }
 
 fn should-be { |&strict=$false expected|
@@ -55,16 +49,20 @@ fn should-be { |&strict=$false expected|
       var expected-string = (string:get-minimal $expected)
       var actual-string = (string:get-minimal $actual)
 
-      if (not-eq $expected-string $actual-string) {
+      if (!=s $expected-string $actual-string) {
         -print-expected-and-actual [
           &expected-description='Expected'
-          &expected=$expected
+          &expected=$expected-string
           &actual-description='Actual'
-          &actual=$actual
+          &actual=$actual-string
         ]
 
         fail 'should-be assertion failed'
       }
     }
   }
+}
+
+fn fail-test {
+  fail 'TEST SET TO FAIL'
 }
