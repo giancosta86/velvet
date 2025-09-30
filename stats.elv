@@ -1,9 +1,5 @@
 use ./outcomes
-
-var -keys-by-outcome = [
-  &$outcomes:passed=passed
-  &$outcomes:failed=failed
-]
+use ./utils/map
 
 fn -from-describe-result { |describe-result counts|
   var updated-counts = $counts
@@ -14,9 +10,7 @@ fn -from-describe-result { |describe-result counts|
     var test-result = $test-results[$test-name]
     var outcome = $test-result[outcome]
 
-    var key = $-keys-by-outcome[$outcome]
-
-    set updated-counts = (assoc $updated-counts $key (+ $updated-counts[$key] 1))
+    set updated-counts = (assoc $updated-counts $outcome (+ $updated-counts[$outcome] 1))
   }
 
   var sub-results = $describe-result[sub-results]
@@ -30,10 +24,21 @@ fn -from-describe-result { |describe-result counts|
 }
 
 fn from-describe-result { |describe-result|
-  var partial-result = (-from-describe-result $describe-result [
-    &passed=0
-    &failed=0
-  ])
+  var keys-by-outcome = [
+    &$outcomes:passed=passed
+    &$outcomes:failed=failed
+  ]
 
-  assoc $partial-result total (+ $partial-result[passed] $partial-result[failed])
+  var counts = (
+    -from-describe-result $describe-result [
+      &$outcomes:passed=0
+      &$outcomes:failed=0
+    ] |
+      map:map (all) { |outcome value|
+        var key = $keys-by-outcome[$outcome]
+        put [$key $value]
+      }
+  )
+
+  assoc $counts total (+ $counts[passed] $counts[failed])
 }

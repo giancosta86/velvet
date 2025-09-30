@@ -4,6 +4,16 @@ use ./utils/raw
 use ./stats
 
 raw:suite 'Stats' { |test~|
+  var passed-test = [
+    &output="Wiii!"
+    &outcome=$outcomes:passed
+  ]
+
+  var failed-test = [
+    &output="Wooo!"
+    &outcome=$outcomes:failed
+  ]
+
   test 'From empty describe result' {
     stats:from-describe-result [
       &test-results=[&]
@@ -19,10 +29,7 @@ raw:suite 'Stats' { |test~|
   test 'From single passed test' {
     stats:from-describe-result [
       &test-results=[
-        &Cip=[
-          &output="Wiii!"
-          &outcome=$outcomes:passed
-        ]
+        &Cip=$passed-test
       ]
       &sub-results=[&]
     ] |
@@ -36,10 +43,7 @@ raw:suite 'Stats' { |test~|
   test 'From single failed test' {
     stats:from-describe-result [
       &test-results=[
-        &Ciop=[
-          &output="Wooo!"
-          &outcome=$outcomes:failed
-        ]
+        &Ciop=$failed-test
       ]
       &sub-results=[&]
     ] |
@@ -53,14 +57,8 @@ raw:suite 'Stats' { |test~|
   test 'From both passed and failed test' {
     stats:from-describe-result [
       &test-results=[
-        &Cip=[
-          &output="Wiii!"
-          &outcome=$outcomes:passed
-        ]
-        &Ciop=[
-          &output="Wooo!"
-          &outcome=$outcomes:failed
-        ]
+        &Cip=$passed-test
+        &Ciop=$failed-test
       ]
       &sub-results=[&]
     ] |
@@ -74,30 +72,18 @@ raw:suite 'Stats' { |test~|
   test 'From multi-level tests' {
     stats:from-describe-result [
       &test-results=[
-        &Cip=[
-          &output="Wiii!"
-          &outcome=$outcomes:passed
-        ]
-        &Ciop=[
-          &output="Wooo!"
-          &outcome=$outcomes:failed
-        ]
+        &Cip=$passed-test
+        &Ciop=$failed-test
       ]
       &sub-results=[
         &Alpha=[
           &test-results=[
-            &Yogi=[
-              &output="YogiWiii!"
-              &outcome=$outcomes:passed
-            ]
+            &Yogi=$passed-test
           ]
           &sub-results=[
             &Gamma=[
               &test-results=[
-                &Ranger=[
-                  &output="RangerWiii!"
-                  &outcome=$outcomes:passed
-                ]
+                &Ranger=$passed-test
               ]
               &sub-results=[&]
             ]
@@ -105,10 +91,7 @@ raw:suite 'Stats' { |test~|
         ]
         &Beta=[
           &test-results=[
-            &Bubu=[
-              &output="BubuWooo!"
-              &outcome=$outcomes:failed
-            ]
+            &Bubu=$failed-test
           ]
           &sub-results=[&]
         ]
