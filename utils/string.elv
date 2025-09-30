@@ -15,3 +15,20 @@ fn get-minimal { |source|
     to-string $source
   }
 }
+
+fn indent-lines { |source-string indent|
+  var partial-result = (
+    put $source-string |
+      to-lines |
+      each { |line|
+        if (!=s $line '') {
+          echo $indent''$line
+        } else {
+          echo
+        }
+      } |
+      slurp
+  )
+
+  put $partial-result[..-1]
+}
