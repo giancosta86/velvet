@@ -1,8 +1,9 @@
 use str
 use ../outcomes
+use ../utils/string
 
-fn -print-indentation { |level|
-  print (str:repeat ' ' (* $level 4))
+fn -get-indentation { |level|
+  str:repeat ' ' (* $level 4)
 }
 
 fn -print-test-result { |test-title test-result level|
@@ -21,15 +22,15 @@ fn -print-test-result { |test-title test-result level|
     fail 'Unknown outcome'
   }
 
-  -print-indentation $level
-  echo (styled $test-title $color bold) $emoji
+  var indentation = (-get-indentation $level)
+  echo $indentation''(styled $test-title $color bold) $emoji
 
   if (eq $outcome $outcomes:failed) {
-    echo $test-result[output]
+    var logging-indentation = (-get-indentation (+ $level 1))
 
-    if $test-result[exception-log] {
-      echo $test-result[exception-log]
-    }
+    echo (string:indent-lines $test-result[output] $logging-indentation)
+
+    echo (string:indent-lines $test-result[exception-log] $logging-indentation)
   }
 }
 
@@ -45,8 +46,10 @@ fn -display-describe-result { |describe-result level|
   keys $describe-result[sub-results] |
     order &key=$str:to-lower~ |
     each { |sub-result-name|
-      -print-indentation $level
-      echo $sub-result-name
+      var indentation = (-get-indentation $level)
+
+      echo
+      echo $indentation''(styled $sub-result-name white bold)
 
       var sub-result = $describe-result[sub-results][$sub-result-name]
 
@@ -64,5 +67,6 @@ fn display { |describe-result stats|
 
   -display-describe-result $describe-result 0
 
+  echo
   echo (styled 'Total tests: '$stats[total]'.' bold) (styled 'Passed: '$stats[passed]'.' green bold) (styled 'Failed: '$stats[failed]'.' red bold)
 }

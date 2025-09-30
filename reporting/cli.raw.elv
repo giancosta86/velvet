@@ -1,6 +1,4 @@
-use path
 use str
-use ../aggregator
 use ../assertions
 use ../outcomes
 use ../stats
@@ -8,15 +6,26 @@ use ../utils/raw
 use ./cli
 
 raw:suite 'CLI reporting' { |test~|
-  fn expect-in-output { |describe-result snippets|
+  fn create-output-tester { |describe-result|
     var stats = (stats:from-describe-result $describe-result)
 
     var output = (cli:display $describe-result $stats | slurp)
 
-    all $snippets | each { |snippet|
-      str:contains $output $snippet |
-        assertions:should-be $true
-    }
+    put [
+      &expect-in-output={ |snippets|
+        all $snippets | each { |snippet|
+          str:contains $output $snippet |
+            assertions:should-be $true
+        }
+      }
+
+      &expect-not-in-output={ |snippets|
+        all $snippets | each { |snippet|
+          str:contains $output $snippet |
+            assertions:should-be $false
+        }
+      }
+    ]
   }
 
   test 'With empty describe result' {
@@ -43,11 +52,18 @@ raw:suite 'CLI reporting' { |test~|
       &sub-results=[&]
     ]
 
-    expect-in-output $describe-result [
-      (styled Alpha green bold | to-string (all))' '✅"\n"
+    var output-tester = (create-output-tester $describe-result)
+
+    $output-tester[expect-in-output] [
+      Alpha
+      ✅
       'Total tests: 1.'
       'Passed: 1.'
       'Failed: 0.'
+    ]
+
+    $output-tester[expect-not-in-output] [
+      Wiii!
     ]
   }
 
@@ -57,14 +73,18 @@ raw:suite 'CLI reporting' { |test~|
         &Beta=[
           &outcome=$outcomes:failed
           &output="Wooo!\n"
-          &exception-log="DODO"
+          &exception-log=DODO
         ]
       ]
       &sub-results=[&]
     ]
 
-    expect-in-output $describe-result [
-      (styled Beta red bold | to-string (all))' '❌"\nWooo!\n\nDODO\n"
+    var output-tester = (create-output-tester $describe-result)
+
+    $output-tester[expect-in-output] [
+      ❌
+      Wooo!
+      DODO
       'Total tests: 1.'
       'Passed: 0.'
       'Failed: 1.'
@@ -89,7 +109,7 @@ raw:suite 'CLI reporting' { |test~|
                 &Beta=[
                   &outcome=$outcomes:failed
                   &output="Wooo!\n"
-                  &exception-log="DODO"
+                  &exception-log=DODO
                 ]
               ]
               &sub-results=[&]
@@ -99,12 +119,21 @@ raw:suite 'CLI reporting' { |test~|
       ]
     ]
 
-    expect-in-output $describe-result [
-      (styled Alpha green bold | to-string (all))' '✅"\n"
-      (styled Beta red bold | to-string (all))' '❌"\nWooo!\n\nDODO\n"
+    var output-tester = (create-output-tester $describe-result)
+
+    $output-tester[expect-in-output] [
+      Alpha
+      ❌
+      Beta
+      Wooo!
+      DODO
       'Total tests: 2.'
       'Passed: 1.'
       'Failed: 1.'
+    ]
+
+    $output-tester[expect-not-in-output] [
+      Wiii!
     ]
   }
 }
