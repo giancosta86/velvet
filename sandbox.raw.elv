@@ -3,6 +3,7 @@ use str
 use ./assertions
 use ./describe-result
 use ./outcomes
+use ./tests/test-scripts
 use ./utils/raw
 
 fn run-test-sandbox { |basename|
@@ -10,7 +11,7 @@ fn run-test-sandbox { |basename|
 
   var sandbox-path = (path:join $this-script-dir sandbox.elv)
 
-  var test-script-path = (path:join $this-script-dir tests test-scripts $basename'.test.elv')
+  var test-script-path = (test-scripts:get-path test-scripts $basename)
 
   elvish -norc $sandbox-path $test-script-path | from-json
 }
@@ -60,7 +61,7 @@ raw:suite 'Running in sandbox' { |test~|
     eq $exception-log $nil |
       assertions:should-be $false
 
-    str:contains $exception-log : |
+    str:contains $exception-log DODO |
       assertions:should-be $true
   }
 }
