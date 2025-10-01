@@ -2,11 +2,12 @@ use ./aggregator
 use ./assertions
 use ./describe-result
 use ./outcomes
+use ./tests/test-scripts
 use ./utils/raw
 
 raw:suite 'Aggregator' { |test~|
   fn get-test-script { |basename|
-    put tests/aggregator/$basename.test.elv
+    test-scripts:get-path aggregator $basename
   }
 
   test 'Running no scripts' {

@@ -52,9 +52,9 @@ fn should-be { |&strict=$false expected|
       if (!=s $expected-string $actual-string) {
         -print-expected-and-actual [
           &expected-description='Expected'
-          &expected=$expected-string
+          &expected=$expected
           &actual-description='Actual'
-          &actual=$actual-string
+          &actual=$actual
         ]
 
         fail 'should-be assertion failed'

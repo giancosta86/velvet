@@ -1,7 +1,6 @@
 use path
 use ./assertions
 use ./describe-context
-use ./outcomes
 use ./utils/assertion
 
 fn run { |script-path|
@@ -11,7 +10,7 @@ fn run { |script-path|
   var root-context = (describe-context:create)
   var current-describe-context = $root-context
 
-  fn virtual-src {
+  fn custom-src {
     put [
       &is-file=$true
       &name=$abs-script-path
@@ -19,9 +18,9 @@ fn run { |script-path|
     ]
   }
 
-  fn describe { |describe-title block|
+  fn describe { |context-title block|
     var sub-context = (
-      $current-describe-context[ensure-sub-context] $describe-title
+      $current-describe-context[ensure-sub-context] $context-title
     )
 
     tmp current-describe-context = $sub-context
@@ -38,7 +37,7 @@ fn run { |script-path|
   }
 
   var namespace = (ns [
-    &src~=$virtual-src~
+    &src~=$custom-src~
     &describe~=$describe~
     &it~=$it~
     &assert~=$assertion:assert~

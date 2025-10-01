@@ -1,22 +1,19 @@
-use path
 use str
-use ./describe-context
-use ./describe-result
 use ./assertions
+use ./describe-result
 use ./outcomes
-use ./utils/raw
 use ./stats
 use ./test-script
-
-fn run-test-script { |basename|
-  var this-script-dir = (path:dir (src)[name])
-
-  var test-script-path = (path:join $this-script-dir tests test-scripts $basename'.test.elv')
-
-  test-script:run $test-script-path
-}
+use ./tests/test-scripts
+use ./utils/raw
 
 raw:suite 'Running test script' { |test~|
+  fn run-test-script { |basename|
+    var test-script-path = (test-scripts:get-path test-scripts $basename)
+
+    test-script:run $test-script-path
+  }
+
   test 'Empty' {
     run-test-script empty |
       assertions:should-be [
@@ -26,9 +23,15 @@ raw:suite 'Running test script' { |test~|
   }
 
   test 'With metainfo checks' {
-    run-test-script metainfo |
-      stats:from-describe-result (all) |
-      put (all)[failed] |
+    var stats = (
+      run-test-script metainfo |
+        stats:from-describe-result (all)
+    )
+
+    put $stats[passed] |
+      assertions:should-be 4
+
+    put $stats[failed] |
       assertions:should-be 0
   }
 
@@ -41,7 +44,7 @@ raw:suite 'Running test script' { |test~|
             &test-results=[
               &'should work'=[
                 &outcome=$outcomes:passed
-                &output="Wiii!\n"
+                &output="Wiii!\nWiii2!\n"
                 &exception-log=$nil
               ]
             ]
@@ -61,7 +64,7 @@ raw:suite 'Running test script' { |test~|
             &test-results=[
               &'should fail'=[
                 &outcome=$outcomes:failed
-                &output="Time to crash!\n"
+                &output="Wooo!\nWooo2!\n"
               ]
             ]
             &sub-results=[&]
@@ -71,7 +74,9 @@ raw:suite 'Running test script' { |test~|
   }
 
   test 'With mixed outcomes' {
-    run-test-script mixed-outcomes |
+    var describe-result = (run-test-script mixed-outcomes)
+
+    put $describe-result |
       describe-result:simplify (all) |
       assertions:should-be [
         &test-results= [&]
@@ -102,5 +107,10 @@ raw:suite 'Running test script' { |test~|
           ]
         ]
       ]
+
+    var test-result = $describe-result[sub-results]['My description'][sub-results][Cip][sub-results][Ciop][test-results]['should fail']
+
+    str:contains $test-result[exception-log] DODUS |
+      assertions:should-be $true
   }
 }

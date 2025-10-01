@@ -25,7 +25,7 @@ raw:suite 'Running in sandbox' { |test~|
             &test-results=[
               &'should work'=[
                 &outcome=$outcomes:passed
-                &output="Wiii!\n"
+                &output="Wiii!\nWiii2!\n"
                 &exception-log=$nil
               ]
             ]
@@ -47,7 +47,7 @@ raw:suite 'Running in sandbox' { |test~|
             &test-results=[
               &'should fail'=[
                 &outcome=$outcomes:failed
-                &output="Time to crash!\n"
+                &output="Wooo!\nWooo2!\n"
               ]
             ]
             &sub-results=[&]
