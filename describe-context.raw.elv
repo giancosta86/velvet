@@ -3,9 +3,10 @@ use ./assertions
 use ./describe-context
 use ./describe-result
 use ./outcomes
+use ./test-result
 use ./utils/raw
 
-raw:suite 'Testing a describe context' { |test~|
+raw:suite 'Describe context' { |test~|
   fn expect-simplified-describe-result { |describe-context expected-result|
     $describe-context[to-result] |
       describe-result:simplify (all) |
@@ -61,20 +62,22 @@ raw:suite 'Testing a describe context' { |test~|
     var test-result = (
       $root[run-test] T-OK {
         echo Wiii!
+        echo Wiii2! >&2
+        put 90
       }
     )
 
     put $test-result |
       assertions:should-be [
         &outcome=$outcomes:passed
-        &output="Wiii!\n"
+        &output="Wiii!\nWiii2!\n"
         &exception-log=$nil
       ]
 
     expect-simplified-describe-result $root [
       &test-results=[
         &T-OK=[
-          &output="Wiii!\n"
+          &output="Wiii!\nWiii2!\n"
           &outcome=$outcomes:passed
         ]
       ]
@@ -87,16 +90,18 @@ raw:suite 'Testing a describe context' { |test~|
 
     var test-result = (
       $root[run-test] T-FAIL {
-        echo Hello
+        echo Wooo
+        echo Wooo2 >&2
+        put 90
         fail Dodo
       }
     )
 
     put $test-result |
-      dissoc (all) exception-log |
+      test-result:simplify (all) |
       assertions:should-be [
         &outcome=$outcomes:failed
-        &output="Hello\n"
+        &output="Wooo\nWooo2\n"
       ]
 
     put $test-result[exception-log] |
@@ -106,46 +111,8 @@ raw:suite 'Testing a describe context' { |test~|
     expect-simplified-describe-result $root [
       &test-results=[
         &T-FAIL=[
-          &output="Hello\n"
+          &output="Wooo\nWooo2\n"
           &outcome=$outcomes:failed
-        ]
-      ]
-      &sub-results=[&]
-    ]
-  }
-
-  test 'Running a test with multiple output lines' {
-    var root = (describe-context:create)
-
-    $root[run-test] T-OK {
-      echo Cip
-      echo Ciop
-    }
-
-    expect-simplified-describe-result $root [
-      &test-results=[
-        &T-OK=[
-          &output="Cip\nCiop\n"
-          &outcome=$outcomes:passed
-        ]
-      ]
-      &sub-results=[&]
-    ]
-  }
-
-  test 'Running a test with both stdout and stderr' {
-    var root = (describe-context:create)
-
-    $root[run-test] T-OK {
-      echo Cip
-      echo Ciop >&2
-    }
-
-    expect-simplified-describe-result $root [
-      &test-results=[
-        &T-OK=[
-          &output="Cip\nCiop\n"
-          &outcome=$outcomes:passed
         ]
       ]
       &sub-results=[&]
@@ -160,17 +127,18 @@ raw:suite 'Testing a describe context' { |test~|
     }
 
     $root[run-test] 'T-FAIL 1' {
-      echo Hello 1
-      fail Dodo1
+      echo Wooo 1
+      fail DODO1
     }
 
     $root[run-test] 'T-OK 2' {
-      echo Wiii 2!
+      echo Wiii 2! >&2
     }
 
     $root[run-test] 'T-FAIL 2' {
-      echo Hello 2
+      echo Wooo 2
       fail Dodo2
+      echo NEVER PRINTED
     }
 
     $root[run-test] 'T-OK 3' {
@@ -180,22 +148,26 @@ raw:suite 'Testing a describe context' { |test~|
     expect-simplified-describe-result $root [
       &sub-results=[&]
       &test-results=[
-        &'T-FAIL 1'=[
-          &outcome=$outcomes:failed
-          &output="Hello 1\n"
-        ]
-        &'T-FAIL 2'=[
-          &outcome=$outcomes:failed
-          &output="Hello 2\n"
-        ]
         &'T-OK 1'=[
           &outcome=$outcomes:passed
           &output="Wiii 1!\n"
         ]
+
+        &'T-FAIL 1'=[
+          &outcome=$outcomes:failed
+          &output="Wooo 1\n"
+        ]
+
         &'T-OK 2'=[
           &outcome=$outcomes:passed
           &output="Wiii 2!\n"
         ]
+
+        &'T-FAIL 2'=[
+          &outcome=$outcomes:failed
+          &output="Wooo 2\n"
+        ]
+
         &'T-OK 3'=[
           &outcome=$outcomes:passed
           &output="Wiii 3!\n"
@@ -204,14 +176,48 @@ raw:suite 'Testing a describe context' { |test~|
     ]
   }
 
-  test 'Converting to describe result with test tree' {
+  test 'Running test with the same name' {
     var root = (describe-context:create)
+
+    $root[run-test] T-DUP {
+      echo Wiii!
+    } |
+      put (all)[outcome] |
+      assertions:should-be $outcomes:passed
+
+    $root[run-test] T-DUP {
+      echo Wiii!
+    } |
+      put (all)[outcome] |
+      assertions:should-be $outcomes:failed
+
+    var describe-result = ($root[to-result])
+
+    describe-result:simplify $describe-result |
+      assertions:should-be [
+        &sub-results=  [&]
+        &test-results= [
+          &T-DUP=       [
+            &outcome=  F
+            &output=   ''
+            ]
+          ]
+        ]
+
+    str:contains $describe-result[test-results][T-DUP][exception-log] DUPLICATED |
+      assertions:should-be $true
+  }
+
+  test 'With multi-level test tree' {
+    var root = (describe-context:create)
+
     var alpha = ($root[ensure-sub-context] alpha)
-    var beta = ($alpha[ensure-sub-context] beta)
 
     $alpha[run-test] alpha-test {
       echo Hello!
     }
+
+    var beta = ($alpha[ensure-sub-context] beta)
 
     $beta[run-test] beta-test {
       echo World!
@@ -242,33 +248,5 @@ raw:suite 'Testing a describe context' { |test~|
         ]
       ]
     ]
-  }
-
-  test 'Running test with the same name' {
-    var root = (describe-context:create)
-
-    $root[run-test] 'T-OK' {
-      echo Wiii!
-    }
-
-    $root[run-test] 'T-OK' {
-      echo Wiii!
-    }
-
-    var describe-result = ($root[to-result])
-
-    describe-result:simplify $describe-result |
-      assertions:should-be [
-        &sub-results=  [&]
-        &test-results= [
-          &T-OK=       [
-            &outcome=  F
-            &output=   ''
-            ]
-          ]
-        ]
-
-    str:contains $describe-result[test-results][T-OK][exception-log] DUPLICATED |
-      assertions:should-be $true
   }
 }

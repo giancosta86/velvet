@@ -1,4 +1,3 @@
-use ./outcomes
 use ./test-result
 use ./utils/map
 
