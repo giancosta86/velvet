@@ -35,7 +35,15 @@ fn create {
     &to-result={
       var sub-results = (
         map:filter-map $sub-contexts { |sub-title sub-context|
-          put [$sub-title ($sub-context[to-result])]
+          var sub-result = ($sub-context[to-result])
+
+          var sub-count = (+ (count $sub-result[test-results]) (count $sub-result[sub-results]))
+
+          if (> $sub-count 0) {
+            put [$sub-title $sub-result]
+          } else {
+            put $nil
+          }
         }
       )
 

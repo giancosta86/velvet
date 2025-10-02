@@ -22,23 +22,18 @@ raw:suite 'Describe context' { |test~|
     ]
   }
 
-  test 'Creating a new sub-context' {
+  test 'Creating a new empty sub-context - that gets pruned' {
     var root = (describe-context:create)
 
     $root[ensure-sub-context] Alpha
 
     expect-simplified-describe-result $root [
       &test-results=[&]
-      &sub-results=[
-        &Alpha=[
-          &test-results=[&]
-          &sub-results=[&]
-        ]
-      ]
+      &sub-results=[&]
     ]
   }
 
-  test 'Ensuring an existing sub-context' {
+  test 'Ensuring an existing sub-context - that still gets pruned' {
     var root = (describe-context:create)
 
     range 0 3 | each { |_|
@@ -47,12 +42,7 @@ raw:suite 'Describe context' { |test~|
 
     expect-simplified-describe-result $root [
       &test-results=[&]
-      &sub-results=[
-        &Alpha=[
-          &test-results=[&]
-          &sub-results=[&]
-        ]
-      ]
+      &sub-results=[&]
     ]
   }
 
