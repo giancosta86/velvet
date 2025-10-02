@@ -1,9 +1,15 @@
+use path
 use ./describe-result
-use ./test-script
+
+var -sandbox-script = (
+  put (src)[name] |
+    path:dir (all) |
+    path:join (all) sandbox.elv
+)
 
 fn run-test-scripts { |@test-scripts|
-  var describe-results = [(all $test-scripts | each { |test-script| #TODO! peach!
-    test-script:run $test-script
+  var describe-results = [(all $test-scripts | peach { |test-script|
+    elvish -norc $-sandbox-script $test-script | from-json
   })]
 
   var result = [

@@ -1,5 +1,5 @@
 describe 'In beta' {
-  it 'is duplicated' {
+  it 'is duplicated in third source file' {
     echo Beta 2
   }
 }

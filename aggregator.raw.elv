@@ -72,7 +72,7 @@ raw:suite 'Aggregator' { |test~|
           &'In beta'=[
             &sub-results=[&]
             &test-results=[
-              &'is duplicated'=[
+              &'is duplicated in third source file'=[
                 &output="Beta 2\n"
                 &outcome=$outcomes:passed
                 &exception-log=$nil
@@ -105,7 +105,7 @@ raw:suite 'Aggregator' { |test~|
                 &test-results=[
                   &'should fail'=[
                     &outcome=$outcomes:failed
-                    &output=''
+                    &output="Cip\nCiop\n"
                   ]
                 ]
                 &sub-results=[
@@ -124,7 +124,7 @@ raw:suite 'Aggregator' { |test~|
           ]
           &'In beta'=  [
             &test-results=[
-              &'is duplicated'=[
+              &'is duplicated in third source file'=[
                 &outcome=$outcomes:failed
                 &output=""
               ]

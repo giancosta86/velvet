@@ -172,7 +172,7 @@ raw:suite 'Running test scripts' { |test~|
           &'In beta'=[
             &sub-results=[&]
             &test-results=[
-              &'is duplicated'=[
+              &'is duplicated in third source file'=[
                 &output="Beta 2\n"
                 &outcome=$outcomes:passed
                 &exception-log=$nil
@@ -222,7 +222,7 @@ raw:suite 'Running test scripts' { |test~|
                 &test-results=[
                   &'should fail'=[
                     &outcome=$outcomes:failed
-                    &output=''
+                    &output="Cip\nCiop\n"
                   ]
                 ]
                 &sub-results=[
@@ -241,7 +241,7 @@ raw:suite 'Running test scripts' { |test~|
           ]
           &'In beta'=  [
             &test-results=[
-              &'is duplicated'=[
+              &'is duplicated in third source file'=[
                 &outcome=$outcomes:failed
                 &output=""
               ]
