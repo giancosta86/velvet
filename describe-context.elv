@@ -34,7 +34,7 @@ fn create {
 
     &to-result={
       var sub-results = (
-        map:map $sub-contexts { |sub-title sub-context|
+        map:filter-map $sub-contexts { |sub-title sub-context|
           put [$sub-title ($sub-context[to-result])]
         }
       )

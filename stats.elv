@@ -34,7 +34,7 @@ fn from-describe-result { |describe-result|
       &$outcomes:passed=0
       &$outcomes:failed=0
     ] |
-      map:map (all) { |outcome value|
+      map:filter-map (all) { |outcome value|
         var key = $keys-by-outcome[$outcome]
         put [$key $value]
       }

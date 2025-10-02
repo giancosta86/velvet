@@ -7,7 +7,7 @@ fn get-minimal { |source|
     to-string [(all $source | each $get-minimal~)]
   } elif (==s $source-kind map) {
     to-string (
-      map:map $source { |key value|
+      map:filter-map $source { |key value|
         put [(get-minimal $key) (get-minimal $value)]
       }
     )
