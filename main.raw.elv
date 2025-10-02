@@ -1,21 +1,25 @@
+use path
 use ./assertions
 use ./describe-result
 use ./main
 use ./outcomes
+use ./tests/test-scripts
 use ./utils/raw
 
 raw:suite 'Getting test script' { |test~|
   test 'In directory with no tests' {
-    tmp pwd = ./utils
+    tmp pwd = (path:join . utils)
 
     main:get-test-scripts |
+      put [(all)] |
       assertions:should-be []
   }
 
   test 'In directory with tests' {
-    tmp pwd = ./tests/aggregator
+    tmp pwd = (path:join . tests aggregator)
 
     main:get-test-scripts |
+      put [(all)] |
       order |
       assertions:should-be [
         alpha.test.elv
@@ -25,9 +29,10 @@ raw:suite 'Getting test script' { |test~|
   }
 
   test 'In directory having nested tests' {
-    tmp pwd = ./tests
+    tmp pwd = (path:join . tests)
 
     main:get-test-scripts |
+      put [(all)] |
       order |
       assertions:should-be [
         aggregator/alpha.test.elv
@@ -42,23 +47,23 @@ raw:suite 'Getting test script' { |test~|
   }
 }
 
-raw:suite 'Checking test scripts' { |test~|
+raw:suite 'Verifying test scripts' { |test~|
   test 'In directory with no tests' {
-    tmp pwd = ./utils
+    tmp pwd = (path:join . utils)
 
     main:has-test-scripts |
       assertions:should-be $false
   }
 
   test 'In directory with tests' {
-    tmp pwd = ./tests/aggregator
+    tmp pwd = (path:join . tests aggregator)
 
     main:has-test-scripts |
       assertions:should-be $true
   }
 
   test 'In directory having nested tests' {
-    tmp pwd = ./tests
+    tmp pwd = (path:join . tests)
 
     main:has-test-scripts |
       assertions:should-be $true
@@ -68,25 +73,37 @@ raw:suite 'Checking test scripts' { |test~|
 
 raw:suite 'Running test scripts' { |test~|
   fn get-test-script { |basename|
-    put tests/aggregator/$basename.test.elv
+    test-scripts:get-path aggregator $basename
   }
 
-  test 'Running no scripts' {
+  fn create-reporter-spy {
     var actual-describe-result
     var actual-stats
 
-    main:test &test-scripts=[] &reporters=[{ |describe-result stats|
+    var reporter = { |describe-result stats|
       set actual-describe-result = $describe-result
       set actual-stats = $stats
-    }]
+    }
 
-    put $actual-describe-result |
+    put [
+      &reporter=$reporter
+      &get-describe-result={ put $actual-describe-result }
+      &get-stats={ put $actual-stats }
+    ]
+  }
+
+  test 'Running no scripts' {
+    var spy = (create-reporter-spy)
+
+    main:test &test-scripts=[] &reporters=[$spy[reporter]]
+
+    $spy[get-describe-result] |
       assertions:should-be [
         &test-results=[&]
         &sub-results=[&]
       ]
 
-    put $actual-stats |
+    $spy[get-stats] |
       assertions:should-be [
         &total=0
         &passed=0
@@ -95,15 +112,11 @@ raw:suite 'Running test scripts' { |test~|
   }
 
   test 'Running one script' {
-    var actual-describe-result
-    var actual-stats
+    var spy = (create-reporter-spy)
 
-    main:test &test-scripts=[(get-test-script alpha)] &reporters=[{ |describe-result stats|
-      set actual-describe-result = $describe-result
-      set actual-stats = $stats
-    }]
+    main:test &test-scripts=[(get-test-script alpha)] &reporters=[$spy[reporter]]
 
-    put $actual-describe-result |
+    $spy[get-describe-result] |
       assertions:should-be [
         &test-results= [&]
         &sub-results=[
@@ -120,7 +133,7 @@ raw:suite 'Running test scripts' { |test~|
         ]
       ]
 
-    put $actual-stats |
+    $spy[get-stats] |
       assertions:should-be [
         &total=1
         &passed=1
@@ -129,16 +142,12 @@ raw:suite 'Running test scripts' { |test~|
   }
 
   test 'Running two scripts' {
-    var actual-describe-result
-    var actual-stats
+    var spy = (create-reporter-spy)
 
-    main:test &test-scripts=[(get-test-script alpha) (get-test-script beta)] &reporters=[{ |describe-result stats|
-      set actual-describe-result = $describe-result
-      set actual-stats = $stats
-    }]
+    main:test &test-scripts=[(get-test-script alpha) (get-test-script beta)] &reporters=[$spy[reporter]]
 
 
-    put $actual-describe-result |
+    $spy[get-describe-result] |
       assertions:should-be [
         &test-results= [&]
         &sub-results=[
@@ -182,7 +191,7 @@ raw:suite 'Running test scripts' { |test~|
         ]
       ]
 
-    put $actual-stats |
+    $spy[get-stats] |
       assertions:should-be [
         &total=3
         &passed=3
@@ -193,15 +202,11 @@ raw:suite 'Running test scripts' { |test~|
   test 'Running all scripts via inference' {
     tmp pwd = ./tests/aggregator
 
-    var actual-describe-result
-    var actual-stats
+    var spy = (create-reporter-spy)
 
-    main:test &reporters=[{ |describe-result stats|
-      set actual-describe-result = $describe-result
-      set actual-stats = $stats
-    }]
+    main:test &reporters=[$spy[reporter]]
 
-    put $actual-describe-result |
+    $spy[get-describe-result] |
       describe-result:simplify (all) |
       assertions:should-be [
         &test-results=[&]
@@ -260,7 +265,7 @@ raw:suite 'Running test scripts' { |test~|
         ]
       ]
 
-    put $actual-stats |
+    $spy[get-stats] |
       assertions:should-be [
         &total=6
         &passed=4
