@@ -1,4 +1,3 @@
-use str
 use ./assertion
 use ./command
 use ./exception
@@ -14,11 +13,14 @@ echo ⚛ Raw testing
       test 'Test title' {
         print Never shown
         print Never shown >&2
+        put 90
       }
     }
   })
 
-  assertion:assert (==s $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\n🎭✅\n\n")
+  assertion:assert (
+    ==s $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\n🎭✅\n\n"
+  )
 
   assertion:assert (eq $command-result[status] $ok)
 }
@@ -31,15 +33,19 @@ echo ⚛ Raw testing
       test 'Test title' {
         echo Cip
         echo Ciop >&2
+        put 90
+
         fail 'DODO'
       }
     }
   })
 
-  assertion:assert (==s $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\nCip\nCiop\n\n")
+  assertion:assert (
+    ==s $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\nCip\nCiop\n\n"
+  )
 
   exception:get-fail-message $command-result[status] |
-    str:contains (all) DODO |
+    ==s (all) DODO |
     assertion:assert (all)
 }
 
@@ -51,11 +57,13 @@ echo ⚛ Raw testing
       test 'Alpha title' {
         print Never shown
         print Never shown >&2
+        put 90
       }
 
       test 'Beta title' {
-        print Never shown
-        print Never shown >&2
+        print Never shown again
+        print Never shown again >&2
+        put 90
       }
     }
   })
@@ -73,17 +81,20 @@ echo ⚛ Raw testing
       test 'Alpha title' {
         print Never shown
         print Never shown >&2
+        put 90
       }
 
       test 'Beta title' {
         echo Yogi
         echo Bubu >&2
+        put 90
 
         fail DODO
       }
 
       test 'Gamma title' {
         print Never executed
+        put 90
 
         fail 'NOT THROWN'
       }
@@ -93,7 +104,7 @@ echo ⚛ Raw testing
   assertion:assert (==s $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Alpha title\n▶ Beta title\nYogi\nBubu\n\n")
 
   exception:get-fail-message $command-result[status] |
-    str:contains (all) DODO |
+    ==s (all) DODO |
     assertion:assert (all)
 }
 

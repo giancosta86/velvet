@@ -1,5 +1,3 @@
-use os
-use path
 use ./command
 
 fn -test { |title test-block|
