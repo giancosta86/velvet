@@ -6,29 +6,27 @@ fn get-minimal { |source|
   if (eq $source-kind list) {
     to-string [(all $source | each $get-minimal~)]
   } elif (eq $source-kind map) {
-    to-string (
-      map:filter-map $source { |key value|
-        put [(get-minimal $key) (get-minimal $value)]
-      }
-    )
+    map:filter-map $source { |key value|
+      put [(get-minimal $key) (get-minimal $value)]
+    } |
+      to-string (all)
   } else {
     to-string $source
   }
 }
 
-fn indent-lines { |source-string indent|
-  var partial-result = (
-    put $source-string |
-      to-lines |
+fn indent-lines { |indent|
+  var slurp-result = (
+    to-lines |
       each { |line|
-        if (!=s $line '') {
-          echo $indent''$line
-        } else {
+        if (eq $line '') {
           echo
+        } else {
+          echo $indent''$line
         }
       } |
       slurp
   )
 
-  put $partial-result[..-1]
+  put $slurp-result[..-1]
 }

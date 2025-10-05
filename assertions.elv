@@ -49,7 +49,7 @@ fn should-be { |&strict=$false expected|
       var expected-string = (string:get-minimal $expected)
       var actual-string = (string:get-minimal $actual)
 
-      if (!=s $expected-string $actual-string) {
+      if (not-eq $expected-string $actual-string) {
         -print-expected-and-actual [
           &expected-description='Expected'
           &expected=$expected

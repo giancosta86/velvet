@@ -31,37 +31,43 @@ raw:suite 'Minimal string' { |test~|
 
 raw:suite 'Indenting lines' { |test~|
   test 'With empty string' {
-    string:indent-lines '' '****' |
+    put '' |
+      string:indent-lines '****' |
       eq (all) '' |
       assertion:assert (all)
   }
 
   test 'With single text line' {
-    string:indent-lines 'Alpha' '****' |
+    put 'Alpha' |
+      string:indent-lines '****' |
       eq (all) '****Alpha' |
       assertion:assert (all)
   }
 
   test 'With 2 text lines' {
-    string:indent-lines "Alpha\nBeta" '****' |
-      eq (all) "****Alpha\n****Beta" |
-      assertion:assert (all)
+      put "Alpha\nBeta" |
+        string:indent-lines '****' |
+        eq (all) "****Alpha\n****Beta" |
+        assertion:assert (all)
   }
 
   test 'With 2 text lines and final empty line' {
-    string:indent-lines "Alpha\nBeta\n" '****' |
+    put "Alpha\nBeta\n" |
+      string:indent-lines '****' |
       eq (all) "****Alpha\n****Beta\n" |
       assertion:assert (all)
   }
 
   test 'With 2 text lines and intermediate empty lines' {
-    string:indent-lines "Alpha\n\n\nBeta" '****' |
+    put "Alpha\n\n\nBeta" |
+      string:indent-lines '****' |
       eq (all) "****Alpha\n\n\n****Beta" |
       assertion:assert (all)
   }
 
   test 'With 3 text lines, intermediate empty lines and final empty lines' {
-    string:indent-lines "Alpha\n\n\nBeta\n\n\n\n\nGamma\n\n" '****' |
+    put "Alpha\n\n\nBeta\n\n\n\n\nGamma\n\n" |
+      string:indent-lines '****' |
       eq (all) "****Alpha\n\n\n****Beta\n\n\n\n\n****Gamma\n\n" |
       assertion:assert (all)
   }

@@ -28,9 +28,9 @@ fn -print-test-result { |test-title test-result level|
   if (eq $outcome $outcomes:failed) {
     var logging-indentation = (-get-indentation (+ $level 1))
 
-    echo (string:indent-lines $test-result[output] $logging-indentation)
+    echo (put $test-result[output] | string:indent-lines $logging-indentation)
 
-    echo (string:indent-lines $test-result[exception-log] $logging-indentation)
+    echo (put $test-result[exception-log] | string:indent-lines $logging-indentation)
   }
 }
 
