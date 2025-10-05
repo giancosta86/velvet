@@ -1,4 +1,3 @@
-use str
 use ./assertion
 use ./command
 use ./exception
@@ -33,11 +32,11 @@ echo ⚛ Command capturing
   echo ▶ Capturing both stdout and stderr without exceptions
 
   command:capture {
-    print Cip
-    print Ciop >&2
+    echo Cip
+    echo Ciop >&2
   } |
     assertion:assert (eq (all) [
-      &output=CipCiop
+      &output="Cip\nCiop\n"
       &status=$ok
     ])
 }
@@ -53,7 +52,7 @@ echo ⚛ Command capturing
   assertion:assert (==s $result[output] Cip)
 
   exception:get-fail-message $result[status] |
-    str:contains (all) DODO |
+    ==s (all) DODO |
     assertion:assert (all)
 }
 
@@ -68,7 +67,7 @@ echo ⚛ Command capturing
   assertion:assert (==s $result[output] Ciop)
 
   exception:get-fail-message $result[status] |
-    str:contains (all) DODO |
+    ==s (all) DODO |
     assertion:assert (all)
 }
 
@@ -76,15 +75,15 @@ echo ⚛ Command capturing
   echo ▶ Capturing both stdout and stderr with exception
 
   var result = (command:capture {
-    print Cip
-    print Ciop >&2
+    echo Cip
+    echo Ciop >&2
     fail DODO
   })
 
-  assertion:assert (==s $result[output] CipCiop)
+  assertion:assert (==s $result[output] "Cip\nCiop\n")
 
   exception:get-fail-message $result[status] |
-    str:contains (all) DODO |
+    ==s (all) DODO |
     assertion:assert (all)
 }
 
