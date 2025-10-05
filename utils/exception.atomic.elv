@@ -19,5 +19,13 @@ echo ⚛ Failure message retrieval
     assertion:assert (all)
 }
 
+{
+  echo ▶ On return
+
+  exception:get-fail-message ?(return) |
+    eq (all) $nil |
+    assertion:assert (all)
+}
+
 echo ⚛ ✅
 echo
