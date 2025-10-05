@@ -1,5 +1,5 @@
-fn assert { |predicate|
-  if (not $predicate) {
+fn assert { |value|
+  if (not $value) {
     fail 'ASSERTION FAILED!'
   }
 }
