@@ -13,6 +13,7 @@ echo ⚛ Atomic assertion
 
   try {
     assertion:assert $false
+
     fail 'The assertion must fail!'
   } catch e {
     var message = $e[reason][content]
