@@ -5,7 +5,7 @@ use ./diff
 use ./raw
 
 raw:suite 'Diff' { |test~|
-  test 'When values are equal' {
+  test 'When the strings are equal' {
     command:capture {
       diff:diff Alpha Alpha
     } |
@@ -16,17 +16,20 @@ raw:suite 'Diff' { |test~|
       assertion:assert (all)
   }
 
-  test 'When values are different' {
+  test 'When the strings are different' {
     var command-result = (
       command:capture {
         diff:diff Alpha Beta
       }
     )
 
-    str:contains $command-result[output] Alpha |
+    str:contains $command-result[output] '@@ -1 +1 @@' |
       assertion:assert (all)
 
-    str:contains $command-result[output] Beta |
+    str:contains $command-result[output] -Alpha |
+      assertion:assert (all)
+
+    str:contains $command-result[output] +Beta |
       assertion:assert (all)
 
     eq $command-result[status] $ok |

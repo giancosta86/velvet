@@ -9,9 +9,11 @@ fn diff { |left right|
     print $left > $left-path
     print $right > $right-path
 
-    (external diff) --color=always -u $left-path $right-path
-  } catch e {
-    # Just hide the exception
+    try {
+      (external diff) --color=always --unified $left-path $right-path
+    } catch e {
+      # Just hide the exception
+    }
   } finally {
     os:remove-all $left-path
     os:remove-all $right-path
