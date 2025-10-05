@@ -41,6 +41,7 @@ raw:suite 'Getting test script' { |test~|
         test-scripts/empty.test.elv
         test-scripts/metainfo.test.elv
         test-scripts/mixed-outcomes.test.elv
+        test-scripts/returning.test.elv
         test-scripts/single-failing.test.elv
         test-scripts/single-ok.test.elv
       ]

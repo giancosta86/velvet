@@ -49,10 +49,10 @@ echo ⚛ Command capturing
     fail DODO
   })
 
-  assertion:assert (==s $result[output] Cip)
+  assertion:assert (eq $result[output] Cip)
 
   exception:get-fail-message $result[status] |
-    ==s (all) DODO |
+    eq (all) DODO |
     assertion:assert (all)
 }
 
@@ -64,10 +64,10 @@ echo ⚛ Command capturing
     fail DODO
   })
 
-  assertion:assert (==s $result[output] Ciop)
+  assertion:assert (eq $result[output] Ciop)
 
   exception:get-fail-message $result[status] |
-    ==s (all) DODO |
+    eq (all) DODO |
     assertion:assert (all)
 }
 
@@ -80,10 +80,10 @@ echo ⚛ Command capturing
     fail DODO
   })
 
-  assertion:assert (==s $result[output] "Cip\nCiop\n")
+  assertion:assert (eq $result[output] "Cip\nCiop\n")
 
   exception:get-fail-message $result[status] |
-    ==s (all) DODO |
+    eq (all) DODO |
     assertion:assert (all)
 }
 

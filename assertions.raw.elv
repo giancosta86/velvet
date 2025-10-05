@@ -13,7 +13,7 @@ raw:suite 'Assertions: expect-crash' { |test~|
       }
     } catch e {
       exception:get-fail-message $e |
-        assertion:assert (==s (all) 'The given code block did not fail!')
+        assertion:assert (eq (all) 'The given code block did not fail!')
     }
   }
 
@@ -25,7 +25,7 @@ raw:suite 'Assertions: expect-crash' { |test~|
       fail DODO
     } |
       exception:get-fail-message (all) |
-      assertion:assert (==s (all) 'DODO')
+      assertion:assert (eq (all) 'DODO')
   }
 }
 
@@ -41,7 +41,7 @@ raw:suite 'Assertions: should-be (strict)' { |test~|
         assertions:should-be &strict Beta
     } |
       exception:get-fail-message (all) |
-      assertion:assert (==s (all) 'strict should-be assertion failed')
+      assertion:assert (eq (all) 'strict should-be assertion failed')
   }
 
   test 'Equal numbers' {
@@ -55,7 +55,7 @@ raw:suite 'Assertions: should-be (strict)' { |test~|
         assertions:should-be &strict (num 90)
     } |
       exception:get-fail-message (all) |
-      assertion:assert (==s (all) 'strict should-be assertion failed')
+      assertion:assert (eq (all) 'strict should-be assertion failed')
   }
 
   test 'Equal booleans' {

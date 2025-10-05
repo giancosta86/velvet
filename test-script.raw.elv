@@ -113,4 +113,26 @@ raw:suite 'Running test script' { |test~|
     str:contains $test-result[exception-log] DODUS |
       assertions:should-be $true
   }
+
+  test 'With return keyword' {
+    var describe-result = (run-test-script returning)
+
+    put $describe-result |
+      assertions:should-be [
+        &test-results=[&]
+        &sub-results=[
+          &'Returning from a test'=[
+            &test-results=[
+              &'should work'=[
+                &outcome=$outcomes:passed
+                &output="Alpha\nBeta\n"
+                &exception-log=$nil
+              ]
+            ]
+            &sub-results=[&]
+          ]
+        ]
+      ]
+
+  }
 }
