@@ -1,8 +1,8 @@
 use file
 use os
 
-fn temp-file-path { |&dir='' @pattern|
-  var temp-file = (os:temp-file &dir=$dir $@pattern)
+fn temp-file-path {
+  var temp-file = (os:temp-file)
   file:close $temp-file
 
   put $temp-file[name]
