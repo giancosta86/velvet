@@ -7,8 +7,8 @@ use ./test-result
 raw:suite 'Test result from block' { |test~|
   test 'For passing block' {
     test-result:from-block {
-      echo "Wiii!"
-      echo "Wiii2!" >&2
+      echo Wiii!
+      echo Wiii2! >&2
       put 90
     } |
       assertions:should-be [
@@ -21,10 +21,10 @@ raw:suite 'Test result from block' { |test~|
   test 'For crashing block' {
     var test-result = (
       test-result:from-block {
-        echo "Wiii!"
-        echo "Wiii2!" >&2
+        echo Wiii!
+        echo Wiii2! >&2
         put 90
-        fail 'DODUS'
+        fail DODUS
       }
      )
 
@@ -36,6 +36,25 @@ raw:suite 'Test result from block' { |test~|
 
     eq $test-result[exception-log] $nil |
       assertions:should-be $false
+  }
+
+  test 'For block with return keyword' {
+    test-result:from-block {
+      echo Wiii!
+      echo Wiii2! >&2
+      put 90
+
+      return
+
+      echo Not printed
+
+      fail 'HAVING NO EFFECT'
+    } |
+      assertions:should-be [
+        &outcome=$outcomes:passed
+        &output="Wiii!\nWiii2!\n"
+        &exception-log=$nil
+      ]
   }
 }
 
