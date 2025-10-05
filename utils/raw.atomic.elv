@@ -19,7 +19,7 @@ echo ⚛ Raw testing
   })
 
   assertion:assert (
-    ==s $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\n🎭✅\n\n"
+    eq $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\n🎭✅\n\n"
   )
 
   assertion:assert (eq $command-result[status] $ok)
@@ -41,11 +41,11 @@ echo ⚛ Raw testing
   })
 
   assertion:assert (
-    ==s $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\nCip\nCiop\n\n"
+    eq $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\nCip\nCiop\n\n"
   )
 
   exception:get-fail-message $command-result[status] |
-    ==s (all) DODO |
+    eq (all) DODO |
     assertion:assert (all)
 }
 
@@ -68,7 +68,7 @@ echo ⚛ Raw testing
     }
   })
 
-  assertion:assert (==s $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Alpha title\n▶ Beta title\n🎭✅\n\n")
+  assertion:assert (eq $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Alpha title\n▶ Beta title\n🎭✅\n\n")
 
   assertion:assert (eq $command-result[status] $ok)
 }
@@ -101,10 +101,10 @@ echo ⚛ Raw testing
     }
   })
 
-  assertion:assert (==s $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Alpha title\n▶ Beta title\nYogi\nBubu\n\n")
+  assertion:assert (eq $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Alpha title\n▶ Beta title\nYogi\nBubu\n\n")
 
   exception:get-fail-message $command-result[status] |
-    ==s (all) DODO |
+    eq (all) DODO |
     assertion:assert (all)
 }
 
