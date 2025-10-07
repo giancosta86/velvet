@@ -96,7 +96,7 @@ raw:suite 'Running test scripts' { |test~|
   test 'Running no scripts' {
     var spy = (create-reporter-spy)
 
-    main:test &test-scripts=[] &reporters=[$spy[reporter]]
+    main:velvet &test-scripts=[] &reporters=[$spy[reporter]]
 
     $spy[get-describe-result] |
       assertions:should-be [
@@ -115,7 +115,7 @@ raw:suite 'Running test scripts' { |test~|
   test 'Running one script' {
     var spy = (create-reporter-spy)
 
-    main:test &test-scripts=[(get-test-script alpha)] &reporters=[$spy[reporter]]
+    main:velvet &test-scripts=[(get-test-script alpha)] &reporters=[$spy[reporter]]
 
     $spy[get-describe-result] |
       assertions:should-be [
@@ -145,8 +145,7 @@ raw:suite 'Running test scripts' { |test~|
   test 'Running two scripts' {
     var spy = (create-reporter-spy)
 
-    main:test &test-scripts=[(get-test-script alpha) (get-test-script beta)] &reporters=[$spy[reporter]]
-
+    main:velvet &test-scripts=[(get-test-script alpha) (get-test-script beta)] &reporters=[$spy[reporter]]
 
     $spy[get-describe-result] |
       assertions:should-be [
@@ -205,7 +204,7 @@ raw:suite 'Running test scripts' { |test~|
 
     var spy = (create-reporter-spy)
 
-    main:test &reporters=[$spy[reporter]]
+    main:velvet &reporters=[$spy[reporter]]
 
     $spy[get-describe-result] |
       describe-result:simplify (all) |

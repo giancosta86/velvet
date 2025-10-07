@@ -13,7 +13,7 @@ fn has-test-scripts {
     != (all) 0
 }
 
-fn test { |&test-scripts=$nil &reporters=[$cli:display~]|
+fn velvet { |&test-scripts=$nil &reporters=[$cli:display~]|
   var actual-test-scripts = (coalesce $test-scripts [(get-test-scripts)])
 
   var describe-result = (aggregator:run-test-scripts $@actual-test-scripts)
