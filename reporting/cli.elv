@@ -2,35 +2,47 @@ use str
 use ../outcomes
 use ../utils/string
 
+var -styles-by-outcome = [
+  &$outcomes:passed=[
+    &emoji=✅
+    &color=green
+  ]
+
+  &$outcomes:failed=[
+    &emoji=❌
+    &color=red
+  ]
+]
+
 fn -get-indentation { |level|
   str:repeat ' ' (* $level 4)
 }
 
-fn -print-test-result { |test-title test-result level|
+fn -display-test-result { |test-title test-result level|
   var outcome = $test-result[outcome]
 
-  var color
-  var emoji
-
-  if (eq $outcome $outcomes:passed) {
-    set color = green
-    set emoji = ✅
-  } elif (eq $outcome $outcomes:failed) {
-    set color = red
-    set emoji = ❌
-  } else {
-    fail 'Unknown outcome'
-  }
+  var style = $-styles-by-outcome[$outcome]
 
   var indentation = (-get-indentation $level)
-  echo $indentation''(styled $test-title $color bold) $emoji
+
+  echo $indentation''(styled $test-title $style[color] bold) $style[emoji]
 
   if (eq $outcome $outcomes:failed) {
     var logging-indentation = (-get-indentation (+ $level 1))
 
-    echo (put $test-result[output] | string:indent-lines $logging-indentation)
-
-    echo (put $test-result[exception-log] | string:indent-lines $logging-indentation)
+    {
+      echo (styled '*** OUTPUT LOG (stdout + stderr) ***' red bold)
+      echo
+      echo (str:trim-space $test-result[output])
+      echo
+      echo
+      echo (styled '*** EXCEPTION LOG ***' red bold)
+      echo
+      echo (str:trim-space $test-result[exception-log])
+      echo
+    } |
+      string:indent-lines $logging-indentation |
+      echo (all)
   }
 }
 
@@ -40,15 +52,28 @@ fn -display-describe-result { |describe-result level|
     each { |test-name|
       var test-result = $describe-result[test-results][$test-name]
 
-      -print-test-result $test-name $test-result $level
+      -display-test-result $test-name $test-result $level
     }
+
+  var is-first-sub-result = $true
 
   keys $describe-result[sub-results] |
     order &key=$str:to-lower~ |
     each { |sub-result-name|
+      if $is-first-sub-result {
+        set is-first-sub-result = $false
+
+        var preceding-test-results = (count $describe-result[test-results])
+
+        if (> $preceding-test-results 0)  {
+          echo
+        }
+      } else {
+        echo
+      }
+
       var indentation = (-get-indentation $level)
 
-      echo
       echo $indentation''(styled $sub-result-name white bold)
 
       var sub-result = $describe-result[sub-results][$sub-result-name]
@@ -57,16 +82,35 @@ fn -display-describe-result { |describe-result level|
     }
 }
 
+fn -display-stats { |stats|
+  var total-style
+
+  if (== 0 $stats[failed]) {
+    set total-style = $-styles-by-outcome[$outcomes:passed]
+  } else {
+    set total-style = $-styles-by-outcome[$outcomes:failed]
+  }
+
+  var total-fragment = $total-style[emoji]' '(styled 'Total tests: '$stats[total]'.' bold $total-style[color])
+
+  var passed-fragment = (styled 'Passed: '$stats[passed]'.' green bold)
+
+  var failed-fragment = (styled 'Failed: '$stats[failed]'.' red bold)
+
+  echo $total-fragment $passed-fragment $failed-fragment
+}
+
 fn display { |describe-result stats|
   var items-count = (+ (count $describe-result[test-results]) (count $describe-result[sub-results]))
 
   if (== $items-count 0) {
-    echo 💬 No test structure found.
+    echo 💬 (styled 'No test structure found.' bold white)
     return
   }
 
   -display-describe-result $describe-result 0
 
   echo
-  echo (styled 'Total tests: '$stats[total]'.' bold) (styled 'Passed: '$stats[passed]'.' green bold) (styled 'Failed: '$stats[failed]'.' red bold)
+
+  -display-stats $stats
 }

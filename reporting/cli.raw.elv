@@ -5,23 +5,23 @@ use ../stats
 use ../utils/raw
 use ./cli
 
-raw:suite 'CLI reporting' { |test~|
+raw:suite 'Command-line reporting' { |test~|
   fn create-output-tester { |describe-result|
     var stats = (stats:from-describe-result $describe-result)
 
-    var output = (cli:display $describe-result $stats | slurp)
+    var report-output = (cli:display $describe-result $stats | slurp)
 
     put [
       &expect-in-output={ |snippets|
         all $snippets | each { |snippet|
-          str:contains $output $snippet |
+          str:contains $report-output $snippet |
             assertions:should-be $true
         }
       }
 
       &expect-not-in-output={ |snippets|
         all $snippets | each { |snippet|
-          str:contains $output $snippet |
+          str:contains $report-output $snippet |
             assertions:should-be $false
         }
       }
@@ -34,10 +34,16 @@ raw:suite 'CLI reporting' { |test~|
       &sub-results=[&]
     ]
 
-    var stats = (stats:from-describe-result $describe-result)
+    var output-tester = (create-output-tester $describe-result)
 
-    cli:display $describe-result $stats |
-      assertions:should-be '💬 No test structure found.'
+    $output-tester[expect-in-output] [
+      💬
+      No test structure found.
+    ]
+
+    $output-tester[expect-not-in-output] [
+      LOG
+    ]
   }
 
   test 'With single passed test' {
@@ -64,6 +70,7 @@ raw:suite 'CLI reporting' { |test~|
 
     $output-tester[expect-not-in-output] [
       Wiii!
+      LOG
     ]
   }
 
@@ -83,6 +90,7 @@ raw:suite 'CLI reporting' { |test~|
 
     $output-tester[expect-in-output] [
       ❌
+      LOG
       Wooo!
       DODO
       'Total tests: 1.'
@@ -124,6 +132,7 @@ raw:suite 'CLI reporting' { |test~|
     $output-tester[expect-in-output] [
       Alpha
       ❌
+      LOG
       Beta
       Wooo!
       DODO
