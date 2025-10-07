@@ -3,14 +3,14 @@ use ./utils/map
 
 fn simplify { |describe-result|
   var simplified-test-results = (
-    map:filter-map $describe-result[test-results] { |key test-result|
-      put [$key (test-result:simplify $test-result)]
+    map:filter-map $describe-result[test-results] { |test-name test-result|
+      put [$test-name (test-result:simplify $test-result)]
     }
   )
 
   var simplified-sub-results = (
-    map:filter-map $describe-result[sub-results] { |key sub-result|
-      put [$key (simplify $sub-result)]
+    map:filter-map $describe-result[sub-results] { |sub-result-name sub-result|
+      put [$sub-result-name (simplify $sub-result)]
     }
   )
 

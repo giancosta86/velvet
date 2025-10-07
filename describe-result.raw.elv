@@ -1,12 +1,11 @@
 use str
 use ./assertions
-use ./describe-context
 use ./describe-result
 use ./outcomes
 use ./utils/raw
 use ./test-result
 
-raw:suite 'Describe result' { |test~|
+raw:suite 'Describe result simplification' { |test~|
   test 'On empty result' {
     var source = [
       &test-results=[&]
@@ -17,7 +16,7 @@ raw:suite 'Describe result' { |test~|
       assertions:should-be $source
   }
 
-  test 'Simplification with just one test' {
+  test 'With just one test' {
     var source = [
       &test-results=[
         &Yogi=[
@@ -41,7 +40,7 @@ raw:suite 'Describe result' { |test~|
       ]
   }
 
-  test 'Simplification with additional test in sub-result' {
+  test 'With test in sub-result' {
     var source = [
       &test-results=[
         &Yogi=[
@@ -186,7 +185,7 @@ raw:suite 'Describe result merging' { |test~|
       ]
   }
 
-  test 'When a test name is duplicated at the same level, with same outcome' {
+  test 'When two passing tests at the same level have the same name' {
     var left = [
       &test-results=[
         &Alpha=$passed-test
@@ -214,7 +213,7 @@ raw:suite 'Describe result merging' { |test~|
       ]
   }
 
-  test 'When a test name is duplicated at the same level, with different outcomes' {
+  test 'When two passing tests at the same level have the same name and different outcomes' {
     var left = [
       &test-results=[
         &Alpha=$passed-test
@@ -277,7 +276,7 @@ raw:suite 'Describe result merging' { |test~|
               &test-results=[
                 &Delta=$passed-test
                 &Sigma=$passed-test
-                &Tau=$passed-test
+                &Tau=$failed-test
               ]
               &sub-results=[&]
             ]
@@ -309,7 +308,7 @@ raw:suite 'Describe result merging' { |test~|
                   ]
                   &Epsilon=$passed-test
                   &Sigma=$passed-test
-                  &Tau=$passed-test
+                  &Tau=$failed-test
                 ]
                 &sub-results=[&]
               ]
