@@ -25,7 +25,7 @@ raw:suite 'Assertions: expect-crash' { |test~|
       fail DODO
     } |
       exception:get-fail-message (all) |
-      assertion:assert (eq (all) 'DODO')
+      assertion:assert (eq (all) DODO)
   }
 }
 
@@ -49,7 +49,7 @@ raw:suite 'Assertions: should-be (strict)' { |test~|
       assertions:should-be &strict (num 90)
   }
 
-  test 'String and number having same value' {
+  test 'String and number denoting the same value' {
     assertions:expect-crash {
       put 90 |
         assertions:should-be &strict (num 90)

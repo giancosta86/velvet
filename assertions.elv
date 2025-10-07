@@ -1,4 +1,3 @@
-use str
 use ./utils/diff
 use ./utils/string
 
@@ -33,32 +32,32 @@ fn -print-expected-and-actual { |inputs|
 }
 
 fn should-be { |&strict=$false expected|
-  one | each { |actual|
-    if $strict {
-      if (not-eq $expected $actual) {
-        -print-expected-and-actual [
-          &expected-description='Expected (strict)'
-          &expected=$expected
-          &actual-description='Actual (strict)'
-          &actual=$actual
-        ]
+  var actual = (one)
 
-        fail 'strict should-be assertion failed'
-      }
-    } else {
-      var expected-string = (string:get-minimal $expected)
-      var actual-string = (string:get-minimal $actual)
+  if $strict {
+    if (not-eq $expected $actual) {
+      -print-expected-and-actual [
+        &expected-description='Expected (strict)'
+        &expected=$expected
+        &actual-description='Actual (strict)'
+        &actual=$actual
+      ]
 
-      if (not-eq $expected-string $actual-string) {
-        -print-expected-and-actual [
-          &expected-description='Expected'
-          &expected=$expected
-          &actual-description='Actual'
-          &actual=$actual
-        ]
+      fail 'strict should-be assertion failed'
+    }
+  } else {
+    var expected-string = (string:get-minimal $expected)
+    var actual-string = (string:get-minimal $actual)
 
-        fail 'should-be assertion failed'
-      }
+    if (not-eq $expected-string $actual-string) {
+      -print-expected-and-actual [
+        &expected-description='Expected'
+        &expected=$expected
+        &actual-description='Actual'
+        &actual=$actual
+      ]
+
+      fail 'should-be assertion failed'
     }
   }
 }
