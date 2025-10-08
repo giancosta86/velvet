@@ -7,7 +7,7 @@ use ./test-result
 use ./utils/raw
 
 raw:suite 'Describe context' { |test~|
-  fn expect-simplified-describe-result { |describe-context expected-result|
+  fn expect-simplified-result { |describe-context expected-result|
     $describe-context[to-result] |
       describe-result:simplify (all) |
       assertions:should-be $expected-result
@@ -16,7 +16,7 @@ raw:suite 'Describe context' { |test~|
   test 'Creating empty root' {
     var root = (describe-context:create)
 
-    expect-simplified-describe-result $root [
+    expect-simplified-result $root [
       &test-results=[&]
       &sub-results=[&]
     ]
@@ -27,7 +27,7 @@ raw:suite 'Describe context' { |test~|
 
     $root[ensure-sub-context] Alpha
 
-    expect-simplified-describe-result $root [
+    expect-simplified-result $root [
       &test-results=[&]
       &sub-results=[&]
     ]
@@ -40,7 +40,22 @@ raw:suite 'Describe context' { |test~|
       $root[ensure-sub-context] Alpha
     }
 
-    expect-simplified-describe-result $root [
+    expect-simplified-result $root [
+      &test-results=[&]
+      &sub-results=[&]
+    ]
+  }
+
+  test 'Ensuring multi-level sub-contexts - that all get pruned' {
+    var root = (describe-context:create)
+
+    var alpha = ($root[ensure-sub-context] Alpha)
+
+    var beta = ($alpha[ensure-sub-context] Beta)
+
+    var gamma = ($beta[ensure-sub-context] Gamma)
+
+    expect-simplified-result $root [
       &test-results=[&]
       &sub-results=[&]
     ]
@@ -64,7 +79,7 @@ raw:suite 'Describe context' { |test~|
         &exception-log=$nil
       ]
 
-    expect-simplified-describe-result $root [
+    expect-simplified-result $root [
       &test-results=[
         &T-OK=[
           &output="Wiii!\nWiii2!\n"
@@ -98,7 +113,7 @@ raw:suite 'Describe context' { |test~|
       eq (all) $nil |
       assertions:should-be $false
 
-    expect-simplified-describe-result $root [
+    expect-simplified-result $root [
       &test-results=[
         &T-FAIL=[
           &output="Wooo\nWooo2\n"
@@ -135,7 +150,7 @@ raw:suite 'Describe context' { |test~|
       echo Wiii 3!
     }
 
-    expect-simplified-describe-result $root [
+    expect-simplified-result $root [
       &sub-results=[&]
       &test-results=[
         &'T-OK 1'=[
@@ -169,30 +184,37 @@ raw:suite 'Describe context' { |test~|
   test 'Running test with the same name' {
     var root = (describe-context:create)
 
-    $root[run-test] T-DUP {
+    var passing-block = {
       echo Wiii!
-    } |
-      put (all)[outcome] |
+    }
+
+    var first-result = ($root[run-test] T-DUP $passing-block)
+
+    put $first-result[outcome] |
       assertions:should-be $outcomes:passed
 
-    $root[run-test] T-DUP {
-      echo Wiii!
-    } |
-      put (all)[outcome] |
+
+    var second-result = ($root[run-test] T-DUP $passing-block)
+
+    put $second-result[outcome] |
       assertions:should-be $outcomes:failed
+
+    str:contains $second-result[exception-log] DUPLICATED |
+      assertions:should-be $true
+
 
     var describe-result = ($root[to-result])
 
     describe-result:simplify $describe-result |
       assertions:should-be [
-        &sub-results=  [&]
-        &test-results= [
-          &T-DUP=       [
-            &outcome=  F
-            &output=   ''
-            ]
+        &test-results=[
+          &T-DUP=[
+            &output=''
+            &outcome=$outcomes:failed
           ]
         ]
+        &sub-results=[&]
+      ]
 
     str:contains $describe-result[test-results][T-DUP][exception-log] DUPLICATED |
       assertions:should-be $true
@@ -213,7 +235,7 @@ raw:suite 'Describe context' { |test~|
       echo World!
     }
 
-    expect-simplified-describe-result $root [
+    expect-simplified-result $root [
       &test-results=[&]
       &sub-results=[
         &alpha=[
