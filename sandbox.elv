@@ -1,5 +1,5 @@
 use ./test-script
 
-var script-file = $args[0]
+var test-script-file = $args[0]
 
-test-script:run $script-file | only-values | to-json
+test-script:run $test-script-file | only-values | to-json
