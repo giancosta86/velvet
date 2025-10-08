@@ -1,7 +1,6 @@
 use path
 use ./assertions
 use ./describe-context
-use ./utils/assertion
 
 fn run { |script-path|
   var abs-script-path = (path:abs $script-path)
@@ -40,7 +39,6 @@ fn run { |script-path|
     &src~=$custom-src~
     &describe~=$describe~
     &it~=$it~
-    &assert~=$assertion:assert~
     &expect-crash~=$assertions:expect-crash~
     &fail-test~=$assertions:fail-test~
     &should-be~=$assertions:should-be~
