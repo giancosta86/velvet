@@ -43,7 +43,7 @@ fn run { |script-path|
   ])
 
   tmp pwd = (path:dir $abs-script-path)
-  eval &ns=$namespace $script-code
+  eval &ns=$namespace $script-code | only-bytes
 
   $root-context[to-result]
 }
