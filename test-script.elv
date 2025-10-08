@@ -28,11 +28,8 @@ fn run { |script-path|
   }
 
   fn it { |test-title block|
-    if (eq $current-describe-context $root-context) {
-      fail 'Tests must be declared via "it" blocks within a hierarchy of "declare" blocks!'
-    }
-
-    $current-describe-context[run-test] $test-title $block
+    $current-describe-context[run-test] $test-title $block |
+      only-bytes
   }
 
   var namespace = (ns [

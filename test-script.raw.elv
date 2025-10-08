@@ -9,7 +9,7 @@ use ./utils/raw
 
 raw:suite 'Running test script' { |test~|
   fn run-test-script { |basename|
-    var test-script-path = (test-scripts:get-path test-scripts $basename)
+    var test-script-path = (test-scripts:get-path single-scripts $basename)
 
     test-script:run $test-script-path
   }
@@ -108,16 +108,14 @@ raw:suite 'Running test script' { |test~|
         ]
       ]
 
-    var test-result = $describe-result[sub-results]['My description'][sub-results][Cip][sub-results][Ciop][test-results]['should fail']
+    var failed-result = $describe-result[sub-results]['My description'][sub-results][Cip][sub-results][Ciop][test-results]['should fail']
 
-    str:contains $test-result[exception-log] DODUS |
+    str:contains $failed-result[exception-log] DODUS |
       assertions:should-be $true
   }
 
   test 'With return keyword' {
-    var describe-result = (run-test-script returning)
-
-    put $describe-result |
+    run-test-script returning |
       assertions:should-be [
         &test-results=[&]
         &sub-results=[
@@ -133,6 +131,19 @@ raw:suite 'Running test script' { |test~|
           ]
         ]
       ]
+  }
 
+  test 'With root "it" block' {
+    run-test-script root-it |
+      assertions:should-be [
+        &test-results=[
+          &'should support "it" in the root'=[
+            &outcome=$outcomes:passed
+            &output="Wiii!\nWiii2!\n"
+            &exception-log=$nil
+          ]
+        ]
+        &sub-results=[&]
+      ]
   }
 }

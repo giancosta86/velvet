@@ -38,12 +38,13 @@ raw:suite 'Getting test script' { |test~|
         aggregator/alpha.test.elv
         aggregator/beta.test.elv
         aggregator/gamma.test.elv
-        test-scripts/empty.test.elv
-        test-scripts/metainfo.test.elv
-        test-scripts/mixed-outcomes.test.elv
-        test-scripts/returning.test.elv
-        test-scripts/single-failing.test.elv
-        test-scripts/single-ok.test.elv
+        single-scripts/empty.test.elv
+        single-scripts/metainfo.test.elv
+        single-scripts/mixed-outcomes.test.elv
+        single-scripts/returning.test.elv
+        single-scripts/root-it.test.elv
+        single-scripts/single-failing.test.elv
+        single-scripts/single-ok.test.elv
       ]
   }
 }
