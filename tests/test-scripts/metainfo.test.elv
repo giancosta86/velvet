@@ -30,6 +30,7 @@ describe 'The provided functions' {
       $expect-crash~
       $fail-test~
       $should-be~
+      $should-not-be~
     ] | each { |provided-fn|
       lang:is-function $provided-fn |
         should-be $true

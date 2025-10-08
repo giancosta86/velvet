@@ -29,6 +29,27 @@ raw:suite 'Assertions: expect-crash' { |test~|
   }
 }
 
+fn with-strictness-prefix { |strict message|
+  var strictness-prefix
+
+  if $strict {
+    set strictness-prefix = 'strict '
+  } else {
+    set strictness-prefix = ''
+  }
+
+  put $strictness-prefix''$message
+}
+
+fn expect-should-be-failure { |&strict=$false expected actual-block|
+  assertions:expect-crash {
+    $actual-block |
+      assertions:should-be &strict=$strict $expected
+  } |
+    exception:get-fail-message (all) |
+    assertion:assert (eq (all) (with-strictness-prefix $strict 'should-be assertion failed'))
+}
+
 raw:suite 'Assertions: should-be (strict)' { |test~|
   test 'Equal strings' {
     put Alpha |
@@ -36,12 +57,9 @@ raw:suite 'Assertions: should-be (strict)' { |test~|
   }
 
   test 'Different strings' {
-    assertions:expect-crash {
-      put Alpha |
-        assertions:should-be &strict Beta
-    } |
-      exception:get-fail-message (all) |
-      assertion:assert (eq (all) 'strict should-be assertion failed')
+    expect-should-be-failure &strict Beta {
+      put Alpha
+    }
   }
 
   test 'Equal numbers' {
@@ -50,12 +68,9 @@ raw:suite 'Assertions: should-be (strict)' { |test~|
   }
 
   test 'String and number denoting the same value' {
-    assertions:expect-crash {
-      put 90 |
-        assertions:should-be &strict (num 90)
-    } |
-      exception:get-fail-message (all) |
-      assertion:assert (eq (all) 'strict should-be assertion failed')
+    expect-should-be-failure &strict (num 90) {
+      put 90
+    }
   }
 
   test 'Equal booleans' {
@@ -94,21 +109,104 @@ raw:suite 'Assertions: should-be (strict)' { |test~|
 raw:suite 'Assertions: should-be (non-strict)' { |test~|
   test 'Equal strings' {
     put Alpha |
-      assertions:should-be &strict=$false Alpha
+      assertions:should-be Alpha
   }
 
   test 'Different strings' {
-    assertions:expect-crash {
-      put Alpha |
-        assertions:should-be &strict=$false Beta
-    } |
-      exception:get-fail-message (all) |
-      assertion:assert (eq (all) 'should-be assertion failed')
+    expect-should-be-failure Beta {
+      put Alpha
+    }
   }
 
   test 'String and number having same value' {
     put 90 |
-      assertions:should-be &strict=$false (num 90)
+      assertions:should-be (num 90)
+  }
+}
+
+fn expect-should-not-be-failure { |&strict=$false expected actual-block|
+  assertions:expect-crash {
+    $actual-block |
+      assertions:should-not-be &strict=$strict $expected
+  } |
+    exception:get-fail-message (all) |
+    assertion:assert (eq (all) (with-strictness-prefix $strict 'should-not-be assertion failed'))
+}
+
+raw:suite 'Assertions: should-not-be (strict)' { |test~|
+  test 'Equal strings' {
+    expect-should-not-be-failure &strict Alpha {
+      put Alpha
+    }
+  }
+
+  test 'Different strings' {
+    put Alpha |
+      assertions:should-not-be &strict Beta
+  }
+
+  test 'Equal numbers' {
+    expect-should-not-be-failure &strict (num 90) {
+      put (num 90)
+    }
+  }
+
+  test 'String and number denoting the same value' {
+    put 90 |
+      assertions:should-not-be &strict (num 90)
+  }
+}
+
+raw:suite 'Assertions: should-not-be (non-strict)' { |test~|
+  test 'Equal strings' {
+    expect-should-not-be-failure Alpha {
+      put Alpha
+    }
+  }
+
+  test 'Different strings' {
+    put Alpha |
+      assertions:should-not-be Beta
+  }
+
+  test 'String and number having same value' {
+    expect-should-not-be-failure (num 90) {
+      put 90
+    }
+  }
+
+  test 'Equal booleans' {
+    put $false |
+      assertions:should-not-be $true
+
+    put $true |
+      assertions:should-not-be $false
+  }
+
+  test 'Equal multi-level lists' {
+    var test-list = [Alpha [Beta [Gamma Delta] Epsilon] Zeta Eta Theta]
+
+    expect-should-not-be-failure $test-list {
+      put $test-list
+    }
+  }
+
+  test 'Equal multi-level maps' {
+    var test-map = [
+      &alpha=90
+      &beta=92
+      &gamma=[
+        &delta=95
+        &epsilon=[
+          &zeta=98
+        ]
+        &eta=99
+      ]
+    ]
+
+    expect-should-not-be-failure $test-map {
+      put $test-map
+    }
   }
 }
 

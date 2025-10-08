@@ -44,6 +44,7 @@ fn run { |script-path|
     &expect-crash~=$assertions:expect-crash~
     &fail-test~=$assertions:fail-test~
     &should-be~=$assertions:should-be~
+    &should-not-be~=$assertions:should-not-be~
   ])
 
   tmp pwd = (path:dir $abs-script-path)

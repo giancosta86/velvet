@@ -34,8 +34,8 @@ raw:suite 'Test result from block' { |test~|
     put $test-result[output] |
       assertions:should-be "Wiii!\nWiii2!\n"
 
-    eq $test-result[exception-log] $nil |
-      assertions:should-be $false
+    put $test-result[exception-log] |
+      assertions:should-not-be &strict $nil
   }
 
   test 'For block with return keyword' {

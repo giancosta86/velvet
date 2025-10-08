@@ -110,8 +110,7 @@ raw:suite 'Describe context' { |test~|
       ]
 
     put $test-result[exception-log] |
-      eq (all) $nil |
-      assertions:should-be $false
+      assertions:should-not-be &strict $nil |
 
     expect-simplified-result $root [
       &test-results=[

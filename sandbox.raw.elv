@@ -58,8 +58,8 @@ raw:suite 'Running in sandbox' { |test~|
 
     var exception-log = $describe-result[sub-results]['My description'][test-results]['should fail'][exception-log]
 
-    eq $exception-log $nil |
-      assertions:should-be $false
+    put $exception-log |
+      assertions:should-not-be &strict $nil
 
     str:contains $exception-log DODO |
       assertions:should-be $true

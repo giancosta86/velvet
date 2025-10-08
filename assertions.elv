@@ -62,6 +62,29 @@ fn should-be { |&strict=$false expected|
   }
 }
 
+fn should-not-be { |&strict=$false unexpected|
+  var actual = (one)
+
+  if $strict {
+    if (eq $unexpected $actual) {
+      print (styled 'Unexpected: ' red bold)
+      pprint $actual
+
+      fail 'strict should-not-be assertion failed'
+    }
+  } else {
+    var unexpected-string = (string:get-minimal $unexpected)
+    var actual-string = (string:get-minimal $actual)
+
+    if (eq $unexpected-string $actual-string) {
+      print (styled 'Unexpected: ' red bold)
+      pprint $actual
+
+      fail 'should-not-be assertion failed'
+    }
+  }
+}
+
 fn fail-test {
   fail 'TEST SET TO FAIL'
 }
