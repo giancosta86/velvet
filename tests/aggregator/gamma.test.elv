@@ -21,7 +21,7 @@ describe 'In alpha' {
       echo Cip
       echo Ciop >&2
 
-      fail 'DODO'
+      fail DODO
     }
   }
 }

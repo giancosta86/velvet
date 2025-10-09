@@ -8,7 +8,7 @@ describe 'In alpha' {
   describe 'In sub-level' {
     describe 'In sub-sub-level' {
       it 'should be ok' {
-        echo "Alpha X" >&2
+        echo Alpha X >&2
       }
     }
   }

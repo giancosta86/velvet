@@ -8,18 +8,20 @@ var -sandbox-script = (
 )
 
 fn run-test-scripts { |@test-scripts|
-  var describe-results = [(all $test-scripts | peach { |test-script|
-    elvish -norc $-sandbox-script $test-script | from-json
-  })]
+  var describe-results = [(
+    all $test-scripts | peach { |test-script|
+      elvish -norc $-sandbox-script $test-script | from-json
+    }
+  )]
 
-  var result = [
+  var global-result = [
     &test-results=[&]
     &sub-results=[&]
   ]
 
   all $describe-results | each { |describe-result|
-    set result = (describe-result:merge $result $describe-result)
+    set global-result = (describe-result:merge $global-result $describe-result)
   }
 
-  put $result
+  put $global-result
 }
