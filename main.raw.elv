@@ -3,12 +3,15 @@ use ./assertions
 use ./describe-result
 use ./main
 use ./outcomes
+use ./tests/aggregator/results
 use ./tests/test-scripts
 use ./utils/raw
 
+var this-script-dir = (path:dir (src)[name])
+
 raw:suite 'Getting test script' { |test~|
   test 'In directory with no tests' {
-    tmp pwd = (path:join . utils)
+    tmp pwd = (path:join $this-script-dir utils)
 
     main:get-test-scripts |
       put [(all)] |
@@ -16,7 +19,7 @@ raw:suite 'Getting test script' { |test~|
   }
 
   test 'In directory with tests' {
-    tmp pwd = (path:join . tests aggregator)
+    tmp pwd = (path:join $this-script-dir tests aggregator)
 
     main:get-test-scripts |
       put [(all)] |
@@ -29,7 +32,7 @@ raw:suite 'Getting test script' { |test~|
   }
 
   test 'In directory having nested tests' {
-    tmp pwd = (path:join . tests)
+    tmp pwd = (path:join $this-script-dir tests)
 
     main:get-test-scripts |
       put [(all)] |
@@ -49,23 +52,23 @@ raw:suite 'Getting test script' { |test~|
   }
 }
 
-raw:suite 'Verifying test scripts' { |test~|
+raw:suite 'Searching for test scripts' { |test~|
   test 'In directory with no tests' {
-    tmp pwd = (path:join . utils)
+    tmp pwd = (path:join $this-script-dir utils)
 
     main:has-test-scripts |
       assertions:should-be $false
   }
 
   test 'In directory with tests' {
-    tmp pwd = (path:join . tests aggregator)
+    tmp pwd = (path:join $this-script-dir tests aggregator)
 
     main:has-test-scripts |
       assertions:should-be $true
   }
 
   test 'In directory having nested tests' {
-    tmp pwd = (path:join . tests)
+    tmp pwd = (path:join $this-script-dir tests)
 
     main:has-test-scripts |
       assertions:should-be $true
@@ -79,18 +82,18 @@ raw:suite 'Running test scripts' { |test~|
   }
 
   fn create-reporter-spy {
-    var actual-describe-result
-    var actual-stats
+    var describe-result
+    var stats
 
-    var reporter = { |describe-result stats|
-      set actual-describe-result = $describe-result
-      set actual-stats = $stats
+    var reporter = { |actual-describe-result actual-stats|
+      set describe-result = $actual-describe-result
+      set stats = $actual-stats
     }
 
     put [
       &reporter=$reporter
-      &get-describe-result={ put $actual-describe-result }
-      &get-stats={ put $actual-stats }
+      &get-describe-result={ put $describe-result }
+      &get-stats={ put $stats }
     ]
   }
 
@@ -119,21 +122,7 @@ raw:suite 'Running test scripts' { |test~|
     main:velvet &test-scripts=[(get-test-script alpha)] &reporters=[$spy[reporter]]
 
     $spy[get-describe-result] |
-      assertions:should-be [
-        &test-results= [&]
-        &sub-results=[
-          &'In alpha'=[
-            &test-results=[
-              &'should work'=[
-                &outcome=$outcomes:passed
-                &output="Alpha 1\n"
-                &exception-log=$nil
-              ]
-            ]
-            &sub-results=[&]
-          ]
-        ]
-      ]
+      assertions:should-be $results:alpha
 
     $spy[get-stats] |
       assertions:should-be [
@@ -149,48 +138,7 @@ raw:suite 'Running test scripts' { |test~|
     main:velvet &test-scripts=[(get-test-script alpha) (get-test-script beta)] &reporters=[$spy[reporter]]
 
     $spy[get-describe-result] |
-      assertions:should-be [
-        &test-results= [&]
-        &sub-results=[
-          &'In alpha'=[
-            &test-results=[
-              &'should work'=[
-                &outcome=$outcomes:passed
-                &output="Alpha 1\n"
-                &exception-log=$nil
-              ]
-            ]
-            &sub-results=[
-              &'In sub-level'=[
-                &test-results=[&]
-                &sub-results=[
-                  &'In sub-sub-level'=[
-                    &test-results=[
-                      &'should be ok'=[
-                        &outcome=$outcomes:passed
-                        &output="Alpha X\n"
-                        &exception-log=$nil
-                      ]
-                    ]
-                    &sub-results=[&]
-                  ]
-                ]
-              ]
-            ]
-          ]
-
-          &'In beta'=[
-            &sub-results=[&]
-            &test-results=[
-              &'is duplicated in third source file'=[
-                &output="Beta 2\n"
-                &outcome=$outcomes:passed
-                &exception-log=$nil
-              ]
-            ]
-          ]
-        ]
-      ]
+      assertions:should-be $results:alpha-beta
 
     $spy[get-stats] |
       assertions:should-be [
@@ -209,62 +157,7 @@ raw:suite 'Running test scripts' { |test~|
 
     $spy[get-describe-result] |
       describe-result:simplify (all) |
-      assertions:should-be [
-        &test-results=[&]
-        &sub-results=[
-          &'In alpha'=[
-            &test-results=[
-              &'should work'=[
-                &outcome=$outcomes:passed
-                &output="Alpha 1\n"
-              ]
-              &'should work too'=[
-                &outcome=$outcomes:passed
-                &output="Alpha 5\n"
-              ]
-            ]
-            &sub-results=[
-              &'In sub-level'=[
-                &test-results=[
-                  &'should fail'=[
-                    &outcome=$outcomes:failed
-                    &output="Cip\nCiop\n"
-                  ]
-                ]
-                &sub-results=[
-                  &'In sub-sub-level'=[
-                    &test-results=[
-                      &'should be ok'=[
-                        &outcome=$outcomes:passed
-                        &output="Alpha X\n"
-                      ]
-                    ]
-                    &sub-results=[&]
-                  ]
-                ]
-              ]
-            ]
-          ]
-          &'In beta'=  [
-            &test-results=[
-              &'is duplicated in third source file'=[
-                &outcome=$outcomes:failed
-                &output=""
-              ]
-            ]
-            &sub-results=[&]
-          ]
-          &'In gamma'=[
-            &test-results=[
-              &'should pass'=[
-                &outcome=$outcomes:passed
-                &output="Gamma 3\n"
-              ]
-            ]
-            &sub-results=[&]
-          ]
-        ]
-      ]
+      assertions:should-be $results:alpha-beta-gamma
 
     $spy[get-stats] |
       assertions:should-be [
