@@ -31,11 +31,14 @@ fn -display-test-result { |test-title test-result level|
     var logging-indentation = (-get-indentation (+ $level 1))
 
     {
-      echo (styled '*** OUTPUT LOG (stdout + stderr) ***' red bold)
-      echo
-      echo (str:trim-space $test-result[output])
-      echo
-      echo
+      if (not-eq $test-result[output] '') {
+        echo (styled '*** OUTPUT LOG (stdout + stderr) ***' red bold)
+        echo
+        echo (str:trim-space $test-result[output])
+        echo
+        echo
+      }
+
       echo (styled '*** EXCEPTION LOG ***' red bold)
       echo
       echo (str:trim-space $test-result[exception-log])
@@ -93,11 +96,16 @@ fn -display-stats { |stats|
 
   var total-fragment = $total-style[emoji]' '(styled 'Total tests: '$stats[total]'.' bold $total-style[color])
 
-  var passed-fragment = (styled 'Passed: '$stats[passed]'.' green bold)
+  var fragments = [$total-fragment]
 
-  var failed-fragment = (styled 'Failed: '$stats[failed]'.' red bold)
+  if (> $stats[failed] 0) {
+    var passed-fragment = (styled 'Passed: '$stats[passed]'.' green bold)
+    var failed-fragment = (styled 'Failed: '$stats[failed]'.' red bold)
 
-  echo $total-fragment $passed-fragment $failed-fragment
+    set fragments = [$@fragments $passed-fragment $failed-fragment]
+  }
+
+  echo $@fragments
 }
 
 fn display { |describe-result stats|

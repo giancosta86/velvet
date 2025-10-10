@@ -1,6 +1,22 @@
+use str
 use ./outcomes
 use ./utils/command
 use ./utils/exception
+
+fn -get-filtered-exception-log { |exception|
+  show $exception |
+    each { |line|
+      if (
+        str:trim-space $line |
+          str:contains (all) 'github.com/giancosta86/velvet/utils/command.elv:'
+      ) {
+        break
+      }
+
+      put $line
+    } |
+    str:join "\n"
+}
 
 fn from-block { |block|
   var capture-result = (command:capture $block)
@@ -15,7 +31,7 @@ fn from-block { |block|
     set exception-log = $nil
   } else {
     set outcome = $outcomes:failed
-    set exception-log = (show $capture-result[status] | slurp)
+    set exception-log = (-get-filtered-exception-log $capture-result[status])
   }
 
   put [

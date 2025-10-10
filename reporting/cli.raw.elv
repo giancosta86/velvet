@@ -64,17 +64,17 @@ raw:suite 'Command-line reporting' { |test~|
       Alpha
       ✅
       'Total tests: 1.'
-      'Passed: 1.'
-      'Failed: 0.'
     ]
 
     $output-tester[expect-not-in-output] [
+      'Passed: 1.'
+      'Failed: 0.'
       Wiii!
       LOG
     ]
   }
 
-  test 'With single failed test' {
+  test 'With single failed test - having output' {
     var describe-result = [
       &test-results=[
         &Beta=[
@@ -90,12 +90,41 @@ raw:suite 'Command-line reporting' { |test~|
 
     $output-tester[expect-in-output] [
       ❌
-      LOG
+      'OUTPUT LOG'
+      'EXCEPTION LOG'
       Wooo!
       DODO
       'Total tests: 1.'
       'Passed: 0.'
       'Failed: 1.'
+    ]
+  }
+
+  test 'With single failed test - having no output' {
+    var describe-result = [
+      &test-results=[
+        &Beta=[
+          &outcome=$outcomes:failed
+          &output=""
+          &exception-log=DODO
+        ]
+      ]
+      &sub-results=[&]
+    ]
+
+    var output-tester = (create-output-tester $describe-result)
+
+    $output-tester[expect-in-output] [
+      ❌
+      'EXCEPTION LOG'
+      DODO
+      'Total tests: 1.'
+      'Passed: 0.'
+      'Failed: 1.'
+    ]
+
+    $output-tester[expect-not-in-output] [
+      'OUTPUT LOG'
     ]
   }
 
