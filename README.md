@@ -1,3 +1,47 @@
 # velvet
 
-_Smooth testing in the Elvish shell _
+_Smooth testing in the Elvish shell_
+
+## Installation
+
+Velvet can be installed via **epm** - for example:
+
+```elvish
+use epm
+
+epm:install github.com/giancosta86/velvet
+```
+
+## Setup
+
+In **rc.elv**, it is recommended to add the following lines:
+
+```elvish
+use github.com/giancosta86/velvet/main velvet
+
+var velvet~ = $velvet:velvet~
+```
+
+## Running tests
+
+To run tests from a directory containing one or more test scripts in its tree, just run this command in the Elvish shell:
+
+> velvet
+
+The command can be customized with a few optional parameters:
+
+- `&test-scripts`: a list of paths to the test scripts to be run; by default, any **.test.elv** file beneath the current directory node is selected
+
+- `&reporters`: an array of functions to report test results and stats; the default is a function writing to the console.
+
+  Each reporter function should receive:
+
+  - a `describe-result` object
+
+  - a `stats` object
+
+  with no additional constraints.
+
+## See also
+
+- [Elvish](https://elv.sh/)
