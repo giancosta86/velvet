@@ -75,8 +75,7 @@ raw:suite 'Searching for test scripts' { |test~|
   }
 }
 
-
-raw:suite 'Running test scripts' { |test~|
+raw:suite 'Top-level test script execution' { |test~|
   fn get-test-script { |basename|
     test-scripts:get-path aggregator $basename
   }

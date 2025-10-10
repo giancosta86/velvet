@@ -7,7 +7,7 @@ use ./test-script
 use ./tests/test-scripts
 use ./utils/raw
 
-raw:suite 'Running test script' { |test~|
+raw:suite 'Low-level test script execution' { |test~|
   fn run-test-script { |basename|
     var test-script-path = (test-scripts:get-path single-scripts $basename)
 
