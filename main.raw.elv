@@ -21,34 +21,25 @@ raw:suite 'Getting test script' { |test~|
   test 'In directory with tests' {
     tmp pwd = (path:join $this-script-dir tests aggregator)
 
+    var expected-scripts = [(
+      all $test-scripts:aggregator | each { |script|
+        path:base $script
+      }
+    )]
+
     main:get-test-scripts |
-      put [(all)] |
       order |
-      assertions:should-be [
-        alpha.test.elv
-        beta.test.elv
-        gamma.test.elv
-      ]
+      put [(all)] |
+      assertions:should-be $expected-scripts
   }
 
   test 'In directory having nested tests' {
     tmp pwd = (path:join $this-script-dir tests)
 
     main:get-test-scripts |
-      put [(all)] |
       order |
-      assertions:should-be [
-        aggregator/alpha.test.elv
-        aggregator/beta.test.elv
-        aggregator/gamma.test.elv
-        single-scripts/empty.test.elv
-        single-scripts/metainfo.test.elv
-        single-scripts/mixed-outcomes.test.elv
-        single-scripts/returning.test.elv
-        single-scripts/root-it.test.elv
-        single-scripts/single-failing.test.elv
-        single-scripts/single-ok.test.elv
-      ]
+      put [(all)] |
+      assertions:should-be $test-scripts:all
   }
 }
 
