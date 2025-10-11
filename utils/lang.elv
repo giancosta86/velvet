@@ -1,3 +1,4 @@
 fn is-function { |value|
-  eq (kind-of $value) "fn"
+  kind-of $value |
+    eq "fn" (all)
 }
