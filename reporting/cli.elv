@@ -36,7 +36,6 @@ fn -display-test-result { |test-title test-result level|
         echo
         echo (str:trim-space $test-result[output])
         echo
-        echo
       }
 
       echo (styled '*** EXCEPTION LOG ***' red bold)
