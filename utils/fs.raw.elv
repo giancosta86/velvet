@@ -3,7 +3,7 @@ use ./assertion
 use ./fs
 use ./raw
 
-raw:suite 'Temp path' { |test~|
+raw:suite 'Temp file path' { |test~|
   test 'Is a string' {
     fs:temp-file-path |
       kind-of (all) |
