@@ -138,6 +138,22 @@ raw:suite 'Top-level test script execution' { |test~|
       ]
   }
 
+  test 'Return value when running two scripts' {
+    var run-result = (
+      main:velvet &test-scripts=[(get-test-script alpha) (get-test-script beta)] &reporters=[]
+    )
+
+    put $run-result[describe-result] |
+      assertions:should-be $results:alpha-beta
+
+    put $run-result[stats] |
+      assertions:should-be [
+        &total=3
+        &passed=3
+        &failed=0
+      ]
+  }
+
   test 'Running all scripts via inference' {
     tmp pwd = ./tests/aggregator
 

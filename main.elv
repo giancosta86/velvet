@@ -20,6 +20,11 @@ fn velvet { |&test-scripts=$nil &reporters=[$cli:display~]|
   var stats = (stats:from-describe-result $describe-result)
 
   all $reporters | each { |reporter|
-    $reporter $describe-result $stats
+    $reporter $describe-result $stats | only-bytes
   }
+
+  put [
+    &describe-result=$describe-result
+    &stats=$stats
+  ]
 }
