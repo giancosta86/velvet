@@ -18,18 +18,16 @@ fn create {
       }
     }
 
-    &run-test={ |test-title block|
-      var test-result = (
+    &add-test-result={ |test-title test-result|
+      var actual-test-result = (
         if (has-key $test-results $test-title) {
           test-result:create-for-duplicated
         } else {
-          test-result:from-block $block
+          put $test-result
         }
       )
 
-      set test-results = (assoc $test-results $test-title $test-result)
-
-      put $test-result
+      set test-results = (assoc $test-results $test-title $actual-test-result)
     }
 
     &to-result={

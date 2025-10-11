@@ -1,6 +1,7 @@
 use path
 use ./assertions
 use ./describe-context
+use ./test-result
 
 fn run { |script-path|
   var abs-script-path = (path:abs $script-path)
@@ -28,8 +29,9 @@ fn run { |script-path|
   }
 
   fn it { |test-title block|
-    $current-describe-context[run-test] $test-title $block |
-      only-bytes
+    var test-result = (test-result:from-block $block)
+
+    $current-describe-context[add-test-result] $test-title $test-result
   }
 
   var namespace = (ns [

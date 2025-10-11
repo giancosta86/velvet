@@ -61,23 +61,18 @@ raw:suite 'Describe context' { |test~|
     ]
   }
 
-  test 'Running a passing test' {
+  test 'Adding a passing test' {
     var root = (describe-context:create)
 
     var test-result = (
-      $root[run-test] T-OK {
+      test-result:from-block {
         echo Wiii!
         echo Wiii2! >&2
         put 90
       }
     )
 
-    put $test-result |
-      assertions:should-be [
-        &outcome=$outcomes:passed
-        &output="Wiii!\nWiii2!\n"
-        &exception-log=$nil
-      ]
+    $root[add-test-result] T-OK $test-result
 
     expect-simplified-result $root [
       &test-results=[
@@ -90,11 +85,11 @@ raw:suite 'Describe context' { |test~|
     ]
   }
 
-  test 'Running a failing test' {
+  test 'Adding a failing test' {
     var root = (describe-context:create)
 
     var test-result = (
-      $root[run-test] T-FAIL {
+      test-result:from-block {
         echo Wooo
         echo Wooo2 >&2
         put 90
@@ -102,15 +97,7 @@ raw:suite 'Describe context' { |test~|
       }
     )
 
-    put $test-result |
-      test-result:simplify (all) |
-      assertions:should-be [
-        &outcome=$outcomes:failed
-        &output="Wooo\nWooo2\n"
-      ]
-
-    put $test-result[exception-log] |
-      assertions:should-not-be &strict $nil |
+    $root[add-test-result] T-FAIL $test-result
 
     expect-simplified-result $root [
       &test-results=[
@@ -123,31 +110,46 @@ raw:suite 'Describe context' { |test~|
     ]
   }
 
-  test 'Running passing and failing tests' {
+  test 'Adding passing and failing tests' {
     var root = (describe-context:create)
 
-    $root[run-test] 'T-OK 1' {
-      echo Wiii 1!
-    }
+    var t-ok-1 = (
+      test-result:from-block {
+        echo Wiii 1!
+      }
+    )
+    $root[add-test-result] 'T-OK 1' $t-ok-1
 
-    $root[run-test] 'T-FAIL 1' {
-      echo Wooo 1
-      fail DODO1
-    }
+    var t-fail-1 = (
+      test-result:from-block {
+        echo Wooo 1
+        fail DODO1
+      }
+    )
+    $root[add-test-result] 'T-FAIL 1' $t-fail-1
 
-    $root[run-test] 'T-OK 2' {
-      echo Wiii 2! >&2
-    }
+    var t-ok-2 = (
+      test-result:from-block {
+        echo Wiii 2! >&2
+      }
+    )
+    $root[add-test-result] 'T-OK 2' $t-ok-2
 
-    $root[run-test] 'T-FAIL 2' {
-      echo Wooo 2
-      fail Dodo2
-      echo NEVER PRINTED
-    }
+    var t-fail-2 = (
+      test-result:from-block {
+        echo Wooo 2
+        fail Dodo2
+        echo NEVER PRINTED
+      }
+    )
+    $root[add-test-result] 'T-FAIL 2' $t-fail-2
 
-    $root[run-test] 'T-OK 3' {
-      echo Wiii 3!
-    }
+    var t-ok-3 = (
+      test-result:from-block {
+        echo Wiii 3!
+      }
+    )
+    $root[add-test-result] 'T-OK 3' $t-ok-3
 
     expect-simplified-result $root [
       &sub-results=[&]
@@ -180,27 +182,21 @@ raw:suite 'Describe context' { |test~|
     ]
   }
 
-  test 'Running test with the same name' {
+  test 'Adding test with the same name' {
     var root = (describe-context:create)
 
-    var passing-block = {
-      echo Wiii!
-    }
+    var test-result = (
+      test-result:from-block {
+        echo Wiii!
+      }
+    )
 
-    var first-result = ($root[run-test] T-DUP $passing-block)
-
-    put $first-result[outcome] |
+    put $test-result[outcome] |
       assertions:should-be $outcomes:passed
 
+    $root[add-test-result] T-DUP $test-result
 
-    var second-result = ($root[run-test] T-DUP $passing-block)
-
-    put $second-result[outcome] |
-      assertions:should-be $outcomes:failed
-
-    str:contains $second-result[exception-log] DUPLICATED |
-      assertions:should-be $true
-
+    $root[add-test-result] T-DUP $test-result
 
     var describe-result = ($root[to-result])
 
@@ -219,20 +215,24 @@ raw:suite 'Describe context' { |test~|
       assertions:should-be $true
   }
 
-  test 'With multi-level test tree' {
+  test 'Adding multi-level test tree' {
     var root = (describe-context:create)
-
     var alpha = ($root[ensure-sub-context] alpha)
-
-    $alpha[run-test] alpha-test {
-      echo Hello!
-    }
-
     var beta = ($alpha[ensure-sub-context] beta)
 
-    $beta[run-test] beta-test {
-      echo World!
-    }
+    var alpha-result = (
+      test-result:from-block {
+        echo Hello!
+      }
+    )
+    $alpha[add-test-result] alpha-test $alpha-result
+
+    var beta-result = (
+      test-result:from-block {
+        echo World!
+      }
+    )
+    $beta[add-test-result] beta-test $beta-result
 
     expect-simplified-result $root [
       &test-results=[&]
