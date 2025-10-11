@@ -1,5 +1,6 @@
 fn is-exception { |x|
-  eq (kind-of $x) exception
+  kind-of $x |
+    eq (all) exception
 }
 
 fn get-fail-message { |potential-exception|
@@ -14,7 +15,8 @@ fn get-fail-message { |potential-exception|
 
 fn is-return { |potential-exception|
   if (
-    not (and (is-exception $potential-exception) (has-key $potential-exception reason))
+    and (is-exception $potential-exception) (has-key $potential-exception reason) |
+      not (all)
   ) {
     put $false
     return
@@ -23,7 +25,8 @@ fn is-return { |potential-exception|
   var reason = $potential-exception[reason]
 
   if (
-    not (and (has-key $reason type) (has-key $reason name))
+    and (has-key $reason type) (has-key $reason name) |
+      not (all)
   ) {
     put $false
     return
