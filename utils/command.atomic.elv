@@ -10,10 +10,11 @@ echo ⚛ Command capturing
   command:capture {
     print Cip
   } |
-    assertion:assert (eq (all) [
+    eq (all) [
       &output=Cip
       &status=$ok
-    ])
+    ] |
+    assertion:assert (all)
 }
 
 {
@@ -22,10 +23,11 @@ echo ⚛ Command capturing
   command:capture {
     print Ciop >&2
   } |
-    assertion:assert (eq (all) [
+    eq (all) [
       &output=Ciop
       &status=$ok
-    ])
+    ] |
+    assertion:assert (all)
 }
 
 {
@@ -35,10 +37,11 @@ echo ⚛ Command capturing
     echo Cip
     echo Ciop >&2
   } |
-    assertion:assert (eq (all) [
+    eq (all) [
       &output="Cip\nCiop\n"
       &status=$ok
-    ])
+    ] |
+    assertion:assert (all)
 }
 
 {
@@ -49,7 +52,8 @@ echo ⚛ Command capturing
     fail DODO
   })
 
-  assertion:assert (eq $result[output] Cip)
+  eq $result[output] Cip |
+    assertion:assert (all)
 
   exception:get-fail-message $result[status] |
     eq (all) DODO |
@@ -64,7 +68,8 @@ echo ⚛ Command capturing
     fail DODO
   })
 
-  assertion:assert (eq $result[output] Ciop)
+  eq $result[output] Ciop |
+    assertion:assert (all)
 
   exception:get-fail-message $result[status] |
     eq (all) DODO |
@@ -80,7 +85,8 @@ echo ⚛ Command capturing
     fail DODO
   })
 
-  assertion:assert (eq $result[output] "Cip\nCiop\n")
+  eq $result[output] "Cip\nCiop\n" |
+    assertion:assert (all)
 
   exception:get-fail-message $result[status] |
     eq (all) DODO |
