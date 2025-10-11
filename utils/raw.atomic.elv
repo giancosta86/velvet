@@ -18,11 +18,12 @@ echo ⚛ Raw testing
     }
   })
 
-  assertion:assert (
-    eq $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\n🎭✅\n\n"
-  )
+  put '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\n🎭✅\n\n" |
+    eq $command-result[output] (all) |
+    assertion:assert (all)
 
-  assertion:assert (eq $command-result[status] $ok)
+  eq $command-result[status] $ok |
+    assertion:assert (all)
 }
 
 {
@@ -40,9 +41,9 @@ echo ⚛ Raw testing
     }
   })
 
-  assertion:assert (
-    eq $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\nCip\nCiop\n\n"
-  )
+  put '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\nCip\nCiop\n\n" |
+    eq $command-result[output] (all) |
+    assertion:assert (all)
 
   exception:get-fail-message $command-result[status] |
     eq (all) DODO |
@@ -63,14 +64,17 @@ echo ⚛ Raw testing
       test 'Beta title' {
         print Never shown again
         print Never shown again >&2
-        put 90
+        put 95
       }
     }
   })
 
-  assertion:assert (eq $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Alpha title\n▶ Beta title\n🎭✅\n\n")
+  put '🎭 '(styled Description bold | to-string (all))"\n▶ Alpha title\n▶ Beta title\n🎭✅\n\n"|
+    eq $command-result[output] (all) |
+    assertion:assert (all)
 
-  assertion:assert (eq $command-result[status] $ok)
+  eq $command-result[status] $ok |
+    assertion:assert (all)
 }
 
 {
@@ -101,7 +105,9 @@ echo ⚛ Raw testing
     }
   })
 
-  assertion:assert (eq $command-result[output] '🎭 '(styled Description bold | to-string (all))"\n▶ Alpha title\n▶ Beta title\nYogi\nBubu\n\n")
+  put '🎭 '(styled Description bold | to-string (all))"\n▶ Alpha title\n▶ Beta title\nYogi\nBubu\n\n" |
+    eq $command-result[output] (all) |
+    assertion:assert (all)
 
   exception:get-fail-message $command-result[status] |
     eq (all) DODO |

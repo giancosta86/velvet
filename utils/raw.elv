@@ -1,7 +1,7 @@
 use ./command
 
-fn -test { |title test-block|
-  echo ▶ $title
+fn -test { |test-title test-block|
+  echo ▶ $test-title
 
   var capture-result = (command:capture $test-block)
 
@@ -11,11 +11,11 @@ fn -test { |title test-block|
   }
 }
 
-fn suite { |&emoji=🎭 description suite-block|
-  echo $emoji (styled $description bold)
+fn suite { |suite-title suite-block|
+  echo 🎭 (styled $suite-title bold)
 
-  $suite-block $-test~ | only-bytes
+  $suite-block $-test~
 
-  echo $emoji''✅
+  echo 🎭✅
   echo
 }
