@@ -8,7 +8,7 @@ fn -get-filtered-exception-log { |exception|
     each { |line|
       if (
         str:trim-space $line |
-          str:contains (all) 'github.com/giancosta86/velvet/utils/command.elv:'
+          str:contains (all) '/velvet/utils/command.elv:11:9-14'
       ) {
         break
       }

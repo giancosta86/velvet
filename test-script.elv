@@ -1,4 +1,6 @@
 use path
+use re
+use str
 use ./assertions
 use ./describe-context
 use ./test-result
@@ -9,6 +11,20 @@ fn run { |script-path|
 
   var root-context = (describe-context:create)
   var current-describe-context = $root-context
+
+  fn update-exception-log { |exception-log|
+    var lines = [(put $exception-log | to-lines)]
+
+    var script-stack-lines = $lines[..-1]
+
+    var eval-line = $lines[-1]
+
+    var updated-eval-line = (
+      re:replace '\[eval\s+\d+\]:(\d+?):(\d+).*?:' $abs-script-path':$1:$2:' $eval-line
+    )
+
+    str:join "\n" [$@script-stack-lines $updated-eval-line]
+  }
 
   fn custom-src {
     put [
@@ -30,8 +46,23 @@ fn run { |script-path|
 
   fn it { |test-title block|
     var test-result = (test-result:from-block $block)
+    var exception-log = $test-result[exception-log]
 
-    $current-describe-context[add-test-result] $test-title $test-result
+    var updated-test-result
+
+    if $exception-log {
+      var updated-exception-log = (
+        update-exception-log $exception-log
+      )
+
+      set updated-test-result = (
+        assoc $test-result exception-log $updated-exception-log
+      )
+    } else {
+      set updated-test-result = $test-result
+    }
+
+    $current-describe-context[add-test-result] $test-title $updated-test-result
   }
 
   var namespace = (ns [

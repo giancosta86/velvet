@@ -73,6 +73,18 @@ raw:suite 'Low-level test script execution' { |test~|
       ]
   }
 
+  test 'Exception log in failing test' {
+    var describe-result = (run-test-script single-failing)
+
+    var exception-log = $describe-result[sub-results]['My description'][test-results]['should fail'][exception-log]
+
+    str:contains $exception-log '[eval' |
+      assertions:should-be $false
+
+    str:contains $exception-log 'single-failing.test.elv:7:5:' |
+      assertions:should-be $true
+  }
+
   test 'With mixed outcomes' {
     var describe-result = (run-test-script mixed-outcomes)
 
