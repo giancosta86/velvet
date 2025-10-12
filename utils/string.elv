@@ -16,17 +16,14 @@ fn get-minimal { |source|
 }
 
 fn indent-lines { |indent|
-  var slurp-result = (
-    to-lines |
-      each { |line|
-        if (eq $line '') {
-          echo
-        } else {
-          echo $indent''$line
-        }
-      } |
-      slurp
-  )
-
-  put $slurp-result[..-1]
+  to-lines |
+    each { |line|
+      if (eq $line '') {
+        echo
+      } else {
+        echo $indent''$line
+      }
+    } |
+    slurp |
+    put (all)[..-1]
 }

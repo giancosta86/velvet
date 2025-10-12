@@ -4,27 +4,32 @@ use ./string
 
 raw:suite 'Minimal string' { |test~|
   test 'With string' {
-    eq (string:get-minimal Dodo) Dodo |
+    string:get-minimal Dodo |
+      eq (all) Dodo |
       assertion:assert (all)
   }
 
   test 'With number' {
-    eq (string:get-minimal (num 90)) 90 |
+    string:get-minimal (num 90) |
+      eq (all) 90 |
       assertion:assert (all)
   }
 
   test 'With bool' {
-    eq (string:get-minimal $false) '$false' |
+    string:get-minimal $false |
+      eq (all) '$false' |
       assertion:assert (all)
   }
 
   test 'With list' {
-    eq (string:get-minimal [A (num 90) (num 92)]) '[A 90 92]' |
+    string:get-minimal [A (num 90) (num 92)] |
+      eq (all) '[A 90 92]' |
       assertion:assert (all)
   }
 
   test 'With map' {
-    eq (string:get-minimal [&(num 90)=(num 92)]) '[&90=92]' |
+    string:get-minimal [&(num 90)=(num 92)] |
+      eq (all) '[&90=92]' |
       assertion:assert (all)
   }
 }
