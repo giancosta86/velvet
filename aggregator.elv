@@ -1,15 +1,20 @@
 use path
 use ./describe-result
+use ./utils/seq
 
-var -sandbox-script = (
+var DEFAULT-NUM-WORKERS = 8
+
+var -sandbox-script-path = (
   put (src)[name] |
     path:dir (all) |
     path:join (all) sandbox.elv
 )
 
-fn run-test-scripts { |@test-scripts|
-  all $test-scripts | peach { |test-script|
-    elvish -norc $-sandbox-script $test-script | from-json
-  } |
-    describe-result:merge
+fn run-test-scripts { |&num-workers=$DEFAULT-NUM-WORKERS @script-paths|
+  all $script-paths |
+    seq:split-by-chunk-count $num-workers |
+    peach &num-workers=$num-workers { |chunk-of-script-paths|
+      elvish -norc $-sandbox-script-path $@chunk-of-script-paths | from-json
+    } |
+      describe-result:merge
 }

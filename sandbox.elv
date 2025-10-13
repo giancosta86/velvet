@@ -1,5 +1,10 @@
+use ./describe-result
 use ./test-script
 
-var test-script-file = $args[0]
+var test-script-paths = $args
 
-test-script:run $test-script-file | only-values | to-json
+all $test-script-paths | each { |test-script-path|
+  test-script:run $test-script-path | only-values
+} |
+  describe-result:merge |
+  to-json
