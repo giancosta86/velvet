@@ -3,32 +3,6 @@ use ./utils/assertion
 use ./utils/exception
 use ./utils/raw
 
-raw:suite 'Assertions: expect-crash' { |test~|
-  test 'When no exception is thrown' {
-    try {
-      assertions:expect-crash {
-        echo Wiii!
-        echo Wiii2! >&2
-        put 90
-      }
-    } catch e {
-      exception:get-fail-message $e |
-        assertion:assert (eq (all) 'The given code block did not fail!')
-    }
-  }
-
-  test 'When there is an exception' {
-    assertions:expect-crash {
-      echo Wooo!
-      echo Wooo2! >&2
-      put 90
-      fail DODO
-    } |
-      exception:get-fail-message (all) |
-      assertion:assert (eq (all) DODO)
-  }
-}
-
 fn with-strictness-prefix { |strict message|
   var strictness-prefix
 
@@ -42,7 +16,7 @@ fn with-strictness-prefix { |strict message|
 }
 
 fn expect-should-be-failure { |&strict=$false expected actual-block|
-  assertions:expect-crash {
+  exception:expect-throws {
     $actual-block |
       assertions:should-be &strict=$strict $expected
   } |
@@ -125,7 +99,7 @@ raw:suite 'Assertions: should-be (non-strict)' { |test~|
 }
 
 fn expect-should-not-be-failure { |&strict=$false expected actual-block|
-  assertions:expect-crash {
+  exception:expect-throws {
     $actual-block |
       assertions:should-not-be &strict=$strict $expected
   } |
@@ -212,7 +186,7 @@ raw:suite 'Assertions: should-not-be (non-strict)' { |test~|
 
 raw:suite 'Assertions: fail-test' { |test~|
   test 'Raising a test failure' {
-    assertions:expect-crash {
+    exception:expect-throws {
       assertions:fail-test
     } |
       exception:get-fail-message (all) |

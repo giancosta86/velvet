@@ -23,7 +23,7 @@ describe 'In arithmetic' {
   describe 'division' {
     describe 'when dividing by 0' {
       it 'should fail' {
-        expect-crash {
+        expect-throws {
           / 92 0
         } |
           to-string (all)[reason] |

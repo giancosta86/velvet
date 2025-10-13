@@ -26,7 +26,7 @@ describe 'The provided functions' {
     all [
       $describe~
       $it~
-      $expect-crash~
+      $expect-throws~
       $fail-test~
       $should-be~
       $should-not-be~

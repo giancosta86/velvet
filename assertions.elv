@@ -1,16 +1,6 @@
 use ./utils/diff
 use ./utils/string
 
-fn expect-crash { |block|
-  try {
-    $block | only-bytes >&2
-  } catch e {
-    put $e
-  } else {
-    fail 'The given code block did not fail!'
-  }
-}
-
 fn -print-expected-and-actual { |inputs|
   var actual-description = $inputs[actual-description]
   var actual = $inputs[actual]

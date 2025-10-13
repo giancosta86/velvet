@@ -84,3 +84,31 @@ echo ⚛ Return detection
 
 echo ⚛ ✅
 echo
+
+echo ⚛ Expecting an exception
+
+{
+  echo ▶ When no exception is thrown
+
+  try {
+    exception:expect-throws { }
+  } catch e {
+    exception:get-fail-message $e |
+      eq (all) 'The given code block did not fail!' |
+      assertion:assert (all)
+  }
+}
+
+{
+  echo ▶ When there is an exception
+
+  exception:expect-throws {
+    fail DODO
+  } |
+    exception:get-fail-message (all) |
+    eq (all) DODO |
+    assertion:assert (all)
+}
+
+echo ⚛ ✅
+echo

@@ -4,6 +4,7 @@ use str
 use ./assertions
 use ./describe-context
 use ./test-result
+use ./utils/exception
 
 fn run { |script-path|
   var abs-script-path = (path:abs $script-path)
@@ -69,7 +70,7 @@ fn run { |script-path|
     &src~=$custom-src~
     &describe~=$describe~
     &it~=$it~
-    &expect-crash~=$assertions:expect-crash~
+    &expect-throws~=$exception:expect-throws~
     &fail-test~=$assertions:fail-test~
     &should-be~=$assertions:should-be~
     &should-not-be~=$assertions:should-not-be~
