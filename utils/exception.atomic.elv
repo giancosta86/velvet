@@ -92,6 +92,8 @@ echo ⚛ Expecting an exception
 
   try {
     exception:expect-throws { }
+
+    fail 'No exception was thrown by the expectation!'
   } catch e {
     exception:get-fail-message $e |
       eq (all) 'The given code block did not fail!' |
