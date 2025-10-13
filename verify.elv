@@ -17,6 +17,7 @@ all [
   map
   string
   diff
+  seq
 ] | each { |raw-script-basename|
   run-script utils/$raw-script-basename'.raw.elv'
 }
