@@ -23,7 +23,7 @@ fn simplify { |describe-result|
 var -merge-test-results~
 var -merge-sub-results~
 
-fn merge { |left right|
+fn -merge-two { |left right|
   put [
     &test-results=(
       -merge-test-results $left[test-results] $right[test-results]
@@ -59,7 +59,7 @@ set -merge-sub-results~ = { |left right|
   keys $right | each { |sub-result-name|
     var actual-sub-result = (
       if (has-key $left $sub-result-name)  {
-        merge $left[$sub-result-name] $right[$sub-result-name]
+        -merge-two $left[$sub-result-name] $right[$sub-result-name]
       } else {
         put $right[$sub-result-name]
       }
@@ -69,4 +69,17 @@ set -merge-sub-results~ = { |left right|
   }
 
   put $sub-results
+}
+
+fn merge {
+  var result = [
+    &test-results=[&]
+    &sub-results=[&]
+  ]
+
+  each { |describe-result|
+    set result = (-merge-two $result $describe-result)
+  }
+
+  put $result
 }

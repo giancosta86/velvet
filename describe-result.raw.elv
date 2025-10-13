@@ -88,6 +88,85 @@ raw:suite 'Describe result simplification' { |test~|
 }
 
 raw:suite 'Describe result merging' { |test~|
+  var empty-result = [
+    &test-results=[&]
+    &sub-results=[&]
+  ]
+
+  var alpha-test = [
+    &output="Alpha!"
+    &outcome=$outcomes:passed
+  ]
+
+  var alpha-result = [
+    &test-results=[
+      &alpha=$alpha-test
+    ]
+    &sub-results=[&]
+  ]
+
+  var beta-test = [
+    &output="Beta!"
+    &outcome=$outcomes:failed
+  ]
+
+  var beta-result = [
+    &test-results=[
+      &beta=$beta-test
+    ]
+    &sub-results=[&]
+  ]
+
+  var gamma-test = [
+    &output="Gamma!"
+    &outcome=$outcomes:passed
+  ]
+
+  var gamma-result = [
+    &test-results=[
+      &gamma=$gamma-test
+    ]
+    &sub-results=[&]
+  ]
+
+  test 'With 0 operands' {
+    describe-result:merge |
+      assertions:should-be $empty-result
+  }
+
+  test 'With 1 operand' {
+    put $alpha-result |
+      describe-result:merge |
+      assertions:should-be $alpha-result
+  }
+
+  test 'With 2 operands' {
+    put $alpha-result $beta-result |
+      describe-result:merge |
+      assertions:should-be [
+        &test-results=[
+          &alpha=$alpha-test
+          &beta=$beta-test
+        ]
+        &sub-results=[&]
+      ]
+  }
+
+  test 'With 3 operands' {
+    put $alpha-result $beta-result $gamma-result |
+      describe-result:merge |
+      assertions:should-be [
+        &test-results=[
+          &alpha=$alpha-test
+          &beta=$beta-test
+          &gamma=$gamma-test
+        ]
+        &sub-results=[&]
+      ]
+  }
+}
+
+raw:suite 'Describe result merging of two operands' { |test~|
   var passed-test = [
     &output="Wiii!"
     &outcome=$outcomes:passed
@@ -109,7 +188,8 @@ raw:suite 'Describe result merging' { |test~|
       &sub-results=[&]
     ]
 
-    describe-result:merge $left $right |
+    put $left $right |
+      describe-result:merge |
       assertions:should-be [
         &test-results=[&]
         &sub-results=[&]
@@ -129,7 +209,8 @@ raw:suite 'Describe result merging' { |test~|
       &sub-results=[&]
     ]
 
-    describe-result:merge $left $right |
+    put $left $right |
+      describe-result:merge |
       assertions:should-be [
         &test-results=[
           &Alpha=$passed-test
@@ -151,7 +232,8 @@ raw:suite 'Describe result merging' { |test~|
       &sub-results=[&]
     ]
 
-    describe-result:merge $left $right |
+    put $left $right |
+      describe-result:merge |
       assertions:should-be [
         &test-results=[
           &Beta=$failed-test
@@ -175,7 +257,8 @@ raw:suite 'Describe result merging' { |test~|
       &sub-results=[&]
     ]
 
-    describe-result:merge $left $right |
+    put $left $right |
+      describe-result:merge |
       assertions:should-be [
         &test-results=[
           &Alpha=$passed-test
@@ -200,7 +283,8 @@ raw:suite 'Describe result merging' { |test~|
       &sub-results=[&]
     ]
 
-    describe-result:merge $left $right |
+    put $left $right |
+      describe-result:merge |
       describe-result:simplify (all) |
       assertions:should-be [
         &test-results=[
@@ -228,7 +312,8 @@ raw:suite 'Describe result merging' { |test~|
       &sub-results=[&]
     ]
 
-    describe-result:merge $left $right |
+    put $left $right |
+      describe-result:merge |
       describe-result:simplify (all) |
       assertions:should-be [
         &test-results=[
@@ -285,7 +370,10 @@ raw:suite 'Describe result merging' { |test~|
       ]
     ]
 
-    var merge-result = (describe-result:merge $left $right)
+    var merge-result = (
+      put $left $right |
+        describe-result:merge
+    )
 
     put $merge-result |
       describe-result:simplify (all) |
