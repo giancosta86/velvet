@@ -25,5 +25,9 @@ fn split-by-chunk-count { |chunk-count|
     )
   }
 
-  put $chunks
+  all $chunks |
+    keep-if { |chunk|
+      count $chunk |
+        > (all) 0
+    }
 }
