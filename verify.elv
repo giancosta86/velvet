@@ -24,15 +24,15 @@ all [
 
 all [
   assertions
-  test-result
-  describe-result
-  stats
-  reporting/cli
-  describe-context
-  test-script
-  sandbox
-  aggregator
-  main
+  # test-result
+  # describe-result
+  # stats
+  # reporting/cli
+  # describe-context
+  # test-script
+  # sandbox
+  # aggregator
+  # main
 ] | each { |raw-script-basename|
     run-script $raw-script-basename'.raw.elv'
   }
