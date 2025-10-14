@@ -1,16 +1,18 @@
 use str
 use ./assertions
 use ./outcomes
+use ./utils/command
 use ./utils/raw
 use ./test-result
 
-raw:suite 'Test result from block' { |test~|
+raw:suite 'Test result from capture result' { |test~|
   test 'For passing block' {
-    test-result:from-block {
+    command:capture {
       echo Wiii!
       echo Wiii2! >&2
       put 90
     } |
+      test-result:from-capture-result (all) |
       assertions:should-be [
         &outcome=$outcomes:passed
         &output="Wiii!\nWiii2!\n"
@@ -20,13 +22,14 @@ raw:suite 'Test result from block' { |test~|
 
   test 'For crashing block' {
     var test-result = (
-      test-result:from-block {
+      command:capture {
         echo Wiii!
         echo Wiii2! >&2
         put 90
         fail DODUS
-      }
-     )
+      } |
+        test-result:from-capture-result (all)
+    )
 
     put $test-result[outcome] |
       assertions:should-be $outcomes:failed
@@ -38,8 +41,20 @@ raw:suite 'Test result from block' { |test~|
       assertions:should-not-be &strict $nil
   }
 
+  test 'Removing clockwork from exception log' {
+    command:capture {
+      echo Wiii!
+      echo Wiii2! >&2
+      put 90
+      fail DODUS
+    } |
+      test-result:from-capture-result (all) |
+      str:contains (all)[exception-log] '/velvet/utils/command.elv:' |
+      assertions:should-be $false
+  }
+
   test 'For block with return keyword' {
-    test-result:from-block {
+    command:capture {
       echo Wiii!
       echo Wiii2! >&2
       put 90
@@ -50,6 +65,7 @@ raw:suite 'Test result from block' { |test~|
 
       fail 'HAVING NO EFFECT'
     } |
+      test-result:from-capture-result (all) |
       assertions:should-be [
         &outcome=$outcomes:passed
         &output="Wiii!\nWiii2!\n"

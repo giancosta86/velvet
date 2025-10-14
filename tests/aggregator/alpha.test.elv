@@ -1,5 +1,5 @@
-describe 'In alpha' {
-  it 'should work' {
+>> 'In alpha' {
+  >> 'should work' {
     echo Alpha 1
   }
 }

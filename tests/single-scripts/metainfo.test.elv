@@ -1,28 +1,28 @@
 use str
 use ../../utils/lang
 
-describe 'The script source' {
+>> 'The script source' {
   var script-src = (src)
 
-  it 'should be a file' {
+  >> 'should be a file' {
     put $script-src[is-file] |
       should-be $true
   }
 
-  it 'should contain the script path' {
+  >> 'should contain the script path' {
     str:has-suffix $script-src[name] metainfo.test.elv |
       should-be $true
   }
 
-  it 'should contain the source code' {
+  >> 'should contain the source code' {
     put $script-src[code] |
       str:contains (all) 'should contain the source code' |
       should-be $true
   }
 }
 
-describe 'The provided functions' {
-  it 'should be available' {
+>> 'The provided functions' {
+  >> 'should be available' {
     all [
       $describe~
       $it~

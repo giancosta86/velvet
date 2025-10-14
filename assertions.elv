@@ -17,7 +17,7 @@ fn -print-expected-and-actual { |inputs|
   echo $formatted-expected
 
   echo 🔎 (styled DIFF: yellow bold)
-  diff:diff $formatted-actual $formatted-expected | tail -n +3
+  diff:diff $formatted-expected $formatted-actual | tail -n +3
   echo 🔎🔎🔎
 }
 

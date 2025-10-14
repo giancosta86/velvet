@@ -5,7 +5,7 @@ var single-scripts = [
   single-scripts/metainfo.test.elv
   single-scripts/mixed-outcomes.test.elv
   single-scripts/returning.test.elv
-  single-scripts/root-it.test.elv
+  single-scripts/root-test.test.elv
   single-scripts/single-failing.test.elv
   single-scripts/single-ok.test.elv
 ]

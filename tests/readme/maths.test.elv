@@ -1,15 +1,15 @@
 use str
 
-describe 'In arithmetic' {
-  describe 'addition' {
-    it 'should work' {
+>> 'In arithmetic' {
+  >> 'addition' {
+    >> 'should work' {
       + 89 1 |
         should-be 90
     }
   }
 
-  describe 'multiplication' {
-    it 'should return just the expected value' {
+  >> 'multiplication' {
+    >> 'should return just the expected value' {
       var result = (* 15 6)
 
       put $result |
@@ -20,9 +20,9 @@ describe 'In arithmetic' {
     }
   }
 
-  describe 'division' {
-    describe 'when dividing by 0' {
-      it 'should fail' {
+  >> 'division' {
+    >> 'when dividing by 0' {
+      >> 'should fail' {
         expect-throws {
           / 92 0
         } |

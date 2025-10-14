@@ -24,8 +24,9 @@ all [
 
 all [
   assertions
-  # test-result
+  test-result
   # describe-result
+  # frame
   # stats
   # reporting/cli
   # describe-context

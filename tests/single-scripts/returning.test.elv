@@ -1,5 +1,5 @@
-describe 'Returning from a test' {
-  it 'should work' {
+>> 'Returning from a test' {
+  >> 'should work' {
     echo Alpha
     echo Beta >&2
     put 90

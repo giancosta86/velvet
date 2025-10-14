@@ -3,7 +3,7 @@ use ./outcomes
 use ./utils/command
 use ./utils/exception
 
-fn -get-filtered-exception-log { |exception|
+fn -remove-clockwork-from-exception-log { |exception|
   show $exception |
     each { |line|
       if (
@@ -18,9 +18,7 @@ fn -get-filtered-exception-log { |exception|
     str:join "\n"
 }
 
-fn from-block { |block|
-  var capture-result = (command:capture $block)
-
+fn from-capture-result { |capture-result|
   var outcome
   var exception-log
 
@@ -31,7 +29,7 @@ fn from-block { |block|
     set exception-log = $nil
   } else {
     set outcome = $outcomes:failed
-    set exception-log = (-get-filtered-exception-log $capture-result[status])
+    set exception-log = (-remove-clockwork-from-exception-log $capture-result[status])
   }
 
   put [
@@ -46,7 +44,8 @@ fn simplify { |test-result|
 }
 
 fn create-for-duplicated {
-  from-block {
+  command:capture {
     fail 'DUPLICATED TEST!'
-  }
+  } |
+    from-capture-result (all)
 }
