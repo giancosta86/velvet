@@ -10,8 +10,8 @@ fn run { |script-path|
   var abs-script-path = (path:abs $script-path)
   var script-code = (slurp < $script-path)
 
-  var root-context = (describe-context:create)
-  var current-describe-context = $root-context
+  var current-frame = $nil
+  var root-frames = []
 
   fn update-exception-log { |exception-log|
     var lines = [(put $exception-log | to-lines)]
@@ -35,35 +35,29 @@ fn run { |script-path|
     ]
   }
 
-  fn describe { |context-title block|
-    var sub-context = (
-      $current-describe-context[ensure-sub-context] $context-title
-    )
+  fn '>>' { |title block|
+    var this-frame = (frame:create $title)
 
-    tmp current-describe-context = $sub-context
+    var parent-frame = $current-frame
 
-    $block | only-bytes
-  }
-
-  fn it { |test-title block|
-    var test-result = (test-result:from-block $block)
-    var exception-log = $test-result[exception-log]
-
-    var updated-test-result
-
-    if $exception-log {
-      var updated-exception-log = (
-        update-exception-log $exception-log
-      )
-
-      set updated-test-result = (
-        assoc $test-result exception-log $updated-exception-log
-      )
+    if $parent-frame {
+      $parent-frame[add-sub-frame] $this-frame
     } else {
-      set updated-test-result = $test-result
+      set root-frames = [$@root-frames $this-frame]
     }
 
-    $current-describe-context[add-test-result] $test-title $updated-test-result
+    #TODO! Try to replace this with just tmp!
+    set current-frame = $this-frame
+    defer { set current-frame = $parent-frame }
+
+    var block-result = (command:capture $block)
+
+    var updated-block-result = (
+      update-exception-log $block-result[exception-log] |
+        assoc $block-result exception-log (all)
+    )
+
+    $current-frame[set-block-result] $block-result
   }
 
   var namespace = (ns [
