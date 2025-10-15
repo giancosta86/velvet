@@ -6,10 +6,10 @@ use ../utils/raw
 use ./cli
 
 raw:suite 'Command-line reporting' { |test~|
-  fn create-output-tester { |describe-result|
-    var stats = (stats:from-describe-result $describe-result)
+  fn create-output-tester { |section|
+    var stats = (stats:from-section $section)
 
-    var report-output = (cli:display $describe-result $stats | slurp)
+    var report-output = (cli:display $section $stats | slurp)
 
     put [
       &expect-in-output={ |snippets|
@@ -28,13 +28,13 @@ raw:suite 'Command-line reporting' { |test~|
     ]
   }
 
-  test 'With empty describe result' {
-    var describe-result = [
+  test 'With empty section' {
+    var section = [
       &test-results=[&]
-      &sub-results=[&]
+      &sub-sections=[&]
     ]
 
-    var output-tester = (create-output-tester $describe-result)
+    var output-tester = (create-output-tester $section)
 
     $output-tester[expect-in-output] [
       💬
@@ -47,7 +47,7 @@ raw:suite 'Command-line reporting' { |test~|
   }
 
   test 'With single passed test' {
-    var describe-result = [
+    var section = [
       &test-results=[
         &Alpha=[
           &outcome=$outcomes:passed
@@ -55,10 +55,10 @@ raw:suite 'Command-line reporting' { |test~|
           &exception-log=$nil
         ]
       ]
-      &sub-results=[&]
+      &sub-sections=[&]
     ]
 
-    var output-tester = (create-output-tester $describe-result)
+    var output-tester = (create-output-tester $section)
 
     $output-tester[expect-in-output] [
       Alpha
@@ -75,7 +75,7 @@ raw:suite 'Command-line reporting' { |test~|
   }
 
   test 'With single failed test - having output' {
-    var describe-result = [
+    var section = [
       &test-results=[
         &Beta=[
           &outcome=$outcomes:failed
@@ -83,10 +83,10 @@ raw:suite 'Command-line reporting' { |test~|
           &exception-log=DODO
         ]
       ]
-      &sub-results=[&]
+      &sub-sections=[&]
     ]
 
-    var output-tester = (create-output-tester $describe-result)
+    var output-tester = (create-output-tester $section)
 
     $output-tester[expect-in-output] [
       ❌
@@ -101,7 +101,7 @@ raw:suite 'Command-line reporting' { |test~|
   }
 
   test 'With single failed test - having no output' {
-    var describe-result = [
+    var section = [
       &test-results=[
         &Beta=[
           &outcome=$outcomes:failed
@@ -109,10 +109,10 @@ raw:suite 'Command-line reporting' { |test~|
           &exception-log=DODO
         ]
       ]
-      &sub-results=[&]
+      &sub-sections=[&]
     ]
 
-    var output-tester = (create-output-tester $describe-result)
+    var output-tester = (create-output-tester $section)
 
     $output-tester[expect-in-output] [
       ❌
@@ -129,7 +129,7 @@ raw:suite 'Command-line reporting' { |test~|
   }
 
   test 'With multi-level describe result' {
-    var describe-result = [
+    var section = [
       &test-results=[
         &Alpha=[
           &outcome=$outcomes:passed
@@ -137,10 +137,10 @@ raw:suite 'Command-line reporting' { |test~|
           &exception-log=$nil
         ]
       ]
-      &sub-results=[
+      &sub-sections=[
         &SomeOther=[
           &test-results=[&]
-          &sub-results=[
+          &sub-sections=[
             &YetAnother=[
               &test-results=[
                 &Beta=[
@@ -149,14 +149,14 @@ raw:suite 'Command-line reporting' { |test~|
                   &exception-log=DODO
                 ]
               ]
-              &sub-results=[&]
+              &sub-sections=[&]
             ]
           ]
         ]
       ]
     ]
 
-    var output-tester = (create-output-tester $describe-result)
+    var output-tester = (create-output-tester $section)
 
     $output-tester[expect-in-output] [
       Alpha

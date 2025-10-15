@@ -48,24 +48,24 @@ fn -display-test-result { |test-title test-result level|
   }
 }
 
-fn -display-describe-result { |describe-result level|
-  keys $describe-result[test-results] |
+fn -display-section { |section level|
+  keys $section[test-results] |
     order &key=$str:to-lower~ |
-    each { |test-name|
-      var test-result = $describe-result[test-results][$test-name]
+    each { |test-title|
+      var test-result = $section[test-results][$test-title]
 
-      -display-test-result $test-name $test-result $level
+      -display-test-result $test-title $test-result $level
     }
 
-  var is-first-sub-result = $true
+  var is-first-sub-section = $true
 
-  keys $describe-result[sub-results] |
+  keys $section[sub-sections] |
     order &key=$str:to-lower~ |
-    each { |sub-result-name|
-      if $is-first-sub-result {
-        set is-first-sub-result = $false
+    each { |sub-section-title|
+      if $is-first-sub-section {
+        set is-first-sub-section = $false
 
-        var preceding-test-results = (count $describe-result[test-results])
+        var preceding-test-results = (count $section[test-results])
 
         if (> $preceding-test-results 0)  {
           echo
@@ -76,11 +76,11 @@ fn -display-describe-result { |describe-result level|
 
       var indentation = (-get-indentation $level)
 
-      echo $indentation''(styled $sub-result-name white bold)
+      echo $indentation''(styled $sub-section-title white bold)
 
-      var sub-result = $describe-result[sub-results][$sub-result-name]
+      var sub-section = $section[sub-sections][$sub-section-title]
 
-      -display-describe-result $sub-result (+ $level 1)
+      -display-section $sub-section (+ $level 1)
     }
 }
 
@@ -107,15 +107,15 @@ fn -display-stats { |stats|
   echo $@fragments
 }
 
-fn display { |describe-result stats|
-  var items-count = (+ (count $describe-result[test-results]) (count $describe-result[sub-results]))
+fn display { |section stats|
+  var items-count = (+ (count $section[test-results]) (count $section[sub-sections]))
 
   if (== $items-count 0) {
     echo 💬 (styled 'No test structure found.' bold white)
     return
   }
 
-  -display-describe-result $describe-result 0
+  -display-section $section 0
 
   echo
 

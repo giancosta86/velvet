@@ -27,7 +27,7 @@ all [
   test-result
   section
   stats
-  # reporting/cli
+  reporting/cli
   # frame
   # test-script
   # sandbox
