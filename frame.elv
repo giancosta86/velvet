@@ -23,8 +23,8 @@ fn create { |title|
       fail 'Cannot convert to section with block result not set'
     }
 
-    var sections = [&]
     var test-results = [&]
+    var sub-sections = [&]
 
     var no-sub-frames = (
       count $sub-frames |
@@ -47,12 +47,12 @@ fn create { |title|
 
       var sub-title = $sub-frame[title]
 
-      var is-sub-result-section = (has-key $sub-result sections)
+      var is-sub-result-section = (has-key $sub-result $sub-sections)
 
       if (section:is-section $sub-result) {
         var updated-section = (
-          if (has-key $sections $sub-title) {
-            var existing-section = $sections[$sub-title]
+          if (has-key $sub-sections $sub-title) {
+            var existing-section = $sub-sections[$sub-title]
 
             section:merge $existing-section $sub-result
           } else {
@@ -60,7 +60,7 @@ fn create { |title|
           }
         )
 
-        set sections = (assoc $sections $sub-title $updated-section)
+        set sub-sections = (assoc $sub-sections $sub-title $updated-section)
       } else {
         var updated-test-result = (
           if (has-key $tests $sub-title) {
@@ -76,7 +76,7 @@ fn create { |title|
 
     put [
       &test-results=$test-results
-      &sections=$sections
+      &sub-sections=$sub-sections
     ]
   }
 

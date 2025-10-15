@@ -25,10 +25,10 @@ all [
 all [
   assertions
   test-result
-  # describe-result
-  # frame
+  section
   # stats
   # reporting/cli
+  # frame
   # describe-context
   # test-script
   # sandbox
