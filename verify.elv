@@ -26,10 +26,9 @@ all [
   assertions
   test-result
   section
-  # stats
+  stats
   # reporting/cli
   # frame
-  # describe-context
   # test-script
   # sandbox
   # aggregator

@@ -14,10 +14,10 @@ raw:suite 'Stats' { |test~|
     &outcome=$outcomes:failed
   ]
 
-  test 'From empty describe result' {
-    stats:from-describe-result [
+  test 'From empty section' {
+    stats:from-section [
       &test-results=[&]
-      &sub-results=[&]
+      &sub-sections=[&]
     ] |
       assertions:should-be [
         &total=0
@@ -27,11 +27,11 @@ raw:suite 'Stats' { |test~|
   }
 
   test 'From single passed test' {
-    stats:from-describe-result [
+    stats:from-section [
       &test-results=[
         &Cip=$passed-test
       ]
-      &sub-results=[&]
+      &sub-sections=[&]
     ] |
       assertions:should-be [
         &total=1
@@ -41,11 +41,11 @@ raw:suite 'Stats' { |test~|
   }
 
   test 'From single failed test' {
-    stats:from-describe-result [
+    stats:from-section [
       &test-results=[
         &Ciop=$failed-test
       ]
-      &sub-results=[&]
+      &sub-sections=[&]
     ] |
       assertions:should-be [
         &total=1
@@ -55,12 +55,12 @@ raw:suite 'Stats' { |test~|
   }
 
   test 'From both passed and failed test' {
-    stats:from-describe-result [
+    stats:from-section [
       &test-results=[
         &Cip=$passed-test
         &Ciop=$failed-test
       ]
-      &sub-results=[&]
+      &sub-sections=[&]
     ] |
       assertions:should-be [
         &total=2
@@ -70,22 +70,22 @@ raw:suite 'Stats' { |test~|
   }
 
   test 'From multi-level tests' {
-    stats:from-describe-result [
+    stats:from-section [
       &test-results=[
         &Cip=$passed-test
         &Ciop=$failed-test
       ]
-      &sub-results=[
+      &sub-sections=[
         &Alpha=[
           &test-results=[
             &Yogi=$passed-test
           ]
-          &sub-results=[
+          &sub-sections=[
             &Gamma=[
               &test-results=[
                 &Ranger=$passed-test
               ]
-              &sub-results=[&]
+              &sub-sections=[&]
             ]
           ]
         ]
@@ -93,7 +93,7 @@ raw:suite 'Stats' { |test~|
           &test-results=[
             &Bubu=$failed-test
           ]
-          &sub-results=[&]
+          &sub-sections=[&]
         ]
       ]
     ] |
