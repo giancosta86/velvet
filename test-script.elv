@@ -62,8 +62,7 @@ fn run { |script-path|
 
   var namespace = (ns [
     &src~=$custom-src~
-    &describe~=$describe~
-    &it~=$it~
+    &'>>'~=$'>>~'
     &expect-throws~=$exception:expect-throws~
     &fail-test~=$assertions:fail-test~
     &should-be~=$assertions:should-be~
