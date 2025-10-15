@@ -2,19 +2,19 @@ use ./utils/diff
 use ./utils/string
 
 fn -print-expected-and-actual { |inputs|
-  var actual-description = $inputs[actual-description]
-  var actual = $inputs[actual]
-  var formatted-actual = (pprint $actual | slurp)
-
   var expected-description = $inputs[expected-description]
   var expected = $inputs[expected]
   var formatted-expected = (pprint $expected | slurp)
 
-  print (styled $actual-description': ' red bold)
-  echo $formatted-actual
+  var actual-description = $inputs[actual-description]
+  var actual = $inputs[actual]
+  var formatted-actual = (pprint $actual | slurp)
 
-  print (styled $expected-description': ' green bold)
+  print (styled $expected-description': ' red bold)
   echo $formatted-expected
+
+  print (styled $actual-description': ' green bold)
+  echo $formatted-actual
 
   echo 🔎 (styled DIFF: yellow bold)
   diff:diff $formatted-expected $formatted-actual | tail -n +3
