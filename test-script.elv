@@ -46,9 +46,7 @@ fn run { |script-path|
       set root-frames = [$@root-frames $this-frame]
     }
 
-    #TODO! Try to replace this with just tmp!
-    set current-frame = $this-frame
-    defer { set current-frame = $parent-frame }
+    tmp current-frame = $this-frame
 
     var block-result = (command:capture $block)
 
