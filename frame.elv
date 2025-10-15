@@ -1,6 +1,31 @@
-fn create { |title|
+fn create { |source-file-path title|
   var block-result = $nil
   var sub-frames = []
+
+  fn inject-script-path-in-exception-log { |test-result|
+    var exception-log = $test-result[exception-log]
+
+    if (not $exception-log) {
+      put $test-result
+      return
+    }
+
+    var lines = [(put $exception-log | to-lines)]
+
+    var frame-stack-lines = $lines[..-1]
+
+    var eval-line = $lines[-1]
+
+    var updated-eval-line = (
+      re:replace '\[eval\s+\d+\]:(\d+?):(\d+).*?:' $source-file-path':$1:$2:' $eval-line
+    )
+
+    var updated-exception-log = (
+      str:join "\n" [$@frame-stack-lines $updated-eval-line]
+    )
+
+    assoc $test-result exception-log $updated-exception-log
+  }
 
   fn set-block-result { |value|
     if $block-result {
@@ -64,9 +89,10 @@ fn create { |title|
       } else {
         var updated-test-result = (
           if (has-key $tests $sub-title) {
-            put test-result:create-for-duplicated
+            test-result:create-for-duplicated
           } else {
-            put test-result:from-block-result $block-result
+            test-result:from-block-result $source-file-path $block-result |
+              inject-script-path-in-exception-log (all)
           }
         )
 
