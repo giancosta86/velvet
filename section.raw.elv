@@ -5,6 +5,208 @@ use ./section
 use ./utils/raw
 use ./test-result
 
+raw:suite 'Section detection' { |test~|
+  test 'Applied to test result' {
+    section:is [
+      &output=""
+      &exception-log=$nil
+    ] |
+      assertions:should-be $false
+  }
+
+  test 'Applied to section' {
+    section:is [
+      &test-results=[&]
+      &sub-sections=[&]
+    ] |
+      assertions:should-be $true
+  }
+}
+
+raw:suite 'Section - Recursive test result mapping' { |test~|
+  fn add-asterisk-to-output { |test-title test|
+    put [$test-title (assoc $test output $test[output]'*')]
+  }
+
+  test 'With empty section' {
+    var empty-section = [
+      &test-results=[&]
+      &sub-sections=[&]
+    ]
+
+    section:recursive-map-test-results $empty-section $add-asterisk-to-output~ |
+      assertions:should-be $empty-section
+  }
+
+  test 'With single root test' {
+    var initial-section = [
+      &test-results=[
+        &alpha=[
+          &output='Cip'
+          &exception-log=$nil
+        ]
+      ]
+      &sub-sections=[&]
+    ]
+
+    var expected-section = [
+      &test-results=[
+        &alpha=[
+          &output='Cip*'
+          &exception-log=$nil
+        ]
+      ]
+      &sub-sections=[&]
+    ]
+
+    section:recursive-map-test-results $initial-section $add-asterisk-to-output~ |
+      assertions:should-be $expected-section
+  }
+
+  test 'With two root tests' {
+    var initial-section = [
+      &test-results=[
+        &alpha=[
+          &output='Cip'
+          &exception-log=$nil
+        ]
+        &beta=[
+          &output='Ciop'
+          &exception-log=$nil
+        ]
+      ]
+
+      &sub-sections=[&]
+    ]
+
+    var expected-section = [
+      &test-results=[
+        &alpha=[
+          &output='Cip*'
+          &exception-log=$nil
+        ]
+        &beta=[
+          &output='Ciop*'
+          &exception-log=$nil
+        ]
+      ]
+
+      &sub-sections=[&]
+    ]
+
+    section:recursive-map-test-results $initial-section $add-asterisk-to-output~ |
+      assertions:should-be $expected-section
+  }
+
+  test 'With single test in sub-section' {
+    var initial-section = [
+      &test-results=[&]
+      &sub-sections=[
+        &alpha=[
+          &test-results=[
+            &beta=[
+              &output='Yogi'
+              &exception-log=$nil
+            ]
+          ]
+          &sub-sections=[&]
+        ]
+      ]
+    ]
+
+    var expected-section = [
+      &test-results=[&]
+      &sub-sections=[
+        &alpha=[
+          &test-results=[
+            &beta=[
+              &output='Yogi*'
+              &exception-log=$nil
+            ]
+          ]
+          &sub-sections=[&]
+        ]
+      ]
+    ]
+
+    section:recursive-map-test-results $initial-section $add-asterisk-to-output~ |
+      assertions:should-be $expected-section
+  }
+
+  test 'With tests at different levels' {
+    var initial-section = [
+      &test-results=[
+        &alpha=[
+          &output='Alpha'
+          &exception-log=$nil
+        ]
+        &beta=[
+          &output='Beta'
+          &exception-log=$nil
+        ]
+      ]
+      &sub-sections=[
+        &gamma=[
+          &test-results=[
+            &delta=[
+              &output='Delta'
+              &exception-log=$nil
+            ]
+          ]
+          &sub-sections=[
+            &epsilon=[
+              &test-results=[
+                &zeta=[
+                  &output='Zeta'
+                  &exception-log=$nil
+                ]
+              ]
+              &sub-sections=[&]
+            ]
+          ]
+        ]
+      ]
+    ]
+
+    var expected-section = [
+      &test-results=[
+        &alpha=[
+          &output='Alpha*'
+          &exception-log=$nil
+        ]
+        &beta=[
+          &output='Beta*'
+          &exception-log=$nil
+        ]
+      ]
+      &sub-sections=[
+        &gamma=[
+          &test-results=[
+            &delta=[
+              &output='Delta*'
+              &exception-log=$nil
+            ]
+          ]
+          &sub-sections=[
+            &epsilon=[
+              &test-results=[
+                &zeta=[
+                  &output='Zeta*'
+                  &exception-log=$nil
+                ]
+              ]
+              &sub-sections=[&]
+            ]
+          ]
+        ]
+      ]
+    ]
+
+    section:recursive-map-test-results $initial-section $add-asterisk-to-output~ |
+      assertions:should-be $expected-section
+  }
+}
+
 raw:suite 'Section simplification' { |test~|
   test 'On empty section' {
     var source = [

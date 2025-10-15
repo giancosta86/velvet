@@ -1,23 +1,24 @@
 use ./test-result
 use ./utils/map
 
-fn simplify { |section|
-  var simplified-test-results = (
-    map:filter-map $section[test-results] { |test-title test-result|
-      put [$test-title (test-result:simplify $test-result)]
-    }
-  )
+fn is { |artifact|
+  has-key $artifact sub-sections
+}
 
-  var simplified-sub-sections = (
-    map:filter-map $section[sub-sections] { |sub-section-title sub-section|
-      put [$sub-section-title (simplify $sub-section)]
-    }
-  )
-
+fn recursive-map-test-results { |section test-mapper|
   put [
-    &test-results=$simplified-test-results
-    &sub-sections=$simplified-sub-sections
+    &test-results=(map:filter-map $section[test-results] $test-mapper)
+
+    &sub-sections=(map:filter-map $section[sub-sections] { |section-title section|
+      put [$section-title (recursive-map-test-results $section $test-mapper)]
+    })
   ]
+}
+
+fn simplify { |section|
+  recursive-map-test-results $section { |test-title test-result|
+    put [$test-title (test-result:simplify $test-result)]
+  }
 }
 
 var -merge-test-results~
