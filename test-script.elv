@@ -13,19 +13,7 @@ fn run { |script-path|
   var current-frame = $nil
   var root-frames = []
 
-  fn update-exception-log { |exception-log|
-    var lines = [(put $exception-log | to-lines)]
 
-    var script-stack-lines = $lines[..-1]
-
-    var eval-line = $lines[-1]
-
-    var updated-eval-line = (
-      re:replace '\[eval\s+\d+\]:(\d+?):(\d+).*?:' $abs-script-path':$1:$2:' $eval-line
-    )
-
-    str:join "\n" [$@script-stack-lines $updated-eval-line]
-  }
 
   fn custom-src {
     put [

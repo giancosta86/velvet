@@ -3,7 +3,7 @@ use ./outcomes
 use ./utils/command
 use ./utils/exception
 
-fn -remove-clockwork-from-exception-log { |exception|
+fn -get-exception-log-without-clockwork { |exception|
   show $exception |
     each { |line|
       if (
@@ -29,7 +29,7 @@ fn from-capture-result { |capture-result|
     set exception-log = $nil
   } else {
     set outcome = $outcomes:failed
-    set exception-log = (-remove-clockwork-from-exception-log $capture-result[status])
+    set exception-log = (-get-exception-log-without-clockwork $capture-result[status])
   }
 
   put [
