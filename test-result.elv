@@ -3,6 +3,10 @@ use ./outcomes
 use ./utils/command
 use ./utils/exception
 
+fn is { |artifact|
+  has-key $artifact output
+}
+
 fn -get-exception-log-without-clockwork { |exception|
   show $exception |
     each { |line|
