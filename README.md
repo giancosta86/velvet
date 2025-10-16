@@ -1,6 +1,6 @@
 # velvet
 
-_Smooth testing in the Elvish shell_
+_Smooth, functional testing in the Elvish shell_
 
 ## Installation
 
