@@ -11,7 +11,7 @@ raw:suite 'Diff' { |test~|
     } |
       eq (all) [
         &output=''
-        &status=$ok
+        &exception=$nil
       ] |
       assertion:assert (all)
   }
@@ -32,7 +32,7 @@ raw:suite 'Diff' { |test~|
     str:contains $command-result[output] +Beta |
       assertion:assert (all)
 
-    eq $command-result[status] $ok |
+    eq $command-result[exception] $nil |
       assertion:assert (all)
   }
 }

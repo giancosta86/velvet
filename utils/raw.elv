@@ -5,9 +5,9 @@ fn -test { |test-title test-block|
 
   var capture-result = (command:capture $test-block)
 
-  if (not-eq $capture-result[status] $ok) {
+  if (not-eq $capture-result[exception] $nil) {
     echo $capture-result[output]
-    fail $capture-result[status]
+    fail $capture-result[exception]
   }
 }
 

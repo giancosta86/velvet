@@ -3,20 +3,20 @@ fn -bytes-as-string { |block|
 }
 
 fn capture { |block|
-  var status = $ok
+  var exception = $nil
 
   var output = (
     -bytes-as-string {
       try {
         $block
       } catch e {
-        set status = $e
+        set exception = $e
       }
     }
   )
 
   put [
-    &status=$status
     &output=$output
+    &exception=$exception
   ]
 }

@@ -12,7 +12,7 @@ echo ⚛ Command capturing
   } |
     eq (all) [
       &output=Cip
-      &status=$ok
+      &exception=$nil
     ] |
     assertion:assert (all)
 }
@@ -25,7 +25,7 @@ echo ⚛ Command capturing
   } |
     eq (all) [
       &output=Ciop
-      &status=$ok
+      &exception=$nil
     ] |
     assertion:assert (all)
 }
@@ -39,7 +39,7 @@ echo ⚛ Command capturing
   } |
     eq (all) [
       &output="Cip\nCiop\n"
-      &status=$ok
+      &exception=$nil
     ] |
     assertion:assert (all)
 }
@@ -55,7 +55,7 @@ echo ⚛ Command capturing
   eq $result[output] Cip |
     assertion:assert (all)
 
-  exception:get-fail-message $result[status] |
+  exception:get-fail-message $result[exception] |
     eq (all) DODO |
     assertion:assert (all)
 }
@@ -71,7 +71,7 @@ echo ⚛ Command capturing
   eq $result[output] Ciop |
     assertion:assert (all)
 
-  exception:get-fail-message $result[status] |
+  exception:get-fail-message $result[exception] |
     eq (all) DODO |
     assertion:assert (all)
 }
@@ -88,7 +88,7 @@ echo ⚛ Command capturing
   eq $result[output] "Cip\nCiop\n" |
     assertion:assert (all)
 
-  exception:get-fail-message $result[status] |
+  exception:get-fail-message $result[exception] |
     eq (all) DODO |
     assertion:assert (all)
 }

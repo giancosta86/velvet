@@ -22,7 +22,7 @@ echo ⚛ Raw testing
     eq $command-result[output] (all) |
     assertion:assert (all)
 
-  eq $command-result[status] $ok |
+  eq $command-result[exception] $nil |
     assertion:assert (all)
 }
 
@@ -45,7 +45,7 @@ echo ⚛ Raw testing
     eq $command-result[output] (all) |
     assertion:assert (all)
 
-  exception:get-fail-message $command-result[status] |
+  exception:get-fail-message $command-result[exception] |
     eq (all) DODO |
     assertion:assert (all)
 }
@@ -73,7 +73,7 @@ echo ⚛ Raw testing
     eq $command-result[output] (all) |
     assertion:assert (all)
 
-  eq $command-result[status] $ok |
+  eq $command-result[exception] $nil |
     assertion:assert (all)
 }
 
@@ -109,7 +109,7 @@ echo ⚛ Raw testing
     eq $command-result[output] (all) |
     assertion:assert (all)
 
-  exception:get-fail-message $command-result[status] |
+  exception:get-fail-message $command-result[exception] |
     eq (all) DODO |
     assertion:assert (all)
 }
