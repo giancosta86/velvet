@@ -2,10 +2,6 @@ use str
 use ./outcomes
 use ./utils/exception-lines
 
-fn is { |artifact|
-  has-key $artifact output
-}
-
 fn simplify { |test-result|
   dissoc $test-result exception-log
 }

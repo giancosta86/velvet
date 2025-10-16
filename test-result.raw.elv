@@ -5,24 +5,6 @@ use ./utils/command
 use ./utils/raw
 use ./test-result
 
-raw:suite 'Test result detection' { |test~|
-  test 'Applied to test result' {
-    test-result:is [
-      &output=""
-      &exception-log=$nil
-    ] |
-      assertions:should-be $true
-  }
-
-  test 'Applied to section' {
-    test-result:is [
-      &test-results=[&]
-      &sub-sections=[&]
-    ] |
-      assertions:should-be $false
-  }
-}
-
 raw:suite 'Test result simplification' { |test~|
   test 'For passing test' {
     test-result:simplify [
