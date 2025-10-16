@@ -1,19 +1,14 @@
 use path
-use re
-use str
 use ./assertions
-use ./describe-context
-use ./test-result
+use ./frame
 use ./utils/exception
 
 fn run { |script-path|
   var abs-script-path = (path:abs $script-path)
   var script-code = (slurp < $script-path)
 
-  var current-frame = $nil
   var root-frames = []
-
-
+  var current-frame = $nil
 
   fn custom-src {
     put [
@@ -24,7 +19,7 @@ fn run { |script-path|
   }
 
   fn '>>' { |title block|
-    var this-frame = (frame:create $title)
+    var this-frame = (frame:create $abs-script-path $title)
 
     var parent-frame = $current-frame
 
@@ -37,11 +32,6 @@ fn run { |script-path|
     tmp current-frame = $this-frame
 
     var block-result = (command:capture $block)
-
-    var updated-block-result = (
-      update-exception-log $block-result[exception-log] |
-        assoc $block-result exception-log (all)
-    )
 
     $current-frame[set-block-result] $block-result
   }
@@ -58,5 +48,19 @@ fn run { |script-path|
   tmp pwd = (path:dir $abs-script-path)
   eval &ns=$namespace $script-code | only-bytes
 
-  $root-context[to-result]
+  all $root-frames | each { |root-frame|
+    var frame-result = (root-frame[to-result])
+
+    var is-section = (has-key $frame-result sub-sections)
+
+    if $is-section {
+      put $frame-result
+    } else {
+      put [
+        &test-results=[&$root-frame[title]=$frame-result]
+        &sub-sections=[]
+      ]
+    }
+  } |
+    section:merge
 }

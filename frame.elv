@@ -1,35 +1,15 @@
-fn create { |source-file-path title|
+use str
+use ./outcomes
+use ./section
+use ./utils/exception-lines
+
+fn create { |script-path title|
   var block-result = $nil
   var sub-frames = []
 
-  fn inject-script-path-in-exception-log { |test-result|
-    var exception-log = $test-result[exception-log]
-
-    if (not $exception-log) {
-      put $test-result
-      return
-    }
-
-    var lines = [(put $exception-log | to-lines)]
-
-    var frame-stack-lines = $lines[..-1]
-
-    var eval-line = $lines[-1]
-
-    var updated-eval-line = (
-      re:replace '\[eval\s+\d+\]:(\d+?):(\d+).*?:' $source-file-path':$1:$2:' $eval-line
-    )
-
-    var updated-exception-log = (
-      str:join "\n" [$@frame-stack-lines $updated-eval-line]
-    )
-
-    assoc $test-result exception-log $updated-exception-log
-  }
-
   fn set-block-result { |value|
     if $block-result {
-      fail 'Block result already set'
+      fail 'Block result already set in frame: '$title
     }
 
     set block-result = $value
@@ -39,60 +19,52 @@ fn create { |source-file-path title|
     set sub-frames = [$@sub-frames $sub-frame]
   }
 
-  fn get-sub-frames {
-    put $sub-frames
-  }
-
-  fn to-result {
-    if (not $block-result) {
-      fail 'Cannot convert to section with block result not set'
-    }
-
-    var test-results = [&]
-    var sub-sections = [&]
-
-    var no-sub-frames = (
-      count $sub-frames |
-        eq (all) 0
+  fn create-test-result { |exception-log|
+    var outcome = (
+      if $exception-log {
+        put $outcomes:failed
+      } else {
+        put $outcomes:passed
+      }
     )
 
-    var is-section = $no-sub-frames
+    put [
+      &output=$block-result[output]
+      &exception-log=$exception-log
+      &outcome=$outcome
+    ]
+  }
 
-    if $is-section {
-      put test-result:from-block-result $block-result
-      return
-    }
+  fn create-section {
+    var test-results = [&]
+    var sub-sections = [&]
 
     var failing-block-result = (not-eq $block-result[status] $ok) {
       fail $block-result[status]
     }
 
     all $sub-frames | each { |sub-frame|
-      var sub-result = ($sub-frame[to-result])
-
       var sub-title = $sub-frame[title]
 
-      var is-sub-result-section = (has-key $sub-result $sub-sections)
+      var sub-artifact = ($sub-frame[to-artifact])
 
-      if (section:is-section $sub-result) {
-        var updated-section = (
+      if (section:is $sub-artifact) {
+        var up-to-date-section = (
           if (has-key $sub-sections $sub-title) {
             var existing-section = $sub-sections[$sub-title]
-
-            section:merge $existing-section $sub-result
+            section:merge $existing-section $sub-artifact
           } else {
-            put $sub-result
+            put $sub-artifact
           }
         )
 
-        set sub-sections = (assoc $sub-sections $sub-title $updated-section)
+        set sub-sections = (assoc $sub-sections $sub-title $up-to-date-section)
       } else {
         var updated-test-result = (
-          if (has-key $tests $sub-title) {
+          if (has-key $test-results $sub-title) {
             test-result:create-for-duplicated
           } else {
-            test-result:from-block-result $source-file-path $block-result |
-              inject-script-path-in-exception-log (all)
+            put $sub-artifact
           }
         )
 
@@ -106,11 +78,40 @@ fn create { |source-file-path title|
     ]
   }
 
+  fn to-artifact {
+    if (not $block-result) {
+      fail 'Cannot obtain artifact when block result is not set, in frame: '$title
+    }
+
+    var exception-log = (
+      if $block-result[exception] {
+        show $block-result[exception] |
+          exception-lines:trim-clockwork-stack |
+          exception-lines:replace-bottom-eval $script-path |
+          str:join "\n"
+      } else {
+        put $nil
+      }
+    )
+
+    var has-sub-frames = (> (count $sub-frames) 0)
+
+    if $has-sub-frames {
+      if $exception-log {
+        echo $exception-log >&2
+        exit 1
+      }
+
+      create-section
+    } else {
+      create-test-result $exception-log
+    }
+  }
+
   put [
     &title=$title
     &set-block-result=$set-block-result~
     &add-sub-frame=$add-sub-frame~
-    &get-sub-frames=$get-sub-frames~
-    &to-section=$to-section~
+    &to-artifact=$to-artifact~
   ]
 }
