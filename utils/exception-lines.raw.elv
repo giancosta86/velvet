@@ -50,8 +50,114 @@ raw:suite 'Exception lines - trimming clockwork stack' { |test~|
 raw:suite 'Exception lines - replacing eval' { |test~|
   test 'With no lines' {
     all [] |
-      exception-lines:replace-bottom-eval '<CIOP>' |
+      exception-lines:replace-bottom-eval ciop.elv |
       eq [(all)] [] |
+      assertion:assert (all)
+  }
+
+  test 'With no eval' {
+    var lines = [
+      Alpha
+      Beta
+      Gamma
+    ]
+
+    all $lines |
+      exception-lines:replace-bottom-eval ciop.elv |
+      eq [(all)] $lines |
+      assertion:assert (all)
+  }
+
+  test 'With single bottom eval' {
+    all [
+      Alpha
+      Beta
+      '[eval 123]:45:8-11: Fake error'
+    ] |
+      exception-lines:replace-bottom-eval ciop.elv |
+      eq [(all)] [
+        Alpha
+        Beta
+        'ciop.elv:45:8-11: Fake error'
+      ] |
+      assertion:assert (all)
+  }
+
+  test 'With multiple instances of eval' {
+    all [
+      Alpha
+      Beta
+      '[eval 456]:123:7: Yet another fake error'
+      '[eval 123]:80:3:4-67: Another fake error'
+      Gamma
+      '[eval 123]:45:8-11: Fake error'
+      Delta
+    ] |
+      exception-lines:replace-bottom-eval ciop.elv |
+      eq [(all)] [
+        Alpha
+        Beta
+        '[eval 456]:123:7: Yet another fake error'
+        'ciop.elv:80:3:4-67: Another fake error'
+        Gamma
+        'ciop.elv:45:8-11: Fake error'
+        Delta
+      ] |
+      assertion:assert (all)
+  }
+
+  test 'With eval not at the beginning of the line' {
+    all [
+      Alpha
+      Beta
+      '[eval 456]:123:7: Yet another fake error, but not in [eval 123]'
+      '[eval 123]:80:3:4-67: Another fake error'
+      Gamma
+      '[eval 123]:45:8-11: Fake error'
+      Delta
+    ] |
+      exception-lines:replace-bottom-eval ciop.elv |
+      eq [(all)] [
+        Alpha
+        Beta
+        '[eval 456]:123:7: Yet another fake error, but not in [eval 123]'
+        'ciop.elv:80:3:4-67: Another fake error'
+        Gamma
+        'ciop.elv:45:8-11: Fake error'
+        Delta
+      ] |
+      assertion:assert (all)
+  }
+
+  test 'With bottom eval induced by command capturing' {
+    var capture-result = (command:capture {
+      var code = '
+        fn g {
+          fail DODO
+        }
+
+        fn f {
+          g
+        }
+
+        f
+      '
+
+      eval $code
+    })
+
+    show $capture-result[exception] >&2
+
+    show $capture-result[exception] |
+      exception-lines:trim-clockwork-stack |
+      take 4 |
+      exception-lines:replace-bottom-eval ciop.elv |
+      eq (all) [
+        'Exception: DODO'
+        '  ciop.elv:3:11-19:           fail DODO'
+        '  ciop.elv:7:11-11:           g'
+        '  ciop.elv:10:9-9:         f'
+      ] |
       assertion:assert (all)
   }
 }

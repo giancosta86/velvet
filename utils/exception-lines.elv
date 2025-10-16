@@ -17,23 +17,27 @@ fn trim-clockwork-stack {
 fn replace-bottom-eval { |replacement|
   var lines = [(all)]
 
-  if (
-    count $lines |
-      eq (all) 0
-  ) {
-    put []
-    return
+  var last-eval = $nil
+
+  var generic-eval-pattern = '^(\[eval\s+\d+\]):\d+?:\d+.*?:'
+
+  all $lines | each { |line|
+    var find-result = [(re:find $generic-eval-pattern $line)]
+
+    if (== (count $find-result) 0) {
+      continue
+    }
+
+    set last-eval = $find-result[0][groups][1][text]
   }
 
-  var frame-stack-lines = $lines[..-1]
+  if (not $last-eval) {
+    all $lines
+  } else {
+    var specific-eval-pattern = '^'(re:quote $last-eval)
 
-  var eval-line = $lines[-1]
-
-  var updated-eval-line = (
-    re:replace '\[eval\s+\d+\]:(\d+?):(\d+).*?:' $replacement':$1:$2:' $eval-line
-  )
-
-  all $frame-stack-lines
-
-  put $updated-eval-line
+    all $lines | each { |line|
+      re:replace $specific-eval-pattern $replacement $line
+    }
+  }
 }
