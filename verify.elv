@@ -18,6 +18,7 @@ all [
   string
   diff
   seq
+  exception-lines
 ] | each { |raw-script-basename|
   run-script utils/$raw-script-basename'.raw.elv'
 }

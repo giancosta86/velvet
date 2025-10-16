@@ -19,7 +19,7 @@ fn replace-bottom-eval { |replacement|
 
   var last-eval = $nil
 
-  var generic-eval-pattern = '^(\[eval\s+\d+\]):\d+?:\d+.*?:'
+  var generic-eval-pattern = '^\s*(\[eval\s+\d+\]):\d+?:\d+.*?:'
 
   all $lines | each { |line|
     var find-result = [(re:find $generic-eval-pattern $line)]
@@ -34,7 +34,7 @@ fn replace-bottom-eval { |replacement|
   if (not $last-eval) {
     all $lines
   } else {
-    var specific-eval-pattern = '^'(re:quote $last-eval)
+    var specific-eval-pattern = '^\s*'(re:quote $last-eval)
 
     all $lines | each { |line|
       re:replace $specific-eval-pattern $replacement $line
