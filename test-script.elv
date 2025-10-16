@@ -1,6 +1,7 @@
 use path
 use ./assertions
-use ./frame
+use ./section
+use ./test-script-frame
 use ./utils/exception
 
 fn run { |script-path|
@@ -19,7 +20,7 @@ fn run { |script-path|
   }
 
   fn '>>' { |title block|
-    var this-frame = (frame:create $abs-script-path $title)
+    var this-frame = (test-script-frame:create $abs-script-path $title)
 
     var parent-frame = $current-frame
 
@@ -31,9 +32,27 @@ fn run { |script-path|
 
     tmp current-frame = $this-frame
 
-    var block-result = (command:capture $block)
+    $current-frame[run-block] $block
+  }
 
-    $current-frame[set-block-result] $block-result
+  fn get-section {
+    all $root-frames | each { |root-frame|
+      var root-artifact = (root-frame[to-artifact])
+
+      if (section:is $root-artifact) {
+        put $root-artifact
+      } else {
+        var frame-title = $root-frame[title]
+
+        put [
+          &test-results=[
+            &$frame-title=$frame-result
+          ]
+          &sub-sections=[&]
+        ]
+      }
+    } |
+      section:merge
   }
 
   var namespace = (ns [
@@ -48,19 +67,5 @@ fn run { |script-path|
   tmp pwd = (path:dir $abs-script-path)
   eval &ns=$namespace $script-code | only-bytes
 
-  all $root-frames | each { |root-frame|
-    var frame-result = (root-frame[to-result])
-
-    var is-section = (has-key $frame-result sub-sections)
-
-    if $is-section {
-      put $frame-result
-    } else {
-      put [
-        &test-results=[&$root-frame[title]=$frame-result]
-        &sub-sections=[]
-      ]
-    }
-  } |
-    section:merge
+  get-section
 }

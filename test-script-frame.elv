@@ -7,12 +7,12 @@ fn create { |script-path title|
   var block-result = $nil
   var sub-frames = []
 
-  fn set-block-result { |value|
+  fn run-block { |block|
     if $block-result {
       fail 'Block result already set in frame: '$title
     }
 
-    set block-result = $value
+    set block-result = (command:capture $block)
   }
 
   fn add-sub-frame { |sub-frame|
@@ -110,7 +110,7 @@ fn create { |script-path title|
 
   put [
     &title=$title
-    &set-block-result=$set-block-result~
+    &run-block=$run-block~
     &add-sub-frame=$add-sub-frame~
     &to-artifact=$to-artifact~
   ]
