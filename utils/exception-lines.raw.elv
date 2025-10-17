@@ -17,7 +17,7 @@ raw:suite 'Exception lines - trimming clockwork stack' { |test~|
       Alpha
       Beta
       Gamma
-      giancosta86/velvet/utils/command.elv:11:9-14
+      giancosta86$exception-lines:-first-clockwork-line-mark
       CLOCKWORK 1
       CLOCKWORK 2
     ] |
@@ -45,7 +45,6 @@ raw:suite 'Exception lines - trimming clockwork stack' { |test~|
       assertion:assert (all)
   }
 }
-
 
 raw:suite 'Exception lines - replacing eval' { |test~|
   test 'With no lines' {
@@ -83,7 +82,7 @@ raw:suite 'Exception lines - replacing eval' { |test~|
       assertion:assert (all)
   }
 
-  test 'With multiple instances of bottom eval and different initial space' {
+  test 'With different initial spaces for same eval' {
     all [
       Alpha
       Beta
@@ -125,7 +124,7 @@ raw:suite 'Exception lines - replacing eval' { |test~|
       assertion:assert (all)
   }
 
-  test 'With eval not at the beginning of the line' {
+  test 'With eval occurrences not at the beginning of the line' {
     all [
       Alpha
       Beta
@@ -148,7 +147,7 @@ raw:suite 'Exception lines - replacing eval' { |test~|
       assertion:assert (all)
   }
 
-  test 'With bottom eval induced by command capturing' {
+  test 'With bottom eval within command capturing' {
     var capture-result = (command:capture {
       var code = '
         fn beta {
@@ -168,7 +167,6 @@ raw:suite 'Exception lines - replacing eval' { |test~|
     var exception-log = (
       show $capture-result[exception] |
         exception-lines:trim-clockwork-stack |
-        take 4 |
         exception-lines:replace-bottom-eval ciop.elv |
         str:join "\n"
     )

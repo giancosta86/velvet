@@ -1,13 +1,13 @@
 use re
 use str
 
-fn trim-clockwork-stack {
-  var first-clockwork-line-mark = '/velvet/utils/command.elv:11:9-14'
+var -first-clockwork-line-mark = '/velvet/utils/command.elv:11:9-14'
 
+fn trim-clockwork-stack {
   each { |line|
     if (
       str:trim-space $line |
-        str:contains (all) $first-clockwork-line-mark
+        str:contains (all) $-first-clockwork-line-mark
     ) {
       break
     }
