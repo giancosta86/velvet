@@ -1,8 +1,8 @@
 use path
 use str
 use ./assertions
-use ./describe-result
 use ./outcomes
+use ./section
 use ./tests/test-scripts
 use ./utils/raw
 
@@ -21,7 +21,7 @@ raw:suite 'Running in sandbox' { |test~|
     run-test-sandbox single-ok |
       assertions:should-be [
         &test-results=[&]
-        &sub-results=[
+        &sub-sections=[
           &'My description'=[
             &test-results=[
               &'should work'=[
@@ -30,20 +30,20 @@ raw:suite 'Running in sandbox' { |test~|
                 &exception-log=$nil
               ]
             ]
-            &sub-results=[&]
+            &sub-sections=[&]
           ]
         ]
       ]
   }
 
   test 'Failing test' {
-    var describe-result = (run-test-sandbox single-failing)
+    var section = (run-test-sandbox single-failing)
 
-    put $describe-result |
-      describe-result:simplify (all) |
+    put $section |
+      section:simplify (all) |
       assertions:should-be [
         &test-results=[&]
-        &sub-results=[
+        &sub-sections=[
           &'My description'=[
             &test-results=[
               &'should fail'=[
@@ -51,12 +51,12 @@ raw:suite 'Running in sandbox' { |test~|
                 &output="Wooo!\nWooo2!\n"
               ]
             ]
-            &sub-results=[&]
+            &sub-sections=[&]
           ]
         ]
       ]
 
-    var exception-log = $describe-result[sub-results]['My description'][test-results]['should fail'][exception-log]
+    var exception-log = $section[sub-sections]['My description'][test-results]['should fail'][exception-log]
 
     put $exception-log |
       assertions:should-not-be &strict $nil

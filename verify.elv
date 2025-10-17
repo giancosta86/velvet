@@ -31,7 +31,7 @@ all [
   reporting/cli
   test-script-frame
   test-script
-  # sandbox
+  sandbox
   # aggregator
   # main
 ] | each { |raw-script-basename|

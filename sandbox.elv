@@ -1,10 +1,10 @@
-use ./describe-result
+use ./section
 use ./test-script
 
 var test-script-paths = $args
 
 all $test-script-paths | each { |test-script-path|
-  test-script:run $test-script-path | only-values
+  test-script:run $test-script-path
 } |
-  describe-result:merge |
+  section:merge |
   to-json
