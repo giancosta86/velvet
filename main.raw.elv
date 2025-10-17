@@ -1,9 +1,9 @@
 use path
 use ./assertions
-use ./describe-result
 use ./main
 use ./outcomes
-use ./tests/aggregator/results
+use ./section
+use ./tests/aggregator/sections
 use ./tests/test-scripts
 use ./utils/raw
 
@@ -72,17 +72,17 @@ raw:suite 'Top-level test script execution' { |test~|
   }
 
   fn create-reporter-spy {
-    var describe-result
+    var section
     var stats
 
-    var reporter = { |actual-describe-result actual-stats|
-      set describe-result = $actual-describe-result
+    var reporter = { |actual-section actual-stats|
+      set section = $actual-section
       set stats = $actual-stats
     }
 
     put [
       &reporter=$reporter
-      &get-describe-result={ put $describe-result }
+      &get-section={ put $section }
       &get-stats={ put $stats }
     ]
   }
@@ -92,10 +92,10 @@ raw:suite 'Top-level test script execution' { |test~|
 
     main:velvet &test-scripts=[] &reporters=[$spy[reporter]]
 
-    $spy[get-describe-result] |
+    $spy[get-section] |
       assertions:should-be [
         &test-results=[&]
-        &sub-results=[&]
+        &sub-sections=[&]
       ]
 
     $spy[get-stats] |
@@ -111,8 +111,8 @@ raw:suite 'Top-level test script execution' { |test~|
 
     main:velvet &test-scripts=[(get-test-script alpha)] &reporters=[$spy[reporter]]
 
-    $spy[get-describe-result] |
-      assertions:should-be $results:alpha
+    $spy[get-section] |
+      assertions:should-be $sections:alpha
 
     $spy[get-stats] |
       assertions:should-be [
@@ -127,8 +127,8 @@ raw:suite 'Top-level test script execution' { |test~|
 
     main:velvet &test-scripts=[(get-test-script alpha) (get-test-script beta)] &reporters=[$spy[reporter]]
 
-    $spy[get-describe-result] |
-      assertions:should-be $results:alpha-beta
+    $spy[get-section] |
+      assertions:should-be $sections:alpha-beta
 
     $spy[get-stats] |
       assertions:should-be [
@@ -143,8 +143,8 @@ raw:suite 'Top-level test script execution' { |test~|
       main:velvet &test-scripts=[(get-test-script alpha) (get-test-script beta)] &reporters=[]
     )
 
-    put $run-result[describe-result] |
-      assertions:should-be $results:alpha-beta
+    put $run-result[section] |
+      assertions:should-be $sections:alpha-beta
 
     put $run-result[stats] |
       assertions:should-be [
@@ -161,9 +161,9 @@ raw:suite 'Top-level test script execution' { |test~|
 
     main:velvet &reporters=[$spy[reporter]]
 
-    $spy[get-describe-result] |
-      describe-result:simplify (all) |
-      assertions:should-be $results:alpha-beta-gamma
+    $spy[get-section] |
+      section:simplify (all) |
+      assertions:should-be $sections:alpha-beta-gamma
 
     $spy[get-stats] |
       assertions:should-be [

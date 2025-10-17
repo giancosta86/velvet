@@ -16,15 +16,15 @@ fn has-test-scripts {
 fn velvet { |&test-scripts=$nil &reporters=[$cli:display~] &num-workers=$aggregator:DEFAULT-NUM-WORKERS|
   var actual-test-scripts = (coalesce $test-scripts [(get-test-scripts)])
 
-  var describe-result = (aggregator:run-test-scripts &num-workers=$num-workers $@actual-test-scripts)
-  var stats = (stats:from-describe-result $describe-result)
+  var section = (aggregator:run-test-scripts &num-workers=$num-workers $@actual-test-scripts)
+  var stats = (stats:from-section $section)
 
   all $reporters | each { |reporter|
-    $reporter $describe-result $stats | only-bytes
+    $reporter $section $stats | only-bytes
   }
 
   put [
-    &describe-result=$describe-result
+    &section=$section
     &stats=$stats
   ]
 
