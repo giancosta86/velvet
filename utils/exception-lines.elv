@@ -2,10 +2,12 @@ use re
 use str
 
 fn trim-clockwork-stack {
+  var first-clockwork-line-mark = '/velvet/utils/command.elv:11:9-14'
+
   each { |line|
     if (
       str:trim-space $line |
-        str:contains (all) '/velvet/utils/command.elv:11:9-14'
+        str:contains (all) $first-clockwork-line-mark
     ) {
       break
     }
@@ -24,7 +26,7 @@ fn replace-bottom-eval { |replacement|
   all $lines | each { |line|
     var find-result = [(re:find $generic-eval-pattern $line)]
 
-    if (== (count $find-result) 0) {
+    if (eq $find-result []) {
       continue
     }
 
@@ -34,10 +36,10 @@ fn replace-bottom-eval { |replacement|
   if (not $last-eval) {
     all $lines
   } else {
-    var specific-eval-pattern = '^\s*'(re:quote $last-eval)
+    var specific-eval-pattern = '^(\s*)'(re:quote $last-eval)
 
     all $lines | each { |line|
-      re:replace $specific-eval-pattern $replacement $line
+      re:replace $specific-eval-pattern '${1}'$replacement $line
     }
   }
 }

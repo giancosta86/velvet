@@ -83,6 +83,25 @@ raw:suite 'Exception lines - replacing eval' { |test~|
       assertion:assert (all)
   }
 
+  test 'With multiple instances of bottom eval and different initial space' {
+    all [
+      Alpha
+      Beta
+      '[eval 123]:65:4-18: Alpha'
+      ' [eval 123]:23:7-13: Beta'
+      '  [eval 123]:45:8-11: Gamma'
+    ] |
+      exception-lines:replace-bottom-eval ciop.elv |
+      eq [(all)] [
+        Alpha
+        Beta
+        'ciop.elv:65:4-18: Alpha'
+        ' ciop.elv:23:7-13: Beta'
+        '  ciop.elv:45:8-11: Gamma'
+      ] |
+      assertion:assert (all)
+  }
+
   test 'With multiple instances of eval' {
     all [
       Alpha
