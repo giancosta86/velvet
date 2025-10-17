@@ -35,18 +35,23 @@ fn run { |script-path|
     $current-frame[run-block] $block
   }
 
-  fn get-section {
+  fn gather-section {
     all $root-frames | each { |root-frame|
-      var root-artifact = (root-frame[to-artifact])
+      var frame-title = $root-frame[title]
 
-      if (section:is $root-artifact) {
-        put $root-artifact
+      var frame-artifact = ($root-frame[to-artifact])
+
+      if (section:is $frame-artifact) {
+        put [
+          &test-results=[&]
+          &sub-sections=[
+            &$frame-title=$frame-artifact
+          ]
+        ]
       } else {
-        var frame-title = $root-frame[title]
-
         put [
           &test-results=[
-            &$frame-title=$frame-result
+            &$frame-title=$frame-artifact
           ]
           &sub-sections=[&]
         ]
@@ -67,5 +72,5 @@ fn run { |script-path|
   tmp pwd = (path:dir $abs-script-path)
   eval &ns=$namespace $script-code | only-bytes
 
-  get-section
+  gather-section
 }

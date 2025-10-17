@@ -24,8 +24,7 @@ use ../../utils/lang
 >> 'The provided functions' {
   >> 'should be available' {
     all [
-      $describe~
-      $it~
+      $'>>~'
       $expect-throws~
       $fail-test~
       $should-be~

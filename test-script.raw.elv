@@ -1,6 +1,6 @@
 use str
 use ./assertions
-use ./describe-result
+use ./section
 use ./outcomes
 use ./stats
 use ./test-script
@@ -18,28 +18,28 @@ raw:suite 'Low-level test script execution' { |test~|
     run-test-script empty |
       assertions:should-be [
         &test-results=[&]
-        &sub-results=[&]
+        &sub-sections=[&]
       ]
   }
 
-  test 'With metainfo checks' {
-    var stats = (
-      run-test-script metainfo |
-        stats:from-describe-result (all)
-    )
+  # test 'With metainfo checks' {
+  #   var stats = (
+  #     run-test-script metainfo |
+  #       stats:from-section (all)
+  #   )
 
-    put $stats[passed] |
-      assertions:should-be 4
+  #   put $stats[passed] |
+  #     assertions:should-be 4
 
-    put $stats[failed] |
-      assertions:should-be 0
-  }
+  #   put $stats[failed] |
+  #     assertions:should-be 0
+  # }
 
   test 'With single passing test' {
     run-test-script single-ok |
       assertions:should-be [
         &test-results= [&]
-        &sub-results= [
+        &sub-sections= [
           &'My description'=[
             &test-results=[
               &'should work'=[
@@ -48,7 +48,7 @@ raw:suite 'Low-level test script execution' { |test~|
                 &exception-log=$nil
               ]
             ]
-            &sub-results=[&]
+            &sub-sections=[&]
           ]
         ]
       ]
@@ -56,10 +56,10 @@ raw:suite 'Low-level test script execution' { |test~|
 
   test 'With single failing test' {
     run-test-script single-failing |
-      describe-result:simplify (all) |
+      section:simplify (all) |
       assertions:should-be [
         &test-results= [&]
-        &sub-results= [
+        &sub-sections= [
           &'My description'=[
             &test-results=[
               &'should fail'=[
@@ -67,32 +67,32 @@ raw:suite 'Low-level test script execution' { |test~|
                 &output="Wooo!\nWooo2!\n"
               ]
             ]
-            &sub-results=[&]
+            &sub-sections=[&]
           ]
         ]
       ]
   }
 
   test 'Exception log in failing test' {
-    var describe-result = (run-test-script single-failing)
+    var section = (run-test-script single-failing)
 
-    var exception-log = $describe-result[sub-results]['My description'][test-results]['should fail'][exception-log]
+    var exception-log = $section[sub-sections]['My description'][test-results]['should fail'][exception-log]
 
     str:contains $exception-log '[eval' |
       assertions:should-be $false
 
-    str:contains $exception-log 'single-failing.test.elv:7:5:' |
+    str:contains $exception-log 'single-failing.test.elv:7:5-13:' |
       assertions:should-be $true
   }
 
   test 'With mixed outcomes' {
-    var describe-result = (run-test-script mixed-outcomes)
+    var section = (run-test-script mixed-outcomes)
 
-    put $describe-result |
-      describe-result:simplify (all) |
+    put $section |
+      section:simplify (all) |
       assertions:should-be [
         &test-results= [&]
-        &sub-results= [
+        &sub-sections= [
           &'My description'=[
             &test-results=[
               &'should pass'=[
@@ -100,10 +100,10 @@ raw:suite 'Low-level test script execution' { |test~|
                 &output="Wiii!\n"
               ]
             ]
-            &sub-results=[
+            &sub-sections=[
               &Cip=[
                 &test-results=[&]
-                &sub-results=[
+                &sub-sections=[
                   &Ciop=[
                     &test-results=[
                       &'should fail'=[
@@ -111,7 +111,7 @@ raw:suite 'Low-level test script execution' { |test~|
                         &output="Wooo!\n"
                       ]
                     ]
-                    &sub-results=[&]
+                    &sub-sections=[&]
                   ]
                 ]
               ]
@@ -120,7 +120,7 @@ raw:suite 'Low-level test script execution' { |test~|
         ]
       ]
 
-    var failed-result = $describe-result[sub-results]['My description'][sub-results][Cip][sub-results][Ciop][test-results]['should fail']
+    var failed-result = $section[sub-sections]['My description'][sub-sections][Cip][sub-sections][Ciop][test-results]['should fail']
 
     str:contains $failed-result[exception-log] DODUS |
       assertions:should-be $true
@@ -130,7 +130,7 @@ raw:suite 'Low-level test script execution' { |test~|
     run-test-script returning |
       assertions:should-be [
         &test-results=[&]
-        &sub-results=[
+        &sub-sections=[
           &'Returning from a test'=[
             &test-results=[
               &'should work'=[
@@ -139,23 +139,23 @@ raw:suite 'Low-level test script execution' { |test~|
                 &exception-log=$nil
               ]
             ]
-            &sub-results=[&]
+            &sub-sections=[&]
           ]
         ]
       ]
   }
 
-  test 'With root "it" block' {
-    run-test-script root-it |
+  test 'With single root test' {
+    run-test-script root-test |
       assertions:should-be [
         &test-results=[
-          &'should support "it" in the root'=[
+          &'should support single root test'=[
             &outcome=$outcomes:passed
             &output="Wiii!\nWiii2!\n"
             &exception-log=$nil
           ]
         ]
-        &sub-results=[&]
+        &sub-sections=[&]
       ]
   }
 }

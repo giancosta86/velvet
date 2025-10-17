@@ -30,7 +30,7 @@ all [
   stats
   reporting/cli
   test-script-frame
-  # test-script
+  test-script
   # sandbox
   # aggregator
   # main

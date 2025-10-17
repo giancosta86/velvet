@@ -3,6 +3,7 @@ use ./outcomes
 use ./section
 use ./test-result
 use ./utils/command
+use ./utils/exception
 use ./utils/exception-lines
 
 fn create { |script-path title|
@@ -81,9 +82,13 @@ fn create { |script-path title|
       fail 'Cannot obtain artifact when block result is not set, in frame: '$title
     }
 
+    var exception = $block-result[exception]
+
     var exception-log = (
-      if (not-eq $block-result[exception] $nil) {
-        show $block-result[exception] |
+      if (
+        and (not-eq $exception $nil) (not (exception:is-return $exception))
+      ) {
+        show $exception |
           exception-lines:trim-clockwork-stack |
           exception-lines:replace-bottom-eval $script-path |
           str:join "\n"

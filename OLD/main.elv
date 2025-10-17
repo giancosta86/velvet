@@ -27,4 +27,6 @@ fn velvet { |&test-scripts=$nil &reporters=[$cli:display~] &num-workers=$aggrega
     &describe-result=$describe-result
     &stats=$stats
   ]
+
+  #TODO! Should I also run "exit 1" on failure in some cases? That would simplify pipelines
 }
