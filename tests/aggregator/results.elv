@@ -2,7 +2,7 @@ use ../../outcomes
 
 var alpha = [
   &test-results= [&]
-  &sub-results=[
+  &sub-sections=[
     &'In alpha'=[
       &test-results=[
         &'should work'=[
@@ -11,14 +11,14 @@ var alpha = [
           &exception-log=$nil
         ]
       ]
-      &sub-results=[&]
+      &sub-sections=[&]
     ]
   ]
 ]
 
 var alpha-beta = [
   &test-results= [&]
-  &sub-results=[
+  &sub-sections=[
     &'In alpha'=[
       &test-results=[
         &'should work'=[
@@ -27,10 +27,10 @@ var alpha-beta = [
           &exception-log=$nil
         ]
       ]
-      &sub-results=[
+      &sub-sections=[
         &'In sub-level'=[
           &test-results=[&]
-          &sub-results=[
+          &sub-sections=[
             &'In sub-sub-level'=[
               &test-results=[
                 &'should be ok'=[
@@ -39,7 +39,7 @@ var alpha-beta = [
                   &exception-log=$nil
                 ]
               ]
-              &sub-results=[&]
+              &sub-sections=[&]
             ]
           ]
         ]
@@ -47,7 +47,7 @@ var alpha-beta = [
     ]
 
     &'In beta'=[
-      &sub-results=[&]
+      &sub-sections=[&]
       &test-results=[
         &'is duplicated in third source file'=[
           &output="Beta 2\n"
@@ -61,7 +61,7 @@ var alpha-beta = [
 
 var alpha-beta-gamma = [
   &test-results=[&]
-  &sub-results=[
+  &sub-sections=[
     &'In alpha'=[
       &test-results=[
         &'should work'=[
@@ -73,7 +73,7 @@ var alpha-beta-gamma = [
           &output="Alpha 5\n"
         ]
       ]
-      &sub-results=[
+      &sub-sections=[
         &'In sub-level'=[
           &test-results=[
             &'should fail'=[
@@ -81,7 +81,7 @@ var alpha-beta-gamma = [
               &output="Cip\nCiop\n"
             ]
           ]
-          &sub-results=[
+          &sub-sections=[
             &'In sub-sub-level'=[
               &test-results=[
                 &'should be ok'=[
@@ -89,7 +89,7 @@ var alpha-beta-gamma = [
                   &output="Alpha X\n"
                 ]
               ]
-              &sub-results=[&]
+              &sub-sections=[&]
             ]
           ]
         ]
@@ -103,7 +103,7 @@ var alpha-beta-gamma = [
           &output=""
         ]
       ]
-      &sub-results=[&]
+      &sub-sections=[&]
     ]
 
     &'In gamma'=[
@@ -113,7 +113,7 @@ var alpha-beta-gamma = [
           &output="Gamma 3\n"
         ]
       ]
-      &sub-results=[&]
+      &sub-sections=[&]
     ]
   ]
 ]

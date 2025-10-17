@@ -1,6 +1,6 @@
 use ./aggregator
 use ./assertions
-use ./describe-result
+use ./section
 use ./tests/aggregator/results
 use ./tests/test-scripts
 use ./utils/raw
@@ -14,7 +14,7 @@ raw:suite 'Aggregator' { |test~|
     aggregator:run-test-scripts |
       assertions:should-be [
         &test-results=[&]
-        &sub-results=[&]
+        &sub-sections=[&]
       ]
   }
 
@@ -30,7 +30,7 @@ raw:suite 'Aggregator' { |test~|
 
   test 'Running 3 scripts' {
     aggregator:run-test-scripts (get-test-script alpha) (get-test-script beta) (get-test-script gamma) |
-      describe-result:simplify (all) |
+      section:simplify (all) |
       assertions:should-be $results:alpha-beta-gamma
   }
 
@@ -39,7 +39,7 @@ raw:suite 'Aggregator' { |test~|
 
     range 1 4 | each { |num-workers|
       aggregator:run-test-scripts &num-workers=$num-workers $@script-paths |
-        describe-result:simplify (all) |
+        section:simplify (all) |
         assertions:should-be $results:alpha-beta-gamma
     }
   }

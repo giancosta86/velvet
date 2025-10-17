@@ -32,7 +32,7 @@ all [
   test-script-frame
   test-script
   sandbox
-  # aggregator
+  aggregator
   # main
 ] | each { |raw-script-basename|
     run-script $raw-script-basename'.raw.elv'

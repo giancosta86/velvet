@@ -1,5 +1,5 @@
 use path
-use ./describe-result
+use ./section
 use ./utils/seq
 
 var DEFAULT-NUM-WORKERS = 8
@@ -16,5 +16,5 @@ fn run-test-scripts { |&num-workers=$DEFAULT-NUM-WORKERS @script-paths|
     peach &num-workers=$num-workers { |chunk-of-script-paths|
       elvish -norc $-sandbox-script-path $@chunk-of-script-paths | from-json
     } |
-      describe-result:merge
+      section:merge
 }
