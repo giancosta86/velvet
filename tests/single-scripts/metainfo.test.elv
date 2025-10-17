@@ -1,4 +1,6 @@
+use os
 use str
+use ../../utils/fs
 use ../../utils/lang
 
 >> 'The script source' {
@@ -33,5 +35,18 @@ use ../../utils/lang
       lang:is-function $provided-fn |
         should-be $true
     }
+  }
+}
+
+>> 'Redirection - appending to file' {
+  >> 'should work' {
+    var temp-path = (fs:temp-file-path)
+    defer { os:remove $temp-path }
+
+    echo alpha >> $temp-path
+    echo beta >> $temp-path
+
+    slurp < $temp-path |
+      should-be "alpha\nbeta\n"
   }
 }

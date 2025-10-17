@@ -22,18 +22,18 @@ raw:suite 'Low-level test script execution' { |test~|
       ]
   }
 
-  # test 'With metainfo checks' {
-  #   var stats = (
-  #     run-test-script metainfo |
-  #       stats:from-section (all)
-  #   )
+  test 'With metainfo checks' {
+    var stats = (
+      run-test-script metainfo |
+        stats:from-section (all)
+    )
 
-  #   put $stats[passed] |
-  #     assertions:should-be 4
+    put $stats[passed] |
+      assertions:should-be 5
 
-  #   put $stats[failed] |
-  #     assertions:should-be 0
-  # }
+    put $stats[failed] |
+      assertions:should-be 0
+  }
 
   test 'With single passing test' {
     run-test-script single-ok |
