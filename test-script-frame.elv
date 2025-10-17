@@ -1,6 +1,8 @@
 use str
 use ./outcomes
 use ./section
+use ./test-result
+use ./utils/command
 use ./utils/exception-lines
 
 fn create { |script-path title|
@@ -19,7 +21,7 @@ fn create { |script-path title|
     set sub-frames = [$@sub-frames $sub-frame]
   }
 
-  fn create-test-result { |exception-log|
+  fn to-test-result { |exception-log|
     var outcome = (
       if $exception-log {
         put $outcomes:failed
@@ -35,13 +37,9 @@ fn create { |script-path title|
     ]
   }
 
-  fn create-section {
+  fn to-section {
     var test-results = [&]
     var sub-sections = [&]
-
-    var failing-block-result = (not-eq $block-result[status] $ok) {
-      fail $block-result[status]
-    }
 
     all $sub-frames | each { |sub-frame|
       var sub-title = $sub-frame[title]
@@ -84,7 +82,7 @@ fn create { |script-path title|
     }
 
     var exception-log = (
-      if $block-result[exception] {
+      if (not-eq $block-result[exception] $nil) {
         show $block-result[exception] |
           exception-lines:trim-clockwork-stack |
           exception-lines:replace-bottom-eval $script-path |
@@ -94,24 +92,22 @@ fn create { |script-path title|
       }
     )
 
-    var has-sub-frames = (> (count $sub-frames) 0)
-
-    if $has-sub-frames {
+    if (> (count $sub-frames) 0) {
       if $exception-log {
         echo $exception-log >&2
         exit 1
       }
 
-      create-section
+      to-section
     } else {
-      create-test-result $exception-log
+      to-test-result $exception-log
     }
   }
 
   put [
     &title=$title
-    &run-block=$run-block~
     &add-sub-frame=$add-sub-frame~
+    &run-block=$run-block~
     &to-artifact=$to-artifact~
   ]
 }

@@ -29,7 +29,7 @@ all [
   section
   stats
   reporting/cli
-  # frame
+  test-script-frame
   # test-script
   # sandbox
   # aggregator
