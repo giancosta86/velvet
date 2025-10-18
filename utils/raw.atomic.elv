@@ -1,3 +1,4 @@
+use str
 use ./assertion
 use ./command
 use ./exception
@@ -18,7 +19,13 @@ echo ⚛ Raw testing
     }
   })
 
-  put '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\n🎭✅\n\n" |
+  all [
+    '🎭 '(styled Description bold | to-string (all))
+    '▶ Test title'
+    🎭✅
+    "\n"
+   ] |
+    str:join "\n" |
     eq $command-result[output] (all) |
     assertion:assert (all)
 
@@ -41,7 +48,14 @@ echo ⚛ Raw testing
     }
   })
 
-  put '🎭 '(styled Description bold | to-string (all))"\n▶ Test title\nCip\nCiop\n\n" |
+  all [
+    '🎭 '(styled Description bold | to-string (all))
+    '▶ Test title'
+    Cip
+    Ciop
+    "\n"
+  ] |
+    str:join "\n" |
     eq $command-result[output] (all) |
     assertion:assert (all)
 
@@ -69,7 +83,14 @@ echo ⚛ Raw testing
     }
   })
 
-  put '🎭 '(styled Description bold | to-string (all))"\n▶ Alpha title\n▶ Beta title\n🎭✅\n\n"|
+  all [
+    '🎭 '(styled Description bold | to-string (all))
+    '▶ Alpha title'
+    '▶ Beta title'
+    🎭✅
+    "\n"
+  ] |
+    str:join "\n" |
     eq $command-result[output] (all) |
     assertion:assert (all)
 
@@ -105,7 +126,15 @@ echo ⚛ Raw testing
     }
   })
 
-  put '🎭 '(styled Description bold | to-string (all))"\n▶ Alpha title\n▶ Beta title\nYogi\nBubu\n\n" |
+  all [
+    '🎭 '(styled Description bold | to-string (all))
+    '▶ Alpha title'
+    '▶ Beta title'
+    Yogi
+    Bubu
+    "\n"
+   ] |
+    str:join "\n" |
     eq $command-result[output] (all) |
     assertion:assert (all)
 
