@@ -3,12 +3,7 @@ fn split-by-chunk-count { |chunk-count|
     fail 'The chunk count must be > 0! Requested: '$chunk-count
   }
 
-  var chunks = (
-    range 0 $chunk-count | each { |_|
-      put []
-    } |
-      put [(all)]
-  )
+  var chunks = [(repeat $chunk-count [])]
 
   var chunk-index = 0
 
@@ -26,8 +21,5 @@ fn split-by-chunk-count { |chunk-count|
   }
 
   all $chunks |
-    keep-if { |chunk|
-      count $chunk |
-        > (all) 0
-    }
+    keep-if { |chunk| not-eq $chunk [] }
 }
