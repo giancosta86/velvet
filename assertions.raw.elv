@@ -3,7 +3,7 @@ use ./utils/assertion
 use ./utils/exception
 use ./utils/raw
 
-fn with-strictness-prefix { |strict message|
+fn with-strictness-determiner { |&strict=$false message|
   var strictness-prefix
 
   if $strict {
@@ -18,10 +18,23 @@ fn with-strictness-prefix { |strict message|
 fn expect-should-be-failure { |&strict=$false expected actual-block|
   exception:expect-throws {
     $actual-block |
+      only-values |
       assertions:should-be &strict=$strict $expected
   } |
     exception:get-fail-message (all) |
-    assertion:assert (eq (all) (with-strictness-prefix $strict 'should-be assertion failed'))
+    eq (all) (with-strictness-determiner &strict=$strict 'should-be assertion failed') |
+    assertion:assert (all)
+}
+
+fn expect-should-not-be-failure { |&strict=$false expected actual-block|
+  exception:expect-throws {
+    $actual-block |
+      only-values |
+      assertions:should-not-be &strict=$strict $expected
+  } |
+    exception:get-fail-message (all) |
+    eq (all) (with-strictness-determiner &strict=$strict 'should-not-be assertion failed') |
+    assertion:assert (all)
 }
 
 raw:suite 'Assertions: should-be (strict)' { |test~|
@@ -98,15 +111,6 @@ raw:suite 'Assertions: should-be (non-strict)' { |test~|
   }
 }
 
-fn expect-should-not-be-failure { |&strict=$false expected actual-block|
-  exception:expect-throws {
-    $actual-block |
-      assertions:should-not-be &strict=$strict $expected
-  } |
-    exception:get-fail-message (all) |
-    assertion:assert (eq (all) (with-strictness-prefix $strict 'should-not-be assertion failed'))
-}
-
 raw:suite 'Assertions: should-not-be (strict)' { |test~|
   test 'Equal strings' {
     expect-should-not-be-failure &strict Alpha {
@@ -149,7 +153,7 @@ raw:suite 'Assertions: should-not-be (non-strict)' { |test~|
     }
   }
 
-  test 'Equal booleans' {
+  test 'Different booleans' {
     put $false |
       assertions:should-not-be $true
 
