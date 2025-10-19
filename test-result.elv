@@ -1,17 +1,11 @@
-use str
 use ./outcomes
-use ./utils/exception-lines
 
 fn simplify { |test-result|
   dissoc $test-result exception-log
 }
 
-fn create-for-duplicated {
-  var exception-log = (
-    show ?(fail 'DUPLICATED TEST!') |
-      exception-lines:trim-clockwork-stack |
-      str:join "\n"
-  )
+fn create-for-duplicate {
+  var exception-log = 'DUPLICATE TEST!'
 
   put [
     &output=''

@@ -49,7 +49,7 @@ var alpha-beta = [
     &'In beta'=[
       &sub-sections=[&]
       &test-results=[
-        &'is duplicated in third source file'=[
+        &'has duplicate in third source file'=[
           &output="Beta 2\n"
           &outcome=$outcomes:passed
           &exception-log=$nil
@@ -98,7 +98,7 @@ var alpha-beta-gamma = [
 
     &'In beta'=  [
       &test-results=[
-        &'is duplicated in third source file'=[
+        &'has duplicate in third source file'=[
           &outcome=$outcomes:failed
           &output=""
         ]

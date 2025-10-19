@@ -130,7 +130,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
       ]
   }
 
-  test 'With section having duplicated passing test' {
+  test 'With section having duplicate passing test' {
     var passing-block = {
       echo Wiii!
       echo Wiii2! >&2
@@ -164,8 +164,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
       ]
 
     put $section[test-results][beta][exception-log] |
-      str:contains (all) 'DUPLICATED TEST' |
-      assertions:should-be $true
+      assertions:should-be 'DUPLICATE TEST!'
   }
 
   test 'With section having failing sub-test' {

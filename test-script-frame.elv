@@ -61,7 +61,7 @@ fn create { |script-path title|
       } else {
         var updated-test-result = (
           if (has-key $test-results $sub-title) {
-            test-result:create-for-duplicated
+            test-result:create-for-duplicate
           } else {
             put $sub-artifact
           }

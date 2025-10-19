@@ -1,5 +1,5 @@
 >> 'In beta' {
-  >> 'is duplicated in third source file' {
+  >> 'has duplicate in third source file' {
     echo Beta 2
   }
 }

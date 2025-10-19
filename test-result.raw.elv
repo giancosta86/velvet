@@ -1,7 +1,5 @@
-use str
 use ./assertions
 use ./outcomes
-use ./utils/command
 use ./utils/raw
 use ./test-result
 
@@ -31,9 +29,9 @@ raw:suite 'Test result simplification' { |test~|
   }
 }
 
-raw:suite 'Duplicated test result' { |test~|
+raw:suite 'Duplicate test result' { |test~|
   test 'Creation' {
-    var test-result = (test-result:create-for-duplicated)
+    var test-result = (test-result:create-for-duplicate)
 
     test-result:simplify $test-result |
       assertions:should-be [
@@ -41,7 +39,7 @@ raw:suite 'Duplicated test result' { |test~|
         &output=''
       ]
 
-    str:contains $test-result[exception-log] DUPLICATED |
-      assertions:should-be $true
+    put $test-result[exception-log] |
+      assertions:should-be 'DUPLICATE TEST!'
   }
 }

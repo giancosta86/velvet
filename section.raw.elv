@@ -491,7 +491,7 @@ raw:suite 'Section merging of two operands' { |test~|
       assertions:should-be [
         &test-results=[
           &Alpha=(
-            test-result:create-for-duplicated |
+            test-result:create-for-duplicate |
               test-result:simplify (all)
           )
         ]
@@ -520,7 +520,7 @@ raw:suite 'Section merging of two operands' { |test~|
       assertions:should-be [
         &test-results=[
           &Alpha=(
-            test-result:create-for-duplicated |
+            test-result:create-for-duplicate |
               test-result:simplify (all)
           )
         ]
@@ -609,7 +609,7 @@ raw:suite 'Section merging of two operands' { |test~|
 
     var delta = $merge-result[sub-sections]['First level'][sub-sections]['Second level'][test-results][Delta]
 
-    str:contains $delta[exception-log] 'DUPLICATED TEST!' |
+    str:contains $delta[exception-log] 'DUPLICATE TEST!' |
       assertions:should-be $true
   }
 }

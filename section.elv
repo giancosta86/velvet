@@ -42,7 +42,7 @@ set -merge-test-results~ = { |left right|
   keys $right | each { |test-title|
     var actual-test-result = (
       if (has-key $left $test-title)  {
-        test-result:create-for-duplicated
+        test-result:create-for-duplicate
       } else {
         put $right[$test-title]
       }
