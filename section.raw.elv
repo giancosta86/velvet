@@ -40,18 +40,16 @@ raw:suite 'Section - Mapping test results within an entire tree' { |test~|
       &sub-sections=[&]
     ]
 
-    var expected-section = [
-      &test-results=[
-        &alpha=[
-          &output='Cip*'
-          &exception-log=$nil
-        ]
-      ]
-      &sub-sections=[&]
-    ]
-
     section:map-test-results-in-tree $source $add-asterisk-to-output~ |
-      assertions:should-be $expected-section
+      assertions:should-be [
+        &test-results=[
+          &alpha=[
+            &output='Cip*'
+            &exception-log=$nil
+          ]
+        ]
+        &sub-sections=[&]
+      ]
   }
 
   test 'With two root tests' {
@@ -70,23 +68,21 @@ raw:suite 'Section - Mapping test results within an entire tree' { |test~|
       &sub-sections=[&]
     ]
 
-    var expected-section = [
-      &test-results=[
-        &alpha=[
-          &output='Cip*'
-          &exception-log=$nil
-        ]
-        &beta=[
-          &output='Ciop*'
-          &exception-log=$nil
-        ]
-      ]
-
-      &sub-sections=[&]
-    ]
-
     section:map-test-results-in-tree $source $add-asterisk-to-output~ |
-      assertions:should-be $expected-section
+      assertions:should-be [
+        &test-results=[
+          &alpha=[
+            &output='Cip*'
+            &exception-log=$nil
+          ]
+          &beta=[
+            &output='Ciop*'
+            &exception-log=$nil
+          ]
+        ]
+
+        &sub-sections=[&]
+      ]
   }
 
   test 'With single test in sub-section' {
@@ -105,23 +101,21 @@ raw:suite 'Section - Mapping test results within an entire tree' { |test~|
       ]
     ]
 
-    var expected-section = [
-      &test-results=[&]
-      &sub-sections=[
-        &alpha=[
-          &test-results=[
-            &beta=[
-              &output='Yogi*'
-              &exception-log=$nil
+    section:map-test-results-in-tree $source $add-asterisk-to-output~ |
+      assertions:should-be [
+        &test-results=[&]
+        &sub-sections=[
+          &alpha=[
+            &test-results=[
+              &beta=[
+                &output='Yogi*'
+                &exception-log=$nil
+              ]
             ]
+            &sub-sections=[&]
           ]
-          &sub-sections=[&]
         ]
       ]
-    ]
-
-    section:map-test-results-in-tree $source $add-asterisk-to-output~ |
-      assertions:should-be $expected-section
   }
 
   test 'With tests at different levels' {
@@ -159,42 +153,40 @@ raw:suite 'Section - Mapping test results within an entire tree' { |test~|
       ]
     ]
 
-    var expected-section = [
-      &test-results=[
-        &alpha=[
-          &output='Alpha*'
-          &exception-log=$nil
-        ]
-        &beta=[
-          &output='Beta*'
-          &exception-log=$nil
-        ]
-      ]
-      &sub-sections=[
-        &gamma=[
-          &test-results=[
-            &delta=[
-              &output='Delta*'
-              &exception-log=$nil
-            ]
-          ]
-          &sub-sections=[
-            &epsilon=[
-              &test-results=[
-                &zeta=[
-                  &output='Zeta*'
-                  &exception-log=$nil
-                ]
-              ]
-              &sub-sections=[&]
-            ]
-          ]
-        ]
-      ]
-    ]
-
     section:map-test-results-in-tree $source $add-asterisk-to-output~ |
-      assertions:should-be $expected-section
+      assertions:should-be [
+        &test-results=[
+          &alpha=[
+            &output='Alpha*'
+            &exception-log=$nil
+          ]
+          &beta=[
+            &output='Beta*'
+            &exception-log=$nil
+          ]
+        ]
+        &sub-sections=[
+          &gamma=[
+            &test-results=[
+              &delta=[
+                &output='Delta*'
+                &exception-log=$nil
+              ]
+            ]
+            &sub-sections=[
+              &epsilon=[
+                &test-results=[
+                  &zeta=[
+                    &output='Zeta*'
+                    &exception-log=$nil
+                  ]
+                ]
+                &sub-sections=[&]
+              ]
+            ]
+          ]
+        ]
+      ]
   }
 }
 
@@ -445,7 +437,7 @@ raw:suite 'Section merging with two operands' { |test~|
       section:merge |
       assertions:should-be [
         &test-results=[
-          &Alpha=(test-result:create-for-duplicate)
+          &Alpha=$test-result:duplicate
         ]
         &sub-sections=[&]
       ]
@@ -470,7 +462,7 @@ raw:suite 'Section merging with two operands' { |test~|
       section:merge |
       assertions:should-be [
         &test-results=[
-          &Alpha=(test-result:create-for-duplicate)
+          &Alpha=$test-result:duplicate
         ]
         &sub-sections=[&]
       ]
@@ -535,7 +527,7 @@ raw:suite 'Section merging with two operands' { |test~|
             &sub-sections=[
               &'Second level'=[
                 &test-results=[
-                  &Delta=(test-result:create-for-duplicate)
+                  &Delta=$test-result:duplicate
                   &Epsilon=$passed-test
                   &Sigma=$passed-test
                   &Tau=$failed-test

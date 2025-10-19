@@ -149,22 +149,13 @@ raw:suite 'Frame - Converting to artifact' { |test~|
       $beta-bis[run-block] $passing-block
     }
 
-    var section = ($alpha[to-artifact])
-
-    put $section |
-      section:simplify (all) |
+    $alpha[to-artifact] |
       assertions:should-be [
         &test-results=[
-          &beta=[
-            &output=''
-            &outcome=$outcomes:failed
-          ]
+          &beta=$test-result:duplicate
         ]
         &sub-sections=[&]
       ]
-
-    put $section[test-results][beta][exception-log] |
-      assertions:should-be 'DUPLICATE TEST!'
   }
 
   test 'With section having failing sub-test' {

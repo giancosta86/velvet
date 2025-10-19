@@ -11,20 +11,20 @@ fn is-section { |artifact|
 }
 
 fn map-test-results-in-tree { |root-section test-result-mapper|
-  var updated-test-results-in-root = (
+  var updated-test-results = (
     map:filter-map $root-section[test-results] { |test-title test-result|
       put [$test-title ($test-result-mapper $test-result)]
     }
   )
 
   var updated-sub-sections = (
-    map:filter-map $root-section[sub-sections] { |section-title sub-section|
-      put [$section-title (map-test-results-in-tree $sub-section $test-result-mapper)]
+    map:filter-map $root-section[sub-sections] { |sub-title sub-section|
+      put [$sub-title (map-test-results-in-tree $sub-section $test-result-mapper)]
     }
   )
 
   put [
-    &test-results=$updated-test-results-in-root
+    &test-results=$updated-test-results
     &sub-sections=$updated-sub-sections
   ]
 }
@@ -36,7 +36,7 @@ fn simplify { |section|
 var -merge-test-results~
 var -merge-sub-sections~
 
-fn -merge-two { |left right|
+fn -merge-two-sections { |left right|
   put [
     &test-results=(
       -merge-test-results $left[test-results] $right[test-results]
@@ -54,7 +54,7 @@ set -merge-test-results~ = { |left right|
   keys $right | each { |test-title|
     var actual-test-result = (
       if (has-key $left $test-title)  {
-        test-result:create-for-duplicate
+        put $test-result:duplicate
       } else {
         put $right[$test-title]
       }
@@ -72,7 +72,7 @@ set -merge-sub-sections~ = { |left right|
   keys $right | each { |sub-section-title|
     var actual-sub-section = (
       if (has-key $left $sub-section-title)  {
-        -merge-two $left[$sub-section-title] $right[$sub-section-title]
+        -merge-two-sections $left[$sub-section-title] $right[$sub-section-title]
       } else {
         put $right[$sub-section-title]
       }
@@ -88,7 +88,7 @@ fn merge {
   var result = $empty
 
   each { |section|
-    set result = (-merge-two $result $section)
+    set result = (-merge-two-sections $result $section)
   }
 
   put $result

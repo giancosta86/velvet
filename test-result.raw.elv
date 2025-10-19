@@ -28,18 +28,3 @@ raw:suite 'Test result simplification' { |test~|
       ]
   }
 }
-
-raw:suite 'Duplicate test result' { |test~|
-  test 'Creation' {
-    var test-result = (test-result:create-for-duplicate)
-
-    test-result:simplify $test-result |
-      assertions:should-be [
-        &outcome=$outcomes:failed
-        &output=''
-      ]
-
-    put $test-result[exception-log] |
-      assertions:should-be 'DUPLICATE TEST!'
-  }
-}
