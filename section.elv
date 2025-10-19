@@ -69,16 +69,16 @@ set -merge-test-results~ = { |left right|
 set -merge-sub-sections~ = { |left right|
   var sub-sections = $left
 
-  keys $right | each { |sub-section-title|
+  keys $right | each { |sub-title|
     var actual-sub-section = (
-      if (has-key $left $sub-section-title)  {
-        -merge-two-sections $left[$sub-section-title] $right[$sub-section-title]
+      if (has-key $left $sub-title)  {
+        -merge-two-sections $left[$sub-title] $right[$sub-title]
       } else {
-        put $right[$sub-section-title]
+        put $right[$sub-title]
       }
     )
 
-    set sub-sections = (assoc $sub-sections $sub-section-title $actual-sub-section)
+    set sub-sections = (assoc $sub-sections $sub-title $actual-sub-section)
   }
 
   put $sub-sections

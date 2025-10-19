@@ -61,7 +61,7 @@ fn -display-section { |section level|
 
   keys $section[sub-sections] |
     order &key=$str:to-lower~ |
-    each { |sub-section-title|
+    each { |sub-title|
       if $is-first-sub-section {
         set is-first-sub-section = $false
 
@@ -76,9 +76,9 @@ fn -display-section { |section level|
 
       var indentation = (-get-indentation $level)
 
-      echo $indentation''(styled $sub-section-title white bold)
+      echo $indentation''(styled $sub-title white bold)
 
-      var sub-section = $section[sub-sections][$sub-section-title]
+      var sub-section = $section[sub-sections][$sub-title]
 
       -display-section $sub-section (+ $level 1)
     }
