@@ -16,10 +16,7 @@ raw:suite 'Low-level test script execution' { |test~|
 
   test 'Empty' {
     run-test-script empty |
-      assertions:should-be [
-        &test-results=[&]
-        &sub-sections=[&]
-      ]
+      assertions:should-be $section:empty
   }
 
   test 'With metainfo checks' {

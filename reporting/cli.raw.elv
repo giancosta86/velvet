@@ -1,6 +1,7 @@
 use str
 use ../assertions
 use ../outcomes
+use ../section
 use ../stats
 use ../utils/raw
 use ./cli
@@ -29,12 +30,7 @@ raw:suite 'Command-line reporting' { |test~|
   }
 
   test 'With empty section' {
-    var section = [
-      &test-results=[&]
-      &sub-sections=[&]
-    ]
-
-    var output-tester = (create-output-tester $section)
+    var output-tester = (create-output-tester $section:empty)
 
     $output-tester[expect-in-output] [
       💬

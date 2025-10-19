@@ -93,10 +93,7 @@ raw:suite 'Top-level test script execution' { |test~|
     main:velvet &test-scripts=[] &reporters=[$spy[reporter]]
 
     $spy[get-section] |
-      assertions:should-be [
-        &test-results=[&]
-        &sub-sections=[&]
-      ]
+      assertions:should-be $section:empty
 
     $spy[get-stats] |
       assertions:should-be [

@@ -41,7 +41,7 @@ fn run { |script-path|
 
       var frame-artifact = ($root-frame[to-artifact])
 
-      if (section:is $frame-artifact) {
+      if (section:is-section $frame-artifact) {
         put [
           &test-results=[&]
           &sub-sections=[

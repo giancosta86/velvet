@@ -1,6 +1,7 @@
 use ./assertions
 use ./outcomes
 use ./utils/raw
+use ./section
 use ./stats
 
 raw:suite 'Stats' { |test~|
@@ -15,10 +16,7 @@ raw:suite 'Stats' { |test~|
   ]
 
   test 'From empty section' {
-    stats:from-section [
-      &test-results=[&]
-      &sub-sections=[&]
-    ] |
+    stats:from-section $section:empty |
       assertions:should-be [
         &total=0
         &passed=0

@@ -1,24 +1,36 @@
 use ./test-result
 use ./utils/map
 
-fn is { |artifact|
+var empty = [
+  &test-results=[&]
+  &sub-sections=[&]
+]
+
+fn is-section { |artifact|
   has-key $artifact sub-sections
 }
 
-fn recursive-map-test-results { |section test-mapper|
-  put [
-    &test-results=(map:filter-map $section[test-results] $test-mapper)
+fn map-test-results-in-tree { |root-section test-result-mapper|
+  var updated-test-results-in-root = (
+    map:filter-map $root-section[test-results] { |test-title test-result|
+      put [$test-title ($test-result-mapper $test-result)]
+    }
+  )
 
-    &sub-sections=(map:filter-map $section[sub-sections] { |section-title section|
-      put [$section-title (recursive-map-test-results $section $test-mapper)]
-    })
+  var updated-sub-sections = (
+    map:filter-map $root-section[sub-sections] { |section-title sub-section|
+      put [$section-title (map-test-results-in-tree $sub-section $test-result-mapper)]
+    }
+  )
+
+  put [
+    &test-results=$updated-test-results-in-root
+    &sub-sections=$updated-sub-sections
   ]
 }
 
 fn simplify { |section|
-  recursive-map-test-results $section { |test-title test-result|
-    put [$test-title (test-result:simplify $test-result)]
-  }
+  map-test-results-in-tree $section $test-result:simplify~
 }
 
 var -merge-test-results~
@@ -58,7 +70,7 @@ set -merge-sub-sections~ = { |left right|
   var sub-sections = $left
 
   keys $right | each { |sub-section-title|
-    var actual-section = (
+    var actual-sub-section = (
       if (has-key $left $sub-section-title)  {
         -merge-two $left[$sub-section-title] $right[$sub-section-title]
       } else {
@@ -66,17 +78,14 @@ set -merge-sub-sections~ = { |left right|
       }
     )
 
-    set sub-sections = (assoc $sub-sections $sub-section-title $actual-section)
+    set sub-sections = (assoc $sub-sections $sub-section-title $actual-sub-section)
   }
 
   put $sub-sections
 }
 
 fn merge {
-  var result = [
-    &test-results=[&]
-    &sub-sections=[&]
-  ]
+  var result = $empty
 
   each { |section|
     set result = (-merge-two $result $section)

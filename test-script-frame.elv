@@ -47,7 +47,7 @@ fn create { |script-path title|
 
       var sub-artifact = ($sub-frame[to-artifact])
 
-      if (section:is $sub-artifact) {
+      if (section:is-section $sub-artifact) {
         var up-to-date-section = (
           if (has-key $sub-sections $sub-title) {
             var existing-section = $sub-sections[$sub-title]

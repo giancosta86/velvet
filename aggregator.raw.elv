@@ -12,10 +12,7 @@ raw:suite 'Aggregator' { |test~|
 
   test 'Running no scripts' {
     aggregator:run-test-scripts |
-      assertions:should-be [
-        &test-results=[&]
-        &sub-sections=[&]
-      ]
+      assertions:should-be $section:empty
   }
 
   test 'Running 1 script' {
