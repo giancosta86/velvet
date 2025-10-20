@@ -39,6 +39,9 @@ raw:suite 'Command-line reporting' { |test~|
 
     $output-tester[expect-not-in-output] [
       LOG
+      Total
+      Passed
+      Failed
     ]
   }
 
@@ -101,7 +104,7 @@ raw:suite 'Command-line reporting' { |test~|
       &test-results=[
         &Beta=[
           &outcome=$outcomes:failed
-          &output=""
+          &output=''
           &exception-log=DODO
         ]
       ]
@@ -156,10 +159,13 @@ raw:suite 'Command-line reporting' { |test~|
 
     $output-tester[expect-in-output] [
       Alpha
+      SomeOther
+      YetAnother
       ❌
-      LOG
       Beta
+      OUTPUT LOG
       Wooo!
+      EXCEPTION LOG
       DODO
       'Total tests: 2.'
       'Passed: 1.'
