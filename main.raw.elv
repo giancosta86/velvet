@@ -68,7 +68,7 @@ raw:suite 'Searching for test scripts' { |test~|
 
 raw:suite 'Top-level test script execution' { |test~|
   fn get-test-script { |basename|
-    script-gallery:get-path aggregator $basename
+    script-gallery:get-script-path aggregator $basename
   }
 
   fn create-reporter-spy {

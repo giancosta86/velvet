@@ -9,7 +9,7 @@ use ./utils/raw
 
 raw:suite 'Test script execution' { |test~|
   fn run-test-script { |basename|
-    var test-script-path = (script-gallery:get-path single-scripts $basename)
+    var test-script-path = (script-gallery:get-script-path single-scripts $basename)
 
     test-script:run $test-script-path
   }

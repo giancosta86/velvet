@@ -1,24 +1,17 @@
 use path
 
-var single-scripts = [
-  single-scripts/empty.test.elv
-  single-scripts/metainfo.test.elv
-  single-scripts/mixed-outcomes.test.elv
-  single-scripts/returning.test.elv
-  single-scripts/root-test.test.elv
-  single-scripts/single-failing.test.elv
-  single-scripts/single-ok.test.elv
-]
+var -this-script-dir = (path:dir (src)[name])
 
-var aggregator = [
-  aggregator/alpha.test.elv
-  aggregator/beta.test.elv
-  aggregator/gamma.test.elv
-]
+fn -get-scripts-for-sub-directory { |subdirectory|
+  tmp pwd = $-this-script-dir
+  put $subdirectory/*.test.elv
+}
 
-var readme = [
-  readme/maths.test.elv
-]
+var single-scripts = [(-get-scripts-for-sub-directory single-scripts)]
+
+var aggregator = [(-get-scripts-for-sub-directory aggregator)]
+
+var readme = [(-get-scripts-for-sub-directory readme)]
 
 var all = [(
   all [
@@ -29,8 +22,6 @@ var all = [(
     order
 )]
 
-fn get-path { |subdirectory basename|
-  var this-script-dir = (path:dir (src)[name])
-
-  path:join $this-script-dir $subdirectory $basename'.test.elv'
+fn get-script-path { |subdirectory basename|
+  path:join $-this-script-dir $subdirectory $basename'.test.elv'
 }

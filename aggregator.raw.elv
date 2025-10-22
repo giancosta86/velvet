@@ -7,7 +7,7 @@ use ./utils/raw
 
 raw:suite 'Aggregator' { |test~|
   fn get-test-script { |basename|
-    script-gallery:get-path aggregator $basename
+    script-gallery:get-script-path aggregator $basename
   }
 
   test 'Running no scripts' {
