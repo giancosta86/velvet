@@ -101,7 +101,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
       assertions:should-be $true
   }
 
-  test 'With section having passing sub-test' {
+  test 'With section having passing test' {
     var alpha = (create-test-frame 'alpha')
 
     $alpha[run-block] {
@@ -124,6 +124,81 @@ raw:suite 'Frame - Converting to artifact' { |test~|
             &output="Wiii!\nWiii2!\n"
             &outcome=$outcomes:passed
             &exception-log=$nil
+          ]
+        ]
+        &sub-sections=[&]
+      ]
+  }
+
+  test 'With section having failing test' {
+    var alpha = (create-test-frame 'alpha')
+
+    $alpha[run-block] {
+      var gamma = (create-test-frame 'gamma')
+      $alpha[add-sub-frame] $gamma
+
+      $gamma[run-block] {
+        echo Wooo
+        echo Wooo2 >&2
+        put 90
+        fail Dodo
+      }
+    }
+
+    var section = ($alpha[to-artifact])
+
+    section:simplify $section |
+      assertions:should-be [
+        &test-results=[
+          &gamma=[
+            &output="Wooo\nWooo2\n"
+            &outcome=$outcomes:failed
+          ]
+        ]
+        &sub-sections=[&]
+      ]
+
+    put $section[test-results][gamma][exception-log] |
+      str:contains (all) 'Dodo' |
+      assertions:should-be $true
+  }
+
+  test 'With section having passing and failing test' {
+    var alpha = (create-test-frame 'alpha')
+
+    $alpha[run-block] {
+      var beta = (create-test-frame 'beta')
+      $alpha[add-sub-frame] $beta
+
+      $beta[run-block] {
+        echo Wiii!
+        echo Wiii2! >&2
+        put 90
+      }
+
+      var gamma = (create-test-frame 'gamma')
+      $alpha[add-sub-frame] $gamma
+
+      $gamma[run-block] {
+        echo Wooo
+        echo Wooo2 >&2
+        put 90
+        fail Dodo
+      }
+    }
+
+    var section = ($alpha[to-artifact])
+
+    section:simplify $section |
+      assertions:should-be [
+        &test-results=[
+          &beta=[
+            &output="Wiii!\nWiii2!\n"
+            &outcome=$outcomes:passed
+          ]
+          &gamma=[
+            &output="Wooo\nWooo2\n"
+            &outcome=$outcomes:failed
           ]
         ]
         &sub-sections=[&]
@@ -158,40 +233,13 @@ raw:suite 'Frame - Converting to artifact' { |test~|
       ]
   }
 
-  test 'With section having failing sub-test' {
-    var alpha = (create-test-frame 'alpha')
-
-    $alpha[run-block] {
-      var gamma = (create-test-frame 'gamma')
-      $alpha[add-sub-frame] $gamma
-
-      $gamma[run-block] {
-        echo Wooo
-        echo Wooo2 >&2
-        put 90
-        fail Dodo
-      }
+  test 'With section whose sub-sections have the same name' {
+    var passing-block = {
+      echo Wiii!
+      echo Wiii2! >&2
+      put 90
     }
 
-    var section = ($alpha[to-artifact])
-
-    section:simplify $section |
-      assertions:should-be [
-        &test-results=[
-          &gamma=[
-            &output="Wooo\nWooo2\n"
-            &outcome=$outcomes:failed
-          ]
-        ]
-        &sub-sections=[&]
-      ]
-
-    put $section[test-results][gamma][exception-log] |
-      str:contains (all) 'Dodo' |
-      assertions:should-be $true
-  }
-
-  test 'With section having passing and failing sub-test' {
     var alpha = (create-test-frame 'alpha')
 
     $alpha[run-block] {
@@ -199,37 +247,43 @@ raw:suite 'Frame - Converting to artifact' { |test~|
       $alpha[add-sub-frame] $beta
 
       $beta[run-block] {
-        echo Wiii!
-        echo Wiii2! >&2
-        put 90
+        var gamma = (create-test-frame 'gamma')
+        $beta[add-sub-frame] $gamma
+
+        $gamma[run-block] $passing-block
       }
 
-      var gamma = (create-test-frame 'gamma')
-      $alpha[add-sub-frame] $gamma
+      var beta-bis = (create-test-frame 'beta')
+      $alpha[add-sub-frame] $beta-bis
 
-      $gamma[run-block] {
-        echo Wooo
-        echo Wooo2 >&2
-        put 90
-        fail Dodo
+      $beta-bis[run-block] {
+        var delta = (create-test-frame 'delta')
+        $beta-bis[add-sub-frame] $delta
+
+        $delta[run-block] $passing-block
       }
     }
 
-    var section = ($alpha[to-artifact])
-
-    section:simplify $section |
+    $alpha[to-artifact] |
       assertions:should-be [
-        &test-results=[
+        &test-results=[&]
+        &sub-sections=[
           &beta=[
-            &output="Wiii!\nWiii2!\n"
-            &outcome=$outcomes:passed
-          ]
-          &gamma=[
-            &output="Wooo\nWooo2\n"
-            &outcome=$outcomes:failed
+            &test-results=[
+              &gamma=[
+                &output="Wiii!\nWiii2!\n"
+                &outcome=$outcomes:passed
+                &exception-log=$nil
+              ]
+              &delta=[
+                &output="Wiii!\nWiii2!\n"
+                &outcome=$outcomes:passed
+                &exception-log=$nil
+              ]
+            ]
+            &sub-sections=[&]
           ]
         ]
-        &sub-sections=[&]
       ]
   }
 

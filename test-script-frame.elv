@@ -22,12 +22,29 @@ fn create { |script-path title|
     set sub-frames = [$@sub-frames $sub-frame]
   }
 
-  fn to-test-result { |exception-log|
-    var outcome = (
-      if $exception-log {
-        put $outcomes:failed
+  fn to-test-result {
+    var exception = $block-result[exception]
+
+    var test-passed = (
+      or (eq $exception $nil) (exception:is-return $exception)
+    )
+
+    var exception-log = (
+      if (not $test-passed) {
+        show $exception |
+          exception-lines:trim-clockwork-stack |
+          exception-lines:replace-bottom-eval $script-path |
+          str:join "\n"
       } else {
+        put $nil
+      }
+    )
+
+    var outcome = (
+      if $test-passed {
         put $outcomes:passed
+      } else {
+        put $outcomes:failed
       }
     )
 
@@ -51,7 +68,9 @@ fn create { |script-path title|
         var up-to-date-section = (
           if (has-key $sub-sections $sub-title) {
             var existing-section = $sub-sections[$sub-title]
-            section:merge $existing-section $sub-artifact
+
+            put $existing-section $sub-artifact |
+              section:merge
           } else {
             put $sub-artifact
           }
@@ -82,30 +101,18 @@ fn create { |script-path title|
       fail 'Cannot obtain artifact when block result is not set, in frame: '$title
     }
 
-    var exception = $block-result[exception]
+    var is-section-frame = (> (count $sub-frames) 0)
 
-    var exception-log = (
-      if (
-        and (not-eq $exception $nil) (not (exception:is-return $exception))
-      ) {
-        show $exception |
-          exception-lines:trim-clockwork-stack |
-          exception-lines:replace-bottom-eval $script-path |
-          str:join "\n"
-      } else {
-        put $nil
-      }
-    )
+    if $is-section-frame {
+      var exception = $block-result[exception]
 
-    if (> (count $sub-frames) 0) {
-      if $exception-log {
-        echo $exception-log >&2
-        exit 1
+      if (not-eq $exception $nil) {
+        fail $exception
       }
 
       to-section
     } else {
-      to-test-result $exception-log
+      to-test-result
     }
   }
 
