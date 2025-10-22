@@ -4,7 +4,7 @@ use ./main
 use ./outcomes
 use ./section
 use ./tests/aggregator/sections
-use ./tests/test-scripts
+use ./tests/script-gallery
 use ./utils/raw
 
 var this-script-dir = (path:dir (src)[name])
@@ -22,7 +22,7 @@ raw:suite 'Getting test script' { |test~|
     tmp pwd = (path:join $this-script-dir tests aggregator)
 
     var expected-scripts = [(
-      all $test-scripts:aggregator | each { |script|
+      all $script-gallery:aggregator | each { |script|
         path:base $script
       }
     )]
@@ -39,7 +39,7 @@ raw:suite 'Getting test script' { |test~|
     main:get-test-scripts |
       order |
       put [(all)] |
-      assertions:should-be $test-scripts:all
+      assertions:should-be $script-gallery:all
   }
 }
 
@@ -68,7 +68,7 @@ raw:suite 'Searching for test scripts' { |test~|
 
 raw:suite 'Top-level test script execution' { |test~|
   fn get-test-script { |basename|
-    test-scripts:get-path aggregator $basename
+    script-gallery:get-path aggregator $basename
   }
 
   fn create-reporter-spy {

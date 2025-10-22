@@ -3,7 +3,7 @@ use str
 use ./assertions
 use ./outcomes
 use ./section
-use ./tests/test-scripts
+use ./tests/script-gallery
 use ./utils/raw
 
 fn run-test-sandbox { |basename|
@@ -11,7 +11,7 @@ fn run-test-sandbox { |basename|
 
   var sandbox-path = (path:join $this-script-dir sandbox.elv)
 
-  var test-script-path = (test-scripts:get-path single-scripts $basename)
+  var test-script-path = (script-gallery:get-path single-scripts $basename)
 
   elvish -norc $sandbox-path $test-script-path | from-json
 }

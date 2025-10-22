@@ -4,12 +4,12 @@ use ./section
 use ./outcomes
 use ./stats
 use ./test-script
-use ./tests/test-scripts
+use ./tests/script-gallery
 use ./utils/raw
 
-raw:suite 'Low-level test script execution' { |test~|
+raw:suite 'Test script execution' { |test~|
   fn run-test-script { |basename|
-    var test-script-path = (test-scripts:get-path single-scripts $basename)
+    var test-script-path = (script-gallery:get-path single-scripts $basename)
 
     test-script:run $test-script-path
   }

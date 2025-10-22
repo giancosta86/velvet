@@ -2,12 +2,12 @@ use ./aggregator
 use ./assertions
 use ./section
 use ./tests/aggregator/sections
-use ./tests/test-scripts
+use ./tests/script-gallery
 use ./utils/raw
 
 raw:suite 'Aggregator' { |test~|
   fn get-test-script { |basename|
-    test-scripts:get-path aggregator $basename
+    script-gallery:get-path aggregator $basename
   }
 
   test 'Running no scripts' {
