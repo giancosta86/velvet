@@ -13,7 +13,8 @@ fn run-test-sandbox { |basename|
 
   var test-script-path = (script-gallery:get-script-path single-scripts $basename)
 
-  elvish -norc $sandbox-path $test-script-path | from-json
+  elvish -norc $sandbox-path $test-script-path |
+    from-json
 }
 
 raw:suite 'Running in sandbox' { |test~|
@@ -57,9 +58,6 @@ raw:suite 'Running in sandbox' { |test~|
       ]
 
     var exception-log = $section[sub-sections]['My test'][test-results]['should fail'][exception-log]
-
-    put $exception-log |
-      assertions:should-not-be &strict $nil
 
     str:contains $exception-log DODO |
       assertions:should-be $true
