@@ -32,12 +32,74 @@ raw:suite 'Test script execution' { |test~|
       assertions:should-be 0
   }
 
-  test 'With single passing test' {
-    run-test-script single-ok |
+  test 'With root passing test' {
+    run-test-script root-ok |
+      assertions:should-be [
+        &test-results= [
+          &'My passing test'=[
+            &outcome=$outcomes:passed
+            &output="Wiii!\nWiii2!\n"
+            &exception-log=$nil
+          ]
+        ]
+        &sub-sections= [&]
+      ]
+  }
+
+  test 'With root failing test' {
+    run-test-script root-failing |
+      section:simplify (all) |
+      assertions:should-be [
+        &test-results= [
+          &'My failing test'=[
+            &outcome=$outcomes:failed
+            &output="Wooo!\nWooo2!\n"
+          ]
+        ]
+        &sub-sections= [&]
+      ]
+  }
+
+  test 'Exception log for root failing test' {
+    var section = (run-test-script root-failing)
+
+    var exception-log = $section[test-results]['My failing test'][exception-log]
+
+    str:contains $exception-log '[eval' |
+      assertions:should-be $false
+
+    str:contains $exception-log 'root-failing.test.elv:6:3-11:' |
+      assertions:should-be $true
+
+    str:contains $exception-log DODO |
+      assertions:should-be $true
+  }
+
+  test 'With root passing and failing test' {
+    run-test-script root-mixed |
+      section:simplify (all) |
+      assertions:should-be [
+        &test-results= [
+          &'My passing test'=[
+            &outcome=$outcomes:passed
+            &output="Wiii!\nWiii2!\n"
+          ]
+
+          &'My failing test'=[
+            &outcome=$outcomes:failed
+            &output="Wooo!\nWooo2!\n"
+          ]
+        ]
+        &sub-sections= [&]
+      ]
+  }
+
+  test 'With section having a passing test' {
+    run-test-script in-section-ok |
       assertions:should-be [
         &test-results= [&]
         &sub-sections= [
-          &'My description'=[
+          &'My test'=[
             &test-results=[
               &'should work'=[
                 &outcome=$outcomes:passed
@@ -51,13 +113,13 @@ raw:suite 'Test script execution' { |test~|
       ]
   }
 
-  test 'With single failing test' {
-    run-test-script single-failing |
+  test 'With section having a single failing test' {
+    run-test-script in-section-failing |
       section:simplify (all) |
       assertions:should-be [
         &test-results= [&]
         &sub-sections= [
-          &'My description'=[
+          &'My test'=[
             &test-results=[
               &'should fail'=[
                 &outcome=$outcomes:failed
@@ -70,27 +132,30 @@ raw:suite 'Test script execution' { |test~|
       ]
   }
 
-  test 'Exception log in failing test' {
-    var section = (run-test-script single-failing)
+  test 'Exception log for in-section failing test' {
+    var section = (run-test-script in-section-failing)
 
-    var exception-log = $section[sub-sections]['My description'][test-results]['should fail'][exception-log]
+    var exception-log = $section[sub-sections]['My test'][test-results]['should fail'][exception-log]
 
     str:contains $exception-log '[eval' |
       assertions:should-be $false
 
-    str:contains $exception-log 'single-failing.test.elv:7:5-13:' |
+    str:contains $exception-log 'in-section-failing.test.elv:7:5-13:' |
+      assertions:should-be $true
+
+    str:contains $exception-log DODO |
       assertions:should-be $true
   }
 
-  test 'With mixed outcomes' {
-    var section = (run-test-script mixed-outcomes)
+  test 'With section having mixed outcomes' {
+    var section = (run-test-script in-section-mixed)
 
     put $section |
       section:simplify (all) |
       assertions:should-be [
         &test-results= [&]
         &sub-sections= [
-          &'My description'=[
+          &'My test'=[
             &test-results=[
               &'should pass'=[
                 &outcome=$outcomes:passed
@@ -117,7 +182,7 @@ raw:suite 'Test script execution' { |test~|
         ]
       ]
 
-    var failed-result = $section[sub-sections]['My description'][sub-sections][Cip][sub-sections][Ciop][test-results]['should fail']
+    var failed-result = $section[sub-sections]['My test'][sub-sections][Cip][sub-sections][Ciop][test-results]['should fail']
 
     str:contains $failed-result[exception-log] DODUS |
       assertions:should-be $true
@@ -139,20 +204,6 @@ raw:suite 'Test script execution' { |test~|
             &sub-sections=[&]
           ]
         ]
-      ]
-  }
-
-  test 'With single root test' {
-    run-test-script root-test |
-      assertions:should-be [
-        &test-results=[
-          &'should support single root test'=[
-            &outcome=$outcomes:passed
-            &output="Wiii!\nWiii2!\n"
-            &exception-log=$nil
-          ]
-        ]
-        &sub-sections=[&]
       ]
   }
 }

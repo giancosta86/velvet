@@ -1,4 +1,4 @@
->> 'My description' {
+>> 'My test' {
   >> 'should work' {
     echo Wiii!
     echo Wiii2! >&2

@@ -1,4 +1,4 @@
->> 'My description' {
+>> 'My test' {
   >> 'should fail' {
     echo Wooo!
     echo Wooo2! >&2

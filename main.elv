@@ -14,6 +14,7 @@ fn has-test-scripts {
 }
 
 # TODO! Add a final test, to test the entire output for a group of scripts
+# TODO! The test scripts MUST be the argument of the command!
 fn velvet { |&test-scripts=$nil &reporters=[$cli:display~] &num-workers=$aggregator:DEFAULT-NUM-WORKERS|
   var actual-test-scripts = (coalesce $test-scripts [(get-test-scripts)])
 

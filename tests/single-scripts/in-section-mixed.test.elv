@@ -1,4 +1,4 @@
->> 'My description' {
+>> 'My test' {
   >> 'should pass' {
     echo Wiii!
   }

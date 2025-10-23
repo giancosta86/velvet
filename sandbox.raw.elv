@@ -18,11 +18,11 @@ fn run-test-sandbox { |basename|
 
 raw:suite 'Running in sandbox' { |test~|
   test 'Passing test' {
-    run-test-sandbox single-ok |
+    run-test-sandbox in-section-ok |
       assertions:should-be [
         &test-results=[&]
         &sub-sections=[
-          &'My description'=[
+          &'My test'=[
             &test-results=[
               &'should work'=[
                 &outcome=$outcomes:passed
@@ -37,14 +37,14 @@ raw:suite 'Running in sandbox' { |test~|
   }
 
   test 'Failing test' {
-    var section = (run-test-sandbox single-failing)
+    var section = (run-test-sandbox in-section-failing)
 
     put $section |
       section:simplify (all) |
       assertions:should-be [
         &test-results=[&]
         &sub-sections=[
-          &'My description'=[
+          &'My test'=[
             &test-results=[
               &'should fail'=[
                 &outcome=$outcomes:failed
@@ -56,7 +56,7 @@ raw:suite 'Running in sandbox' { |test~|
         ]
       ]
 
-    var exception-log = $section[sub-sections]['My description'][test-results]['should fail'][exception-log]
+    var exception-log = $section[sub-sections]['My test'][test-results]['should fail'][exception-log]
 
     put $exception-log |
       assertions:should-not-be &strict $nil
