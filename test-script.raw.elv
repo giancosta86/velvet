@@ -5,6 +5,7 @@ use ./outcomes
 use ./stats
 use ./test-script
 use ./tests/script-gallery
+use ./utils/exception
 use ./utils/raw
 
 raw:suite 'Test script execution' { |test~|
@@ -144,6 +145,35 @@ raw:suite 'Test script execution' { |test~|
       assertions:should-be $true
 
     str:contains $exception-log DODO |
+      assertions:should-be $true
+  }
+
+  test 'Root test without title' {
+    exception:expect-throws {
+      run-test-script root-test-without-title
+    } |
+      exception:get-fail-message (all) |
+      str:contains (all) '>> must have at least 2 arguments' |
+      assertions:should-be $true
+  }
+
+  test 'Section without title' {
+    var section = (run-test-script sub-section-without-title)
+
+    put $section |
+      section:simplify (all) |
+      assertions:should-be [
+        &test-results=[
+          &Alpha=[
+            &outcome=$outcomes:failed
+            &output=''
+          ]
+        ]
+        &sub-sections=[&]
+      ]
+
+    put $section[test-results][Alpha][exception-log] |
+      str:contains (all) '>> must have at least 2 arguments' |
       assertions:should-be $true
   }
 

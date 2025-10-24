@@ -1,5 +1,5 @@
->> 'In alpha' {
-  >> 'should work' {
+>> In alpha {
+  >> should work {
     echo Alpha 1
   }
 }
