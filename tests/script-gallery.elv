@@ -2,16 +2,29 @@ use path
 
 var -this-script-dir = (path:dir (src)[name])
 
-fn -get-scripts-for-sub-directory { |subdirectory|
-  tmp pwd = $-this-script-dir
-  put $subdirectory/*.test.elv
-}
+var single-scripts = [
+  single-scripts/empty.test.elv
+  single-scripts/in-section-failing.test.elv
+  single-scripts/in-section-mixed.test.elv
+  single-scripts/in-section-ok.test.elv
+  single-scripts/metainfo.test.elv
+  single-scripts/returning.test.elv
+  single-scripts/root-failing.test.elv
+  single-scripts/root-mixed.test.elv
+  single-scripts/root-ok.test.elv
+  single-scripts/root-test-without-title.test.elv
+  single-scripts/sub-section-without-title.test.elv
+]
 
-var single-scripts = [(-get-scripts-for-sub-directory single-scripts)]
+var aggregator = [
+  aggregator/alpha.test.elv
+  aggregator/beta.test.elv
+  aggregator/gamma.test.elv
+]
 
-var aggregator = [(-get-scripts-for-sub-directory aggregator)]
-
-var readme = [(-get-scripts-for-sub-directory readme)]
+var readme = [
+  readme/maths.test.elv
+]
 
 var all = [(
   all [
