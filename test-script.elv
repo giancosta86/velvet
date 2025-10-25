@@ -80,7 +80,8 @@ fn run { |script-path|
   ])
 
   tmp pwd = (path:dir $abs-script-path)
-  eval &ns=$namespace $script-code | only-bytes
+  eval &ns=$namespace $script-code |
+    only-bytes
 
   gather-section
 }
