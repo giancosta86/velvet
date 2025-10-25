@@ -5,11 +5,11 @@ use ./tests/aggregator/sections
 use ./tests/script-gallery
 use ./utils/raw
 
-raw:suite 'Aggregator' { |test~|
-  fn get-test-script { |basename|
-    script-gallery:get-script-path aggregator $basename
-  }
+fn get-test-script { |basename|
+  script-gallery:get-script-path aggregator $basename
+}
 
+raw:suite 'Aggregator' { |test~|
   test 'Running no scripts' {
     aggregator:run-test-scripts |
       assertions:should-be $section:empty
