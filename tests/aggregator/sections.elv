@@ -45,7 +45,6 @@ var alpha-beta = [
         ]
       ]
     ]
-
     &'In beta'=[
       &sub-sections=[&]
       &test-results=[
@@ -59,7 +58,7 @@ var alpha-beta = [
   ]
 ]
 
-var alpha-beta-gamma = [
+var alpha-beta-gamma-simplified = [
   &test-results=[&]
   &sub-sections=[
     &'In alpha'=[
@@ -95,7 +94,6 @@ var alpha-beta-gamma = [
         ]
       ]
     ]
-
     &'In beta'=  [
       &test-results=[
         &'has duplicate in third source file'=[
@@ -105,7 +103,6 @@ var alpha-beta-gamma = [
       ]
       &sub-sections=[&]
     ]
-
     &'In gamma'=[
       &test-results=[
         &'should pass'=[

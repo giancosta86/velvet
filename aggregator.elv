@@ -14,7 +14,8 @@ fn run-test-scripts { |&num-workers=$DEFAULT-NUM-WORKERS @script-paths|
   all $script-paths |
     seq:split-by-chunk-count $num-workers |
     peach &num-workers=$num-workers { |chunk-of-script-paths|
-      elvish -norc $-sandbox-script-path $@chunk-of-script-paths | from-json
+      elvish -norc $-sandbox-script-path $@chunk-of-script-paths |
+        from-json
     } |
       section:merge
 }

@@ -28,16 +28,16 @@ raw:suite 'Aggregator' { |test~|
   test 'Running 3 scripts' {
     aggregator:run-test-scripts (get-test-script alpha) (get-test-script beta) (get-test-script gamma) |
       section:simplify (all) |
-      assertions:should-be $sections:alpha-beta-gamma
+      assertions:should-be $sections:alpha-beta-gamma-simplified
   }
 
   test 'Running the same 3 scripts with different numbers of workers' {
     var script-paths = [(get-test-script alpha) (get-test-script beta) (get-test-script gamma)]
 
-    range 1 4 | each { |num-workers|
+    range 1 6 | each { |num-workers|
       aggregator:run-test-scripts &num-workers=$num-workers $@script-paths |
         section:simplify (all) |
-        assertions:should-be $sections:alpha-beta-gamma
+        assertions:should-be $sections:alpha-beta-gamma-simplified
     }
   }
 }
