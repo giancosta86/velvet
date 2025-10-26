@@ -127,23 +127,20 @@ raw:suite 'Top-level command' { |test~|
       assertions:should-be '❌ There are failed tests!'
   }
 
-  test 'Running all aggregator tests and requesting a summary' {
+  test 'Running all the aggregator tests and requesting a summary' {
     tmp pwd = (path:join $this-script-dir tests aggregator)
 
     main:velvet &put &reporters=[] |
       summary:simplify (all) |
       assertions:should-be $summaries:alpha-beta-gamma-simplified
   }
-}
 
+  test 'Running all the aggregator tests and checking the byte output' {
+    tmp pwd = (path:join $this-script-dir tests aggregator)
 
-raw:suite 'Running the README test' { |test~|
-  tmp pwd = (path:join $this-script-dir tests aggregator)
-
-  test 'Checking the byte output' {
     var home-directory = (put ~)
 
-    var expected-log-path = (path:join $this-script-dir tests readme maths.log)
+    var expected-log-path = (path:join $this-script-dir tests aggregator all.log)
 
     var expected-log = (slurp < $expected-log-path)
 
@@ -154,12 +151,5 @@ raw:suite 'Running the README test' { |test~|
       string:unstyled (all) |
       str:replace $home-directory '<HOME>' (all) |
       assertions:should-be $expected-log
-  }
-
-  test 'Checking the value output' {
-    main:velvet &put |
-      only-values |
-      summary:simplify (all) |
-      assertions:should-be $summaries:alpha-beta-gamma-simplified
   }
 }
