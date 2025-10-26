@@ -77,3 +77,20 @@ raw:suite 'Indenting lines' { |test~|
       assertion:assert (all)
   }
 }
+
+raw:suite 'Unstyling a string' { |test~|
+  test 'With non-styled string' {
+    var source = 'This is just a basic string'
+
+    string:unstyled $source |
+    eq (all) $source |
+    assertion:assert (all)
+  }
+
+  test 'With styled string' {
+    echo (styled 'Hello' bold italic green), (styled 'this' italic) is just a (styled 'basic test' bold red) |
+      string:unstyled (all) |
+      eq (all) 'Hello, this is just a basic test' |
+      assertion:assert (all)
+  }
+}

@@ -1,3 +1,4 @@
+use re
 use ./map
 
 fn get-minimal { |source|
@@ -26,4 +27,8 @@ fn indent-lines { |indent|
     } |
     slurp |
     put (all)[..-1]
+}
+
+fn unstyled { |source|
+  re:replace '\x1b\[[0-9;]*m' '' $source
 }

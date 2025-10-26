@@ -1,4 +1,5 @@
 use path
+use str
 use ./assertions
 use ./main
 use ./summary
@@ -6,6 +7,7 @@ use ./tests/aggregator/summaries
 use ./tests/script-gallery
 use ./utils/exception
 use ./utils/raw
+use ./utils/string
 
 var this-script-dir = (path:dir (src)[name])
 
@@ -136,5 +138,28 @@ raw:suite 'Top-level command' { |test~|
 
 
 raw:suite 'Running the README test' { |test~|
+  tmp pwd = (path:join $this-script-dir tests aggregator)
 
+  test 'Checking the byte output' {
+    var home-directory = (put ~)
+
+    var expected-log-path = (path:join $this-script-dir tests readme maths.log)
+
+    var expected-log = (slurp < $expected-log-path)
+
+    main:velvet |
+      only-bytes |
+      slurp |
+      str:trim-space (all) |
+      string:unstyled (all) |
+      str:replace $home-directory '<HOME>' (all) |
+      assertions:should-be $expected-log
+  }
+
+  test 'Checking the value output' {
+    main:velvet &put |
+      only-values |
+      summary:simplify (all) |
+      assertions:should-be $summaries:alpha-beta-gamma-simplified
+  }
 }
