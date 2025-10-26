@@ -40,8 +40,7 @@ raw:suite 'Running in sandbox' { |test~|
   test 'Failing test' {
     var section = (run-test-sandbox in-section-failing)
 
-    put $section |
-      section:simplify (all) |
+    section:simplify $section |
       assertions:should-be [
         &test-results=[&]
         &sub-sections=[

@@ -160,8 +160,7 @@ raw:suite 'Test script execution' { |test~|
   test 'Section without title' {
     var section = (run-test-script sub-section-without-title)
 
-    put $section |
-      section:simplify (all) |
+    section:simplify $section |
       assertions:should-be [
         &test-results=[
           &Alpha=[
@@ -180,8 +179,8 @@ raw:suite 'Test script execution' { |test~|
   test 'With section having mixed outcomes' {
     var section = (run-test-script in-section-mixed)
 
-    put $section |
-      section:simplify (all) |
+
+    section:simplify $section |
       assertions:should-be [
         &test-results= [&]
         &sub-sections= [

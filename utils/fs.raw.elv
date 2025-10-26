@@ -8,8 +8,7 @@ raw:suite 'Temp file path' { |test~|
     var temp-file-path = (fs:temp-file-path)
     defer { os:remove $temp-file-path }
 
-    put $temp-file-path |
-      kind-of (all) |
+    kind-of $temp-file-path |
       eq (all) string |
       assertion:assert (all)
   }
@@ -18,8 +17,7 @@ raw:suite 'Temp file path' { |test~|
     var temp-file-path = (fs:temp-file-path)
     defer { os:remove $temp-file-path }
 
-    put $temp-file-path |
-      os:exists (all) |
+    os:exists $temp-file-path |
       assertion:assert (all)
   }
 }
