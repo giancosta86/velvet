@@ -21,7 +21,7 @@ fn expect-should-be-failure { |&strict=$false expected actual-block|
       only-values |
       assertions:should-be &strict=$strict $expected
   } |
-    exception:get-fail-message (all) |
+    exception:get-fail-message |
     eq (all) (with-strictness-determiner &strict=$strict 'should-be assertion failed') |
     assertion:assert (all)
 }
@@ -32,7 +32,7 @@ fn expect-should-not-be-failure { |&strict=$false expected actual-block|
       only-values |
       assertions:should-not-be &strict=$strict $expected
   } |
-    exception:get-fail-message (all) |
+    exception:get-fail-message |
     eq (all) (with-strictness-determiner &strict=$strict 'should-not-be assertion failed') |
     assertion:assert (all)
 }
@@ -193,7 +193,7 @@ raw:suite 'Assertions: fail-test' { |test~|
     exception:expect-throws {
       assertions:fail-test
     } |
-      exception:get-fail-message (all) |
+      exception:get-fail-message |
       assertions:should-be 'TEST SET TO FAIL'
   }
 }

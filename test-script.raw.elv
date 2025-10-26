@@ -152,7 +152,7 @@ raw:suite 'Test script execution' { |test~|
     exception:expect-throws {
       run-test-script root-test-without-title
     } |
-      exception:get-fail-message (all) |
+      exception:get-fail-message |
       str:contains (all) '>> must have at least 2 arguments' |
       assertions:should-be $true
   }
@@ -235,5 +235,18 @@ raw:suite 'Test script execution' { |test~|
           ]
         ]
       ]
+  }
+
+  test 'Exception handling' {
+    var stats = (
+      run-test-script exceptions |
+        stats:from-section (all)
+    )
+
+    put $stats[passed] |
+      assertions:should-be 1
+
+    put $stats[failed] |
+      assertions:should-be 0
   }
 }

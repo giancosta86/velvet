@@ -75,6 +75,7 @@ fn run { |script-path|
     &'>>'~=$'>>~'
     &expect-throws~=$exception:expect-throws~
     &fail-test~=$assertions:fail-test~
+    &get-fail-message~=$exception:get-fail-message~
     &should-be~=$assertions:should-be~
     &should-not-be~=$assertions:should-not-be~
   ])

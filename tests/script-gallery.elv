@@ -4,6 +4,7 @@ var -this-script-dir = (path:dir (src)[name])
 
 var single-scripts = [
   single-scripts/empty.test.elv
+  single-scripts/exceptions.test.elv
   single-scripts/in-section-failing.test.elv
   single-scripts/in-section-mixed.test.elv
   single-scripts/in-section-ok.test.elv

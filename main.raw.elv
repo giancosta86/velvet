@@ -123,7 +123,7 @@ raw:suite 'Top-level command' { |test~|
     exception:expect-throws {
       main:velvet &must-pass &reporters=[]
     } |
-      exception:get-fail-message (all) |
+      exception:get-fail-message |
       assertions:should-be '❌ There are failed tests!'
   }
 

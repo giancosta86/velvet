@@ -3,7 +3,14 @@ fn is-exception { |x|
     eq (all) exception
 }
 
-fn get-fail-message { |potential-exception|
+fn get-fail-message { |@arguments|
+  var potential-exception = (
+    [
+      &(num 0)={ one }
+      &(num 1)={ put $arguments[0] }
+    ][(count $arguments)]
+  )
+
   if (
     and (is-exception $potential-exception) (has-key $potential-exception reason) (has-key $potential-exception[reason] content)
   ) {

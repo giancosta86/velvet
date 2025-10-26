@@ -10,7 +10,7 @@ raw:suite 'Splitting a sequence by chunk count' { |test~|
       all [Alpha Beta] |
         seq:split-by-chunk-count -1
     } |
-      exception:get-fail-message (all) |
+      exception:get-fail-message |
       str:contains (all) 'The chunk count must be > 0!' |
       assertion:assert (all)
   }
@@ -20,7 +20,7 @@ raw:suite 'Splitting a sequence by chunk count' { |test~|
       all [Alpha Beta] |
         seq:split-by-chunk-count 0
     } |
-      exception:get-fail-message (all) |
+      exception:get-fail-message |
       str:contains (all) 'The chunk count must be > 0!' |
       assertion:assert (all)
   }

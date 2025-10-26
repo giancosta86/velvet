@@ -29,6 +29,7 @@ use ../../utils/lang
       $'>>~'
       $expect-throws~
       $fail-test~
+      $get-fail-message~
       $should-be~
       $should-not-be~
     ] | each { |provided-fn|

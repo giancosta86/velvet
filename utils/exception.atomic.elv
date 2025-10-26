@@ -107,8 +107,19 @@ echo ⚛ Expecting an exception
   exception:expect-throws {
     fail DODO
   } |
-    exception:get-fail-message (all) |
+    exception:get-fail-message |
     eq (all) DODO |
+    assertion:assert (all)
+}
+
+{
+  echo ▶ Into the pipeline, without arguments
+
+  exception:expect-throws {
+    fail CIOP
+  } |
+    exception:get-fail-message |
+    eq (all) CIOP |
     assertion:assert (all)
 }
 
