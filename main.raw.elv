@@ -147,8 +147,8 @@ raw:suite 'Top-level command' { |test~|
     main:velvet |
       only-bytes |
       slurp |
-      str:trim-space (all) |
       string:unstyled (all) |
+      str:trim-space (all) |
       str:replace $home-directory '<HOME>' (all) |
       assertions:should-be $expected-log
   }
