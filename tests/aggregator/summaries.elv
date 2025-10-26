@@ -1,6 +1,7 @@
 use ../../outcomes
+use ../../summary
 
-var alpha = [
+var alpha = (summary:from-section [
   &test-results= [&]
   &sub-sections=[
     &'In alpha'=[
@@ -14,10 +15,10 @@ var alpha = [
       &sub-sections=[&]
     ]
   ]
-]
+])
 
-var alpha-beta = [
-  &test-results= [&]
+var alpha-beta = (summary:from-section [
+  &test-results=[&]
   &sub-sections=[
     &'In alpha'=[
       &test-results=[
@@ -56,9 +57,9 @@ var alpha-beta = [
       ]
     ]
   ]
-]
+])
 
-var alpha-beta-gamma-simplified = [
+var alpha-beta-gamma-simplified = (summary:from-section [
   &test-results=[&]
   &sub-sections=[
     &'In alpha'=[
@@ -113,4 +114,4 @@ var alpha-beta-gamma-simplified = [
       &sub-sections=[&]
     ]
   ]
-]
+])

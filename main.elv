@@ -1,6 +1,6 @@
 use ./aggregator
 use ./reporting/cli
-use ./stats
+use ./summary
 
 fn get-test-scripts {
   put **[nomatch-ok].test.elv
@@ -13,22 +13,29 @@ fn has-test-scripts {
     != (all) 0
 }
 
-# TODO! Add a final test, to test the entire output for a group of scripts
-# TODO! The test scripts MUST be the argument of the command!
-fn velvet { |&test-scripts=$nil &reporters=[$cli:display~] &num-workers=$aggregator:DEFAULT-NUM-WORKERS|
-  var actual-test-scripts = (coalesce $test-scripts [(get-test-scripts)])
+fn velvet { |&must-pass=$false &put=$false &reporters=[$cli:display~] &num-workers=$aggregator:DEFAULT-NUM-WORKERS @script-paths|
+  var actual-test-scripts = (
+    if (> (count $script-paths) 0) {
+      put $script-paths
+    } else {
+      put [(get-test-scripts)]
+    }
+  )
 
   var section = (aggregator:run-test-scripts &num-workers=$num-workers $@actual-test-scripts)
-  var stats = (stats:from-section $section)
+
+  var summary = (summary:from-section $section)
 
   all $reporters | each { |reporter|
-    $reporter $section $stats | only-bytes
+    $reporter $summary |
+      only-bytes
   }
 
-  put [
-    &section=$section
-    &stats=$stats
-  ]
+  if (and $must-pass (> $summary[stats][failed] 0)) {
+    fail '❌ There are failed tests!'
+  }
 
-  #TODO! Should I also run "exit 1" on failure in some cases? That would simplify pipelines
+  if $put {
+    put $summary
+  }
 }

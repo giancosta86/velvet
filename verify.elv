@@ -28,6 +28,7 @@ all [
   test-result
   section
   stats
+  summary
   reporting/cli
   test-script-frame
   test-script

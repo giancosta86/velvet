@@ -107,7 +107,9 @@ fn -display-stats { |stats|
   echo $@fragments
 }
 
-fn display { |section stats|
+fn display { |summary|
+  var section = $summary[section]
+
   var items-count = (+ (count $section[test-results]) (count $section[sub-sections]))
 
   if (== $items-count 0) {
@@ -119,5 +121,5 @@ fn display { |section stats|
 
   echo
 
-  -display-stats $stats
+  -display-stats $summary[stats]
 }

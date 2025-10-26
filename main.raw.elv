@@ -1,15 +1,34 @@
 use path
 use ./assertions
 use ./main
-use ./outcomes
-use ./section
-use ./tests/aggregator/sections
+use ./summary
+use ./tests/aggregator/summaries
 use ./tests/script-gallery
+use ./utils/exception
 use ./utils/raw
 
 var this-script-dir = (path:dir (src)[name])
 
-raw:suite 'Getting test script' { |test~|
+fn get-test-script { |basename|
+  script-gallery:get-script-path aggregator $basename
+}
+
+fn create-reporter-spy {
+  var summary
+
+  var reporter = { |actual-summary|
+    set summary = $actual-summary
+  }
+
+  put [
+    &reporter=$reporter
+    &get-summary={
+      put $summary
+    }
+  ]
+}
+
+raw:suite 'Listing test scripts' { |test~|
   test 'In directory with no tests' {
     tmp pwd = (path:join $this-script-dir utils)
 
@@ -33,7 +52,7 @@ raw:suite 'Getting test script' { |test~|
       assertions:should-be $expected-scripts
   }
 
-  test 'In directory having nested tests' {
+  test 'In directory with nested tests' {
     tmp pwd = (path:join $this-script-dir tests)
 
     main:get-test-scripts |
@@ -43,7 +62,7 @@ raw:suite 'Getting test script' { |test~|
   }
 }
 
-raw:suite 'Searching for test scripts' { |test~|
+raw:suite 'Boolean detection of test scripts' { |test~|
   test 'In directory with no tests' {
     tmp pwd = (path:join $this-script-dir utils)
 
@@ -66,107 +85,56 @@ raw:suite 'Searching for test scripts' { |test~|
   }
 }
 
-raw:suite 'Top-level test script execution' { |test~|
-  fn get-test-script { |basename|
-    script-gallery:get-script-path aggregator $basename
-  }
-
-  fn create-reporter-spy {
-    var section
-    var stats
-
-    var reporter = { |actual-section actual-stats|
-      set section = $actual-section
-      set stats = $actual-stats
-    }
-
-    put [
-      &reporter=$reporter
-      &get-section={ put $section }
-      &get-stats={ put $stats }
-    ]
-  }
-
-  test 'Running no scripts' {
+raw:suite 'Top-level command' { |test~|
+  test 'Running one aggregator script' {
     var spy = (create-reporter-spy)
 
-    main:velvet &test-scripts=[] &reporters=[$spy[reporter]]
+    main:velvet &reporters=[$spy[reporter]] (get-test-script alpha)
 
-    $spy[get-section] |
-      assertions:should-be $section:empty
-
-    $spy[get-stats] |
-      assertions:should-be [
-        &total=0
-        &passed=0
-        &failed=0
-      ]
+    $spy[get-summary] |
+      assertions:should-be $summaries:alpha
   }
 
-  test 'Running one script' {
+  test 'Running two aggregator scripts' {
     var spy = (create-reporter-spy)
 
-    main:velvet &test-scripts=[(get-test-script alpha)] &reporters=[$spy[reporter]]
+    main:velvet &reporters=[$spy[reporter]] (get-test-script alpha) (get-test-script beta)
 
-    $spy[get-section] |
-      assertions:should-be $sections:alpha
-
-    $spy[get-stats] |
-      assertions:should-be [
-        &total=1
-        &passed=1
-        &failed=0
-      ]
+    $spy[get-summary] |
+      assertions:should-be $summaries:alpha-beta
   }
 
-  test 'Running two scripts' {
-    var spy = (create-reporter-spy)
-
-    main:velvet &test-scripts=[(get-test-script alpha) (get-test-script beta)] &reporters=[$spy[reporter]]
-
-    $spy[get-section] |
-      assertions:should-be $sections:alpha-beta
-
-    $spy[get-stats] |
-      assertions:should-be [
-        &total=3
-        &passed=3
-        &failed=0
-      ]
-  }
-
-  test 'Return value when running two scripts' {
-    var run-result = (
-      main:velvet &test-scripts=[(get-test-script alpha) (get-test-script beta)] &reporters=[]
-    )
-
-    put $run-result[section] |
-      assertions:should-be $sections:alpha-beta
-
-    put $run-result[stats] |
-      assertions:should-be [
-        &total=3
-        &passed=3
-        &failed=0
-      ]
-  }
-
-  test 'Running all scripts via inference' {
-    tmp pwd = ./tests/aggregator
+  test 'Running all aggregator scripts via inference' {
+    tmp pwd = (path:join $this-script-dir tests aggregator)
 
     var spy = (create-reporter-spy)
 
     main:velvet &reporters=[$spy[reporter]]
-
-    $spy[get-section] |
-      section:simplify (all) |
-      assertions:should-be $sections:alpha-beta-gamma
-
-    $spy[get-stats] |
-      assertions:should-be [
-        &total=6
-        &passed=4
-        &failed=2
-      ]
+    $spy[get-summary] |
+      summary:simplify (all) |
+      assertions:should-be $summaries:alpha-beta-gamma-simplified
   }
+
+  test 'Running all aggregator tests and asserting success' {
+    tmp pwd = (path:join $this-script-dir tests aggregator)
+
+    exception:expect-throws {
+      main:velvet &must-pass &reporters=[]
+    } |
+      exception:get-fail-message (all) |
+      assertions:should-be '❌ There are failed tests!'
+  }
+
+  test 'Running all aggregator tests and requesting a summary' {
+    tmp pwd = (path:join $this-script-dir tests aggregator)
+
+    main:velvet &put &reporters=[] |
+      summary:simplify (all) |
+      assertions:should-be $summaries:alpha-beta-gamma-simplified
+  }
+}
+
+
+raw:suite 'Running the README test' { |test~|
+
 }

@@ -2,15 +2,18 @@ use str
 use ../assertions
 use ../outcomes
 use ../section
-use ../stats
+use ../summary
 use ../utils/raw
 use ./cli
 
 raw:suite 'Command-line reporting' { |test~|
   fn create-output-tester { |section|
-    var stats = (stats:from-section $section)
+    var summary = (summary:from-section $section)
 
-    var report-output = (cli:display $section $stats | slurp)
+    var report-output = (
+      cli:display $summary |
+        slurp
+    )
 
     put [
       &expect-in-output={ |snippets|
