@@ -32,4 +32,16 @@ use str
       }
     }
   }
+
+  >> custom fail {
+    >> should be handled and inspectable {
+      expect-throws {
+        if (== (% 8 2) 0) {
+          fail '8 is even!'
+        }
+      } |
+        get-fail-message |
+        should-be '8 is even!'
+    }
+  }
 }

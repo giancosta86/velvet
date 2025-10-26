@@ -1,3 +1,5 @@
+use path
+
 fn run-script { |script-path|
   elvish -norc $script-path
 }
@@ -8,7 +10,7 @@ all [
   command
   raw
 ] | each { |atomic-script-basename|
-  run-script utils/$atomic-script-basename'.atomic.elv'
+  run-script (path:join utils $atomic-script-basename'.atomic.elv')
 }
 
 all [
@@ -20,7 +22,7 @@ all [
   seq
   exception-lines
 ] | each { |raw-script-basename|
-  run-script utils/$raw-script-basename'.raw.elv'
+  run-script (path:join utils $raw-script-basename'.raw.elv')
 }
 
 all [
@@ -37,4 +39,10 @@ all [
   main
 ] | each { |raw-script-basename|
     run-script $raw-script-basename'.raw.elv'
+  }
+
+all [
+  maths
+] | each { |raw-script-basename|
+    run-script (path:join tests readme $raw-script-basename'.raw.elv')
   }
