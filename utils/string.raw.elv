@@ -83,8 +83,8 @@ raw:suite 'Unstyling a string' { |test~|
     var source = 'This is just a basic string'
 
     string:unstyled $source |
-    eq (all) $source |
-    assertion:assert (all)
+      eq (all) $source |
+      assertion:assert (all)
   }
 
   test 'With styled string' {
