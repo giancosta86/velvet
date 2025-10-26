@@ -3,10 +3,10 @@ use ../../assertions
 use ../../main
 use ../../utils/raw
 
-raw:suite 'Running the README test' { |test~|
+raw:suite 'README tests' { |test~|
   tmp pwd = (path:join tests readme)
 
-  test 'Checking the stats' {
+  test 'Must run successfully' {
     main:velvet &must-pass &put &reporters=[] |
       put (all)[stats] |
       assertions:should-be [

@@ -38,11 +38,11 @@ all [
   aggregator
   main
 ] | each { |raw-script-basename|
-    run-script $raw-script-basename'.raw.elv'
-  }
+  run-script $raw-script-basename'.raw.elv'
+}
 
 all [
   maths
 ] | each { |raw-script-basename|
-    run-script (path:join tests readme $raw-script-basename'.raw.elv')
-  }
+  run-script (path:join tests readme $raw-script-basename'.raw.elv')
+}
