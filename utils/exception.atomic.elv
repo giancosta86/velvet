@@ -113,7 +113,7 @@ echo ⚛ Expecting an exception
 }
 
 {
-  echo ▶ Into the pipeline, without arguments
+  echo ▶ In a pipeline, without arguments
 
   exception:expect-throws {
     fail CIOP
