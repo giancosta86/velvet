@@ -2,13 +2,19 @@
 
 _Smooth, functional testing in the Elvish shell_
 
-**velvet** is a minimalist - yet fairly _sophisticated_ - **test framework** and **runner**, enabling users to run _tests organized in hierarchical structures_ leveraging the _functional programming_ elegance of the [Elvish](https://elv.sh/) shell.
+**velvet** is a minimalist - yet _sophisticated_ - **test framework** and **runner**, enabling users to _run tests organized in hierarchical structures_ leveraging the _functional programming_ elegance of the [Elvish](https://elv.sh/) shell.
 
 ![Execution screenshot](docs/aggregator-log.png)
 
+## Why Velvet?
+
+I _love_ the expressive, **Gherkin**-like syntax that can be found in test systems like [Jest](https://jestjs.io/), [Vitest](https://vitest.dev/) and [ScalaTest](https://www.scalatest.org/), but they are all focused on a specific technology - which usually doesn't feel as natural as a shell when dealing with **system programming** like file system or network operations.
+
+Given my passion for the [Elvish](https://elv.sh/) shell, I've designed a testing infrastructure taking my favorite aspects of such frameworks, while applying my own perspective - especially focusing on _cross-technology, integration scenarios_.
+
 ## Installation
 
-Velvet can be installed via **epm** - for example:
+Velvet can be installed via **epm** - in particular:
 
 ```elvish
 use epm
@@ -26,7 +32,37 @@ use github.com/giancosta86/velvet/main velvet
 var velvet~ = $velvet:velvet~
 ```
 
-This will make the `velvet` command available.
+This will make the `velvet` command globally available at the command prompt.
+
+## Writing tests
+
+Tests are defined in **test scripts** - by convention, files having `.test.elv` extension - that is, Elvish scripts having a handful of _additional builtin functions_: as a consequence, test scripts can import modules - including from third-party libraries - and leverage the entirety of the Elvish language.
+
+### Structuring tests
+
+A test has **passed** outcome if its block ends with no exception; otherwise, it is marked as **failed**.
+
+### Assertions
+
+- `should-be [&strict] <expected>`: if the value passed via pipe (`|`) is not equal to the `<expected>` argument:
+
+  1. Display both values
+
+  1. If the `diff` command is available on the system, also show their differences
+
+  1. Fail.
+
+  **Please, note**: _equality_ is defined as follows:
+
+  - if `&strict` is requested, the `eq` function is applied to the pair of values.
+
+  - otherwise (the default), the _recursive minimalist string representations_ of both operand are compared.
+
+- `should-not-be [&strict] <unexpected>`: if the value passed via pipe (`|`) is equal to the `<unexpected>` argument, display such value and fail.
+
+- `expect-throws <block>`: requires `block` to throw an exception - or fails if it completed successfully.
+
+  As a plus, the exception is output as value, so that it can be further inspected - especially via `get-fail-message`, which returns the message passed to the `fail` command, or `$nil` otherwise.
 
 ## Running tests
 
@@ -44,11 +80,29 @@ The command can be customized with a few _optional parameters_:
 
 - `num-workers`: the number of parallel Elvish shells executing test scripts. **Default**: 8.
 
+The script paths can also be passed as _variadic arguments_ to the `velvet` command:
+
+```elvish
+velvet <script 1> <script 2> ... <script N>
+```
+
+otherwise, all the test scripts located in the directory tree below the current working directory will be run.
+
 ## Writing tests
 
 ## Architecture
 
 ![Architectural schema](docs/architecture.png)
+
+- Every test script runs its tests **sequentially** - in a (virtually) _dedicated shell_: consequently, the _current working directory_ and other global variables can be changed with no fear of interference
+
+- Multiple test scripts are usually run _in parallel_ - and all the results are merged in the end, ready to be sent to the requested reporters and/or emitted to Elvish's value channel.
+
+  **Please, note**:
+
+  - different scripts can have _sections having the same titles_ - and the test results will be merged
+
+  - on the other hand, _tests must have unique titles_
 
 ## Credits
 
