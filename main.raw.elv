@@ -145,7 +145,6 @@ raw:suite 'Top-level command' { |test~|
     var expected-log = (slurp < $expected-log-path)
 
     main:velvet |
-      only-bytes |
       slurp |
       string:unstyled (all) |
       str:trim-space (all) |
