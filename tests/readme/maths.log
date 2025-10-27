@@ -1,0 +1,15 @@
+In arithmetic
+    addition
+        should work ✅
+
+    custom fail
+        should be handled and inspectable ✅
+
+    division
+        when dividing by 0
+            should fail ✅
+
+    multiplication
+        should return just the expected value ✅
+
+✅ Total tests: 4.
