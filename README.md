@@ -4,13 +4,13 @@ _Smooth, functional testing in the Elvish shell_
 
 **velvet** is a minimalist - yet _sophisticated_ - **test framework** and **runner**, enabling users to _run tests organized in hierarchical structures_ leveraging the _functional programming_ elegance of the [Elvish](https://elv.sh/) shell.
 
-![Execution screenshot](docs/aggregator-log.png)
+![Console summary](docs/console-summary.png)
 
 ## Why Velvet?
 
-I _love_ the expressive, **Gherkin**-like syntax that can be found in test systems like [Jest](https://jestjs.io/), [Vitest](https://vitest.dev/) and [ScalaTest](https://www.scalatest.org/), but they are all focused on a specific technology - which usually doesn't feel as natural as a shell when dealing with **system programming** like file system or network operations.
+I _love_ the expressive, **Gherkin**-like syntax that can be found in test systems like [Jest](https://jestjs.io/), [Vitest](https://vitest.dev/) and [ScalaTest](https://www.scalatest.org/), but they are all focused on a specific technology - which usually doesn't feel as natural as a shell when dealing with **system programming** like file or network operations.
 
-Given my passion for the [Elvish](https://elv.sh/) shell, I've designed a testing infrastructure taking my favorite aspects of such frameworks, while applying my own perspective - especially focusing on _cross-technology, integration scenarios_.
+Given my passion for the [Elvish](https://elv.sh/) shell, I've designed this testing infrastructure taking my favorite aspects of such frameworks, while applying my own perspective - especially focusing on _cross-technology, integration scenarios_.
 
 ## Installation
 
@@ -36,9 +36,53 @@ This will make the `velvet` command globally available at the command prompt.
 
 ## Writing tests
 
-Tests are defined in **test scripts** - by convention, files having `.test.elv` extension - that is, Elvish scripts having a handful of _additional builtin functions_: as a consequence, test scripts can import modules - including from third-party libraries - and leverage the entirety of the Elvish language.
+Tests are defined in **test scripts** - by convention, files having `.test.elv` extension: they are _standard Elvish scripts_ that can also transparently invoke a handful of additional builtin functions, injected by Velvet and described below.
 
 ### Structuring tests
+
+The `>>` function is the basic building block for _defining the test tree_ - adopting a Gherkin-like descriptive notation:
+
+```elvish
+>> First component {
+  >> division operation {
+    >> when divisor is not 0 {
+      >> should return value {
+        # Test code goes here
+      }
+    }
+
+    >> when divisor is 0 {
+      >> should crash {
+        # Test code goes here
+      }
+    }
+  }
+}
+
+>> Second component {
+  >> other operation {
+    >> should work {
+      # Test code goes here
+    }
+  }
+}
+```
+
+**Please, note**: the `>>` function - called at the beginning of the line, has no ambiguity with the `>>` redirection operator, used towards the end of the line.
+
+**Please, note**: you might prefer a traditional, string-based definition, like this:
+
+```elvish
+>> 'Addition' {
+  >> 'when a and b are positive' {
+    >> 'should be positive' {
+      # Test code goes here
+    }
+  }
+}
+```
+
+It is perfectly acceptable, because `>>` can take an arbitrary number of strings before the block - including a single one with explicit delimiters.
 
 A test has **passed** outcome if its block ends with no exception; otherwise, it is marked as **failed**.
 
@@ -63,6 +107,8 @@ A test has **passed** outcome if its block ends with no exception; otherwise, it
 - `expect-throws <block>`: requires `block` to throw an exception - or fails if it completed successfully.
 
   As a plus, the exception is output as value, so that it can be further inspected - especially via `get-fail-message`, which returns the message passed to the `fail` command, or `$nil` otherwise.
+
+- `fail-test` always fails - with a predefined message.
 
 ## Running tests
 
