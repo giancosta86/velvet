@@ -31,7 +31,7 @@ all [
   section
   stats
   summary
-  reporting/cli
+  reporting/console
   test-script-frame
   test-script
   sandbox

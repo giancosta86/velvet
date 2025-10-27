@@ -4,14 +4,14 @@ use ../outcomes
 use ../section
 use ../summary
 use ../utils/raw
-use ./cli
+use ./console
 
 raw:suite 'Command-line reporting' { |test~|
   fn create-output-tester { |section|
     var summary = (summary:from-section $section)
 
     var report-output = (
-      cli:display $summary |
+      console:report $summary |
         slurp
     )
 
