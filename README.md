@@ -2,13 +2,13 @@
 
 _Smooth, functional testing in the Elvish shell_
 
-**velvet** is a minimalist - yet _sophisticated_ - **test framework** and **runner**, enabling users to _run tests organized in hierarchical structures_ leveraging the _functional programming_ elegance of the [Elvish](https://elv.sh/) shell.
+**velvet** is a minimalist - yet _sophisticated_ - **test framework** and **runner**, enabling its users to _run tests organized in hierarchical structures_ leveraging the _functional programming_ elegance of the [Elvish](https://elv.sh/) shell.
 
 ![Console summary](docs/console-summary.png)
 
 ## Why Velvet?
 
-I _love_ the expressive, **Gherkin**-like syntax that can be found in test software like [Jest](https://jestjs.io/), [Vitest](https://vitest.dev/) and [ScalaTest](https://www.scalatest.org/), but they are all focused on a specific technology - which usually doesn't feel as natural as a shell when dealing with **system programming** like file or network operations.
+I am personally fond of the expressive, **Gherkin**-like syntax that can be found in test software like [Jest](https://jestjs.io/), [Vitest](https://vitest.dev/) and [ScalaTest](https://www.scalatest.org/), but each of them is based on a specific language - which usually doesn't feel as natural as a shell when dealing with **system programming** like file, network or process operations.
 
 Given my passion for the [Elvish](https://elv.sh/) shell, I've designed this testing infrastructure by combining my favorite aspects of such frameworks, while applying my own perspective - especially focusing on _cross-technology, integration scenarios_.
 
@@ -40,7 +40,7 @@ Tests are defined in **test scripts** - by convention, files having `.test.elv` 
 
 ### Defining the test structure
 
-The `>>` function - is the basic building block for _defining the test tree_ - adopting _a Gherkin-like descriptive notation_:
+The `>>` function is the basic building block for _defining the test tree_ - adopting _a Gherkin-like descriptive notation_:
 
 ```elvish
 >> First component {
@@ -90,9 +90,9 @@ whereas the sections are:
 
 - **other operation**
 
-**Please, note**: tests can also reside in the root of the script - when they are not contained in another `>>` block.
+**Please, note**: tests can also reside in the root of the script - simply when they are not contained in another `>>` block.
 
-**Please, note**: the `>>` _function_ - called at the beginning of the line, has _no ambiguity_ with the `>>` _redirection operator_, used towards the end of the line.
+**Please, note**: the `>>` _function_ - called at the beginning of the line, has _no ambiguity_ with the `>>` _redirection operator_, which always appears after a command.
 
 **Please, note**: you might prefer to put titles into quotation marks, like this:
 
@@ -106,49 +106,116 @@ whereas the sections are:
 }
 ```
 
-This is perfectly acceptable, because `>>` can take an arbitrary number of strings before the block - including a single one with explicit delimiters.
+This is perfectly acceptable, because `>>` can take an arbitrary number of strings before the `{ }` block - including just a single string with explicit delimiters.
 
-A test has the **passed** outcome if its block ends with no exception; otherwise, it is marked as **failed**.
+## Test outcome
+
+A test can only have two outcomes:
+
+- ✅**passed** if its block ends with no exception
+
+- ❌**failed** if an exception was thrown; in particular, you can fail a test via Elvish's `fail` function, or via one of Velvet's _assertions_.
+
+The **test output** - on both _stdout_ and _stderr_ - is displayed, together with the _exception log_, only if the test fails.
 
 ### Assertions
 
 - `should-be [&strict] <expected>`: if the value passed via pipe (`|`) is not equal to the `<expected>` argument:
 
-  1. Display both values
+  1. Displays both values
 
-  1. If the `diff` command is available on the system, also show their differences
+  1. If the `diff` command is available on the system, also shows their differences
 
-  1. Fail.
+  1. Fails.
 
-  **Please, note**: _equality_ is defined as follows:
+  To test a single variable, you can prepend the `put` function:
+
+  ```elvish
+  put $my-variable |
+    should-be 90
+  ```
+
+  although, most frequently, you'll use a direct pipe
+
+  ```elvish
+  my-command <arg 1> <arg 2> ... <arg N> |
+    should-be <expected value>
+  ```
+
+  #### Equality
+
+  In Velvet, _equality_ is defined as follows:
 
   - if `&strict` is requested, the `eq` function is applied to the pair of values.
 
-  - otherwise (the default), the _recursive minimalist string representations_ of both operand are compared.
+    ```elvish
+    # This assertion fails!
+    put 90 |
+      should-be &strict (num 90)
+    ```
 
-- `should-not-be [&strict] <unexpected>`: if the value passed via pipe (`|`) is equal to the `<unexpected>` argument, display such value and fail.
+  - otherwise, the default behavior consists in comparing the _recursive minimalist string representations_ of both operands.
 
-- `expect-throws <block>`: requires `block` to throw an exception - or fails if it completed successfully.
+    ```elvish
+    # This succeeds!
+    put 90 |
+      should-be &strict (num 90)
+    ```
 
-  As a plus, the exception is output as value, so that it can be further inspected - especially via `get-fail-message`, which returns the message passed to the `fail` command, or `$nil` otherwise.
+- `should-not-be [&strict] <unexpected>`: if the value passed via pipe (`|`) is equal to the `<unexpected>` argument:
 
-- `fail-test` always fails - with a predefined message.
+  1. Displays such value
+
+  1. Fails.
+
+  ```elvish
+  some-command |
+    should-not-be 90
+  ```
+
+  The `&strict` equality flag works precisely like described above.
+
+- `expect-throws <block>`: requires `block` to _throw an exception_ - failing if it completed successfully.
+
+  ```elvish
+  # This works fine
+  expect-throws {
+    fail DODO
+  }
+
+  # This will fail, saying a failure was expected!
+  expect-throws {
+    # This blocks throws nothing
+  }
+  ```
+
+  As a plus, the exception itself is output as a value, so it can be further inspected - especially via `get-fail-message`, which returns the message passed to the `fail` command, or `$nil` otherwise.
+
+  ```elvish
+  expect-throws {
+    fail DODO
+  } |
+    get-fail-message |
+    should-be DODO
+  ```
+
+- `fail-test` takes no arguments and _always fails_ - with a predefined message: it's perfect for quickly sketching up a new test in test iterations.
 
 ## Running tests
 
-To run tests from a directory containing one or more test scripts in its tree, just run this command in the Elvish shell:
+To run all the tests within a directory containing one or more test scripts in its tree, just run this command in the Elvish shell:
 
 > velvet
 
-The command can be customized with a few _optional parameters_:
+The command can be customized via a few _optional parameters_:
 
 - `&must-pass`: if at least one test fails, the command throws an exception. **Default**: disabled.
 
-- `&reporters`: an array of functions to report the test summary; each reporter function should receive a `summary` object - with no additional constraints. **Default**: a function writing to the console with _colors_ and _emojis_.
+- `&reporters`: an array of functions to report the test summary; each reporter receives a `summary` object - with no additional constraints. **Default**: a reporter writing to the console with _colors_ and _emojis_.
 
 - `&put`: outputs the summary to Elvish's value channel. In this case, you'll probably want to set `&reporters=[]` - or to reporters not writing to the console. **Default**: disabled.
 
-- `num-workers`: the number of parallel Elvish shells executing test scripts. **Default**: 8.
+- `num-workers`: the (actually maximum) number of parallel Elvish shells executing test scripts. **Default**: 8.
 
 The script paths can also be passed as _variadic arguments_ to the `velvet` command:
 
@@ -162,15 +229,15 @@ otherwise, all the test scripts located in the directory tree below the current 
 
 ![Execution flow](docs/execution-flow.png)
 
-- Every test script runs its tests **sequentially** - in a (virtually) _dedicated shell_: consequently, the _current working directory_ and other global variables can be changed with no fear of interference
+- Every test script runs its tests **sequentially** - in a (virtually) _dedicated shell_: consequently, the _current working directory_ and other global variables can be changed with no fear of interference.
 
 - Multiple test scripts are usually run _in parallel_ - and all the results are merged in the end, ready to be sent to the requested reporters and/or emitted to Elvish's value channel.
 
   **Please, note**:
 
-  - different scripts can have _sections having the same titles_ - and the test results will be merged
+  - separate scripts can have _sections with the same titles_ - and the test results will be merged
 
-  - on the other hand, _tests must have unique titles_
+  - on the other hand, _tests must have unique titles_ - or they will be merged into a `DUPLICATE!` test result
 
 ## Credits
 
