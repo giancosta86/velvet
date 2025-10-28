@@ -1,4 +1,5 @@
 use path
+use re
 use str
 use ./assertions
 use ./main
@@ -148,7 +149,7 @@ raw:suite 'Top-level command' { |test~|
       slurp |
       string:unstyled (all) |
       str:trim-space (all) |
-      str:replace $home-directory '<HOME>' (all) |
+      re:replace '([ \t]*?)\S+?/velvet/' '$1<VELVET>/' (all) |
       assertions:should-be $expected-log
   }
 }

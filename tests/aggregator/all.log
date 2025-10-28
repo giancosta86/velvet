@@ -12,7 +12,7 @@ In alpha
             *** EXCEPTION LOG ***
 
             Exception: DODO
-              <HOME>/GitZone/velvet/tests/aggregator/gamma.test.elv:24:7-15:       fail DODO
+              <VELVET>/tests/aggregator/gamma.test.elv:24:7-15:       fail DODO
 
 
         In sub-sub-level
