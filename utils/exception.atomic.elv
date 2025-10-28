@@ -12,6 +12,13 @@ echo ⚛ Exception detection
 }
 
 {
+  echo ▶ On division by zero
+
+  exception:is-exception ?(/ 8 0) |
+    assertion:assert (all)
+}
+
+{
   echo ▶ On fail
 
   exception:is-exception ?(fail DODO) |
@@ -22,6 +29,56 @@ echo ⚛ Exception detection
   echo ▶ On return
 
   exception:is-exception ?(return) |
+    assertion:assert (all)
+}
+
+echo ⚛ ✅
+echo
+
+echo ⚛ Reason retrieval
+
+{
+  echo ▶ On number
+
+  exception:get-reason 90 |
+    eq (all) $nil |
+    assertion:assert (all)
+}
+
+{
+  echo ▶ On division by zero
+
+  exception:get-reason ?(/ 8 0) |
+    assertion:assert (all)
+}
+
+{
+  echo ▶ On division by zero, passed via pipeline
+
+  put ?(/ 8 0) |
+    exception:get-reason |
+    assertion:assert (all)
+}
+
+{
+  echo ▶ On fail
+
+  exception:get-reason ?(fail DODO) |
+    assertion:assert (all)
+}
+
+{
+  echo ▶ On fail, passed via pipeline
+
+  put ?(fail DODO) |
+    exception:get-reason |
+    assertion:assert (all)
+}
+
+{
+  echo ▶ On return
+
+  exception:get-reason ?(return) |
     assertion:assert (all)
 }
 
@@ -39,9 +96,26 @@ echo ⚛ Failure message retrieval
 }
 
 {
+  echo ▶ On division by zero
+
+  exception:get-fail-message ?(/ 8 0) |
+    eq (all) $nil |
+    assertion:assert (all)
+}
+
+{
   echo ▶ On fail
 
   exception:get-fail-message ?(fail DODO) |
+    eq (all) DODO |
+    assertion:assert (all)
+}
+
+{
+  echo ▶ On fail, passed via pipeline
+
+  put ?(fail DODO) |
+    exception:get-fail-message |
     eq (all) DODO |
     assertion:assert (all)
 }

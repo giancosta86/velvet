@@ -1,11 +1,11 @@
->> My test {
-  >> should pass {
+>> 'My test' {
+  >> 'should pass' {
     echo Wiii!
   }
 
-  >> Cip {
-    >> Ciop {
-      >> should fail {
+  >> 'Cip' {
+    >> 'Ciop' {
+      >> 'should fail' {
         echo Wooo!
         fail DODUS
       }

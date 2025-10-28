@@ -3,28 +3,28 @@ use str
 use ../../utils/fs
 use ../../utils/lang
 
->> The script source {
+>> 'The script source' {
   var script-src = (src)
 
-  >> should be a file {
+  >> 'should be a file' {
     put $script-src[is-file] |
       should-be $true
   }
 
-  >> should contain the script path {
+  >> 'should contain the script path' {
     str:has-suffix $script-src[name] metainfo.test.elv |
       should-be $true
   }
 
-  >> should contain the source code {
+  >> 'should contain the source code' {
     put $script-src[code] |
       str:contains (all) 'should contain the source code' |
       should-be $true
   }
 }
 
->> The provided functions {
-  >> should be available {
+>> 'The provided functions' {
+  >> 'should be available' {
     all [
       $'>>~'
       $expect-throws~
@@ -39,8 +39,8 @@ use ../../utils/lang
   }
 }
 
->> Redirection - appending to file {
-  >> should work {
+>> 'Redirection - appending to file' {
+  >> 'should work' {
     var temp-path = (fs:temp-file-path)
     defer { os:remove $temp-path }
 

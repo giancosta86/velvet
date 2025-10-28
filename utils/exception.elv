@@ -3,36 +3,44 @@ fn is-exception { |x|
     eq (all) exception
 }
 
-fn get-fail-message { |@arguments|
-  var potential-exception = (
-    [
-      &(num 0)={ one }
-      &(num 1)={ put $arguments[0] }
-    ][(count $arguments)]
-  )
+fn -get-potential-exception { |@arguments|
+  var result-retriever = [
+    &(num 0)={ one }
+    &(num 1)={ put $arguments[0] }
+  ][(count $arguments)]
+
+  $result-retriever
+}
+
+fn get-reason { |@arguments|
+  var potential-exception = (-get-potential-exception $@arguments)
 
   if (
-    and (is-exception $potential-exception) (has-key $potential-exception reason) (has-key $potential-exception[reason] content)
+    and (is-exception $potential-exception) (has-key $potential-exception reason)
   ) {
-    put $potential-exception[reason][content]
+    put $potential-exception[reason]
+  } else {
+    put $nil
+  }
+}
+
+fn get-fail-message { |@arguments|
+  var reason = (get-reason $@arguments)
+
+  if (
+    and $reason (has-key $reason content)
+  ) {
+    put $reason[content]
   } else {
     put $nil
   }
 }
 
 fn is-return { |potential-exception|
-  if (
-    and (is-exception $potential-exception) (has-key $potential-exception reason) |
-      not (all)
-  ) {
-    put $false
-    return
-  }
-
-  var reason = $potential-exception[reason]
+  var reason = (get-reason $potential-exception)
 
   if (
-    and (has-key $reason type) (has-key $reason name) |
+    and $reason (has-key $reason type) (has-key $reason name) |
       not (all)
   ) {
     put $false

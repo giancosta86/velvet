@@ -1,5 +1,5 @@
->> Exceptions {
-  >> handling and detection {
+>> 'Exceptions' {
+  >> 'handling and detection' {
     var message = DODO
 
     expect-throws {

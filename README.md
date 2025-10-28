@@ -43,25 +43,25 @@ Tests are defined in **test scripts** - by convention, files having `.test.elv` 
 The `>>` function is the basic building block for _defining the test tree_ - adopting _a Gherkin-like descriptive notation_:
 
 ```elvish
->> First component {
-  >> division operation {
-    >> when divisor is not 0 {
-      >> should return value {
+>> 'First component' {
+  >> 'division operation' {
+    >> 'when divisor is not 0' {
+      >> 'should return value' {
         # Test code goes here
       }
     }
 
-    >> when divisor is 0 {
-      >> should crash {
+    >> 'when divisor is 0' {
+      >> 'should crash' {
         # Test code goes here
       }
     }
   }
 }
 
->> Second component {
-  >> other operation {
-    >> should work {
+>> 'Second component' {
+  >> 'other operation' {
+    >> 'should work' {
       # Test code goes here
     }
   }
@@ -93,20 +93,6 @@ whereas the sections are:
 **Please, note**: tests can also reside in the root of the script - simply when they are not contained in another `>>` block.
 
 **Please, note**: the `>>` _function_ - called at the beginning of the line, has _no ambiguity_ with the `>>` _redirection operator_, which always appears after a command.
-
-**Please, note**: you might prefer to put titles into quotation marks, like this:
-
-```elvish
->> 'Addition' {
-  >> 'when a and b are positive' {
-    >> 'should be positive' {
-      # Test code goes here
-    }
-  }
-}
-```
-
-This is perfectly acceptable, because `>>` can take an arbitrary number of strings before the `{ }` block - including just a single string with explicit delimiters.
 
 ## Test outcome
 

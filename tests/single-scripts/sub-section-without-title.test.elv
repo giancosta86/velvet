@@ -1,6 +1,6 @@
->> Alpha {
+>> 'Alpha' {
   >> {
-    >> Gamma {
+    >> 'Gamma' {
       echo The intermediate section title is missing!
     }
   }

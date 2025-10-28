@@ -20,16 +20,7 @@ fn run { |script-path|
     ]
   }
 
-  fn '>>' { |@arguments|
-    if (< (count $arguments) 2) {
-      fail '>> must have at least 2 arguments: a title fragment and the executable block'
-    }
-
-    var title-fragments = $arguments[..-1]
-    var block = $arguments[-1]
-
-    var title = (str:join ' ' $title-fragments)
-
+  fn '>>' { |title block|
     var this-frame = (test-script-frame:create $abs-script-path $title)
 
     var parent-frame = $current-frame

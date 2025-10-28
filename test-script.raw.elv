@@ -152,8 +152,8 @@ raw:suite 'Test script execution' { |test~|
     exception:expect-throws {
       run-test-script root-test-without-title
     } |
-      exception:get-fail-message |
-      str:contains (all) '>> must have at least 2 arguments' |
+      print (all)[reason] |
+      str:contains (all) 'arity mismatch' |
       assertions:should-be $true
   }
 
@@ -172,13 +172,12 @@ raw:suite 'Test script execution' { |test~|
       ]
 
     put $section[test-results][Alpha][exception-log] |
-      str:contains (all) '>> must have at least 2 arguments' |
+      str:contains (all) 'arity mismatch' |
       assertions:should-be $true
   }
 
   test 'With section having mixed outcomes' {
     var section = (run-test-script in-section-mixed)
-
 
     section:simplify $section |
       assertions:should-be [
