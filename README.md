@@ -8,9 +8,9 @@ _Smooth, functional testing in the Elvish shell_
 
 ## Why Velvet?
 
-I _love_ the expressive, **Gherkin**-like syntax that can be found in test systems like [Jest](https://jestjs.io/), [Vitest](https://vitest.dev/) and [ScalaTest](https://www.scalatest.org/), but they are all focused on a specific technology - which usually doesn't feel as natural as a shell when dealing with **system programming** like file or network operations.
+I _love_ the expressive, **Gherkin**-like syntax that can be found in test software like [Jest](https://jestjs.io/), [Vitest](https://vitest.dev/) and [ScalaTest](https://www.scalatest.org/), but they are all focused on a specific technology - which usually doesn't feel as natural as a shell when dealing with **system programming** like file or network operations.
 
-Given my passion for the [Elvish](https://elv.sh/) shell, I've designed this testing infrastructure taking my favorite aspects of such frameworks, while applying my own perspective - especially focusing on _cross-technology, integration scenarios_.
+Given my passion for the [Elvish](https://elv.sh/) shell, I've designed this testing infrastructure by combining my favorite aspects of such frameworks, while applying my own perspective - especially focusing on _cross-technology, integration scenarios_.
 
 ## Installation
 
@@ -36,11 +36,11 @@ This will make the `velvet` command globally available at the command prompt.
 
 ## Writing tests
 
-Tests are defined in **test scripts** - by convention, files having `.test.elv` extension: they are _standard Elvish scripts_ that can also transparently invoke a handful of additional builtin functions, injected by Velvet and described below.
+Tests are defined in **test scripts** - by convention, files having `.test.elv` extension: they are _standard Elvish scripts_ that can also transparently invoke a handful of _additional builtin functions_, injected by Velvet and described below.
 
-### Structuring tests
+### Defining the test structure
 
-The `>>` function is the basic building block for _defining the test tree_ - adopting a Gherkin-like descriptive notation:
+The `>>` function - is the basic building block for _defining the test tree_ - adopting _a Gherkin-like descriptive notation_:
 
 ```elvish
 >> First component {
@@ -68,9 +68,33 @@ The `>>` function is the basic building block for _defining the test tree_ - ado
 }
 ```
 
-**Please, note**: the `>>` function - called at the beginning of the line, has no ambiguity with the `>>` redirection operator, used towards the end of the line.
+The innermost calls of `>>` define **tests**, which are the leaves in a tree of **sections**; in the example above, the tests are:
 
-**Please, note**: you might prefer a traditional, string-based definition, like this:
+- **should return value**
+
+- **should crash**
+
+- **should work**
+
+whereas the sections are:
+
+- **First component**
+
+- **division operation**
+
+- **when divisor is not 0**
+
+- **when divisor is 0**
+
+- **Second component**
+
+- **other operation**
+
+**Please, note**: tests can also reside in the root of the script - when they are not contained in another `>>` block.
+
+**Please, note**: the `>>` _function_ - called at the beginning of the line, has _no ambiguity_ with the `>>` _redirection operator_, used towards the end of the line.
+
+**Please, note**: you might prefer to put titles into quotation marks, like this:
 
 ```elvish
 >> 'Addition' {
@@ -82,9 +106,9 @@ The `>>` function is the basic building block for _defining the test tree_ - ado
 }
 ```
 
-It is perfectly acceptable, because `>>` can take an arbitrary number of strings before the block - including a single one with explicit delimiters.
+This is perfectly acceptable, because `>>` can take an arbitrary number of strings before the block - including a single one with explicit delimiters.
 
-A test has **passed** outcome if its block ends with no exception; otherwise, it is marked as **failed**.
+A test has the **passed** outcome if its block ends with no exception; otherwise, it is marked as **failed**.
 
 ### Assertions
 
@@ -134,11 +158,9 @@ velvet <script 1> <script 2> ... <script N>
 
 otherwise, all the test scripts located in the directory tree below the current working directory will be run.
 
-## Writing tests
+## Execution flow
 
-## Architecture
-
-![Architectural schema](docs/architecture.png)
+![Execution flow](docs/execution-flow.png)
 
 - Every test script runs its tests **sequentially** - in a (virtually) _dedicated shell_: consequently, the _current working directory_ and other global variables can be changed with no fear of interference
 
