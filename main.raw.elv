@@ -149,7 +149,7 @@ raw:suite 'Top-level command' { |test~|
       slurp |
       string:unstyled (all) |
       str:trim-space (all) |
-      re:replace '([ \t]*?)\S+?/velvet/' '$1<VELVET>/' (all) |
+      re:replace '([ \t]*?)\S+?/velvet/(?:velvet/)?' '$1<VELVET>/' (all) |
       assertions:should-be $expected-log
   }
 }
