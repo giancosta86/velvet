@@ -140,13 +140,21 @@ The **test output** - on both _stdout_ and _stderr_ - is displayed, together wit
       should-be &strict (num 90)
     ```
 
-  - otherwise, the default behavior consists in comparing the _recursive minimalist string representations_ of both operands.
+  - otherwise, the default behavior consists in comparing the _minimized representations_ of both operands.
 
     ```elvish
     # This succeeds!
     put 90 |
       should-be &strict (num 90)
     ```
+
+    **PLEASE, NOTE**: the _minimized representation_ for any value is defined as follows:
+
+    - if the value is a **list**, return a list whose items are the _minimized representations_ of its items
+
+    - if the value is a **map**, return a map whose keys and values are the _minimized representations_ of the keys and values
+
+    - otherwise, the _minimized representation_ is the output of `to-string`
 
 - `should-not-be [&strict] <unexpected>`: if the value passed via pipe (`|`) is equal to the `<unexpected>` argument:
 
@@ -224,6 +232,14 @@ otherwise, all the test scripts located in the directory tree below the current 
   - separate scripts can have _sections with the same titles_ - and the test results will be merged
 
   - on the other hand, _tests must have unique titles_ - or they will be merged into a `DUPLICATE!` test result
+
+## The default reporter
+
+- order
+
+## Frequently asked questions
+
+- **setup** and **teardown**
 
 ## Credits
 
