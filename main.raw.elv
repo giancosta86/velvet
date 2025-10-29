@@ -44,9 +44,8 @@ raw:suite 'Listing test scripts' { |test~|
     tmp pwd = (path:join $this-script-dir tests aggregator)
 
     var expected-scripts = [(
-      all $script-gallery:aggregator | each { |script|
-        path:base $script
-      }
+      all $script-gallery:aggregator |
+        each $path:base~
     )]
 
     main:get-test-scripts |

@@ -5,7 +5,10 @@ fn get-minimal { |source|
   var source-kind = (kind-of $source)
 
   if (eq $source-kind list) {
-    to-string [(all $source | each $get-minimal~)]
+    to-string [(
+      all $source |
+        each $get-minimal~
+    )]
   } elif (eq $source-kind map) {
     map:filter-map $source { |key value|
       put [(get-minimal $key) (get-minimal $value)]
