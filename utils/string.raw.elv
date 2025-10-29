@@ -1,3 +1,4 @@
+use str
 use ./assertion
 use ./raw
 use ./string
@@ -91,6 +92,45 @@ raw:suite 'Unstyling a string' { |test~|
     echo (styled 'Hello' bold italic green), (styled 'this' italic) is just a (styled 'basic test' bold red) |
       string:unstyled (all) |
       eq (all) 'Hello, this is just a basic test' |
+      assertion:assert (all)
+  }
+}
+
+raw:suite 'Fancy string from value' { |test~|
+  test 'Applied to single-line string' {
+    var source = 'Hello, world!'
+
+    string:fancy $source |
+      eq (all) $source"\n" |
+      assertion:assert (all)
+  }
+
+  test 'Applied to multi-line string' {
+    var source = "Hello!\n   world!"
+
+    string:fancy $source |
+      eq (all) $source"\n" |
+      assertion:assert (all)
+  }
+
+  test 'Applied to number' {
+    string:fancy (num 90) |
+      eq (all) "(num 90)\n" |
+      assertion:assert (all)
+  }
+
+  test 'Applied to list' {
+    string:fancy [A B C] |
+      eq (all) "[\n A\n B\n C\n]\n" |
+      assertion:assert (all)
+  }
+
+  test 'Applied to exception' {
+    var exception = ?(fail DODO)
+
+    string:fancy $exception |
+      string:unstyled (all) |
+      str:has-prefix (all) "Exception: DODO\n" |
       assertion:assert (all)
   }
 }

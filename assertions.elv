@@ -4,21 +4,26 @@ use ./utils/string
 fn -print-expected-and-actual { |inputs|
   var expected-description = $inputs[expected-description]
   var expected = $inputs[expected]
-  var formatted-expected = (pprint $expected | slurp)
+  var formatted-expected = (string:fancy $expected)
 
   var actual-description = $inputs[actual-description]
   var actual = $inputs[actual]
-  var formatted-actual = (pprint $actual | slurp)
+  var formatted-actual = (string:fancy $actual)
 
-  print (styled $expected-description': ' red bold)
+  echo (styled $expected-description':' red bold)
   echo $formatted-expected
 
-  print (styled $actual-description': ' green bold)
+  echo (styled $actual-description':' green bold)
   echo $formatted-actual
 
   echo 🔎 (styled DIFF: yellow bold)
   diff:diff $formatted-expected $formatted-actual | tail -n +3
   echo 🔎🔎🔎
+}
+
+fn -print-unexpected { |unexpected|
+  echo (styled 'Unexpected:' red bold)
+  echo (string:fancy $unexpected)
 }
 
 fn should-be { |&strict=$false expected|
@@ -57,8 +62,7 @@ fn should-not-be { |&strict=$false unexpected|
 
   if $strict {
     if (eq $unexpected $actual) {
-      print (styled 'Unexpected: ' red bold)
-      pprint $actual
+      -print-unexpected $unexpected
 
       fail 'strict should-not-be assertion failed'
     }
@@ -67,8 +71,7 @@ fn should-not-be { |&strict=$false unexpected|
     var actual-string = (string:get-minimal $actual)
 
     if (eq $unexpected-string $actual-string) {
-      print (styled 'Unexpected: ' red bold)
-      pprint $actual
+      -print-unexpected $unexpected
 
       fail 'should-not-be assertion failed'
     }

@@ -32,3 +32,16 @@ fn indent-lines { |indent|
 fn unstyled { |source|
   re:replace '\x1b\[[0-9;]*m' '' $source
 }
+
+fn fancy { |value|
+  var kind = (kind-of $value)
+
+  if (eq $kind string) {
+    echo $value
+  } elif (eq $kind exception) {
+    show $value
+  } else {
+    pprint $value
+  } |
+    slurp
+}
