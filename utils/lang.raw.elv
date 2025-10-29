@@ -15,7 +15,7 @@ raw:suite 'is-function test' { |test~|
   }
 }
 
-raw:suite 'Minimal value' { |test~|
+raw:suite 'Minimized value' { |test~|
   test 'For string' {
     var value = 'This is a string!'
 
