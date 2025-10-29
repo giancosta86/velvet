@@ -175,13 +175,13 @@ The **test output** - on both _stdout_ and _stderr_ - is displayed, together wit
   }
   ```
 
-  As a plus, the exception itself is output as a value, so it can be further inspected - especially via `get-fail-message`, which returns the message passed to the `fail` command, or `$nil` otherwise.
+  As a plus, the exception itself is output as a value, so it can be further inspected - especially via `get-fail-content`, which returns the value (usually a message string) passed to the `fail` command, or `$nil` otherwise.
 
   ```elvish
   throws {
     fail DODO
   } |
-    get-fail-message |
+    get-fail-content |
     should-be DODO
   ```
 

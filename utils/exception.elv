@@ -24,7 +24,7 @@ fn get-reason { |@arguments|
   }
 }
 
-fn get-fail-message { |@arguments|
+fn get-fail-content { |@arguments|
   var reason = (get-reason $@arguments)
 
   if (

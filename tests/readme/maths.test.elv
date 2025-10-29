@@ -40,7 +40,7 @@ use str
           fail '8 is even!'
         }
       } |
-        get-fail-message |
+        get-fail-content |
         should-be '8 is even!'
     }
   }

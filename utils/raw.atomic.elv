@@ -59,7 +59,7 @@ echo ⚛ Raw testing
     eq $command-result[output] (all) |
     assertion:assert (all)
 
-  exception:get-fail-message $command-result[exception] |
+  exception:get-fail-content $command-result[exception] |
     eq (all) DODO |
     assertion:assert (all)
 }
@@ -138,7 +138,7 @@ echo ⚛ Raw testing
     eq $command-result[output] (all) |
     assertion:assert (all)
 
-  exception:get-fail-message $command-result[exception] |
+  exception:get-fail-content $command-result[exception] |
     eq (all) DODO |
     assertion:assert (all)
 }

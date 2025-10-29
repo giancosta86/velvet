@@ -5,7 +5,7 @@
     throws {
       fail $message
     } |
-      get-fail-message |
+      get-fail-content |
       should-be $message
   }
 }

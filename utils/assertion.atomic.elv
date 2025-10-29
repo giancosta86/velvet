@@ -16,9 +16,9 @@ echo ⚛ Atomic assertion
 
     fail 'The assertion must fail!'
   } catch e {
-    var message = $e[reason][content]
+    var content = $e[reason][content]
 
-    if (not-eq $message 'ASSERTION FAILED!') {
+    if (not-eq $content 'ASSERTION FAILED!') {
       fail 'The expected failure did not occur!'
     }
   }

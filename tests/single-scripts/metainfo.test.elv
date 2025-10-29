@@ -29,7 +29,7 @@ use ../../utils/lang
       $'>>~'
       $throws~
       $fail-test~
-      $get-fail-message~
+      $get-fail-content~
       $should-be~
       $should-not-be~
     ] | each { |provided-fn|

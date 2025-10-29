@@ -55,7 +55,7 @@ echo ⚛ Command capturing
   eq $result[output] Cip |
     assertion:assert (all)
 
-  exception:get-fail-message $result[exception] |
+  exception:get-fail-content $result[exception] |
     eq (all) DODO |
     assertion:assert (all)
 }
@@ -71,7 +71,7 @@ echo ⚛ Command capturing
   eq $result[output] Ciop |
     assertion:assert (all)
 
-  exception:get-fail-message $result[exception] |
+  exception:get-fail-content $result[exception] |
     eq (all) DODO |
     assertion:assert (all)
 }
@@ -88,7 +88,7 @@ echo ⚛ Command capturing
   eq $result[output] "Cip\nCiop\n" |
     assertion:assert (all)
 
-  exception:get-fail-message $result[exception] |
+  exception:get-fail-content $result[exception] |
     eq (all) DODO |
     assertion:assert (all)
 }

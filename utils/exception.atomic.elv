@@ -85,12 +85,12 @@ echo ⚛ Reason retrieval
 echo ⚛ ✅
 echo
 
-echo ⚛ Failure message retrieval
+echo ⚛ Failure content retrieval
 
 {
   echo ▶ On number
 
-  exception:get-fail-message 90 |
+  exception:get-fail-content 90 |
     eq (all) $nil |
     assertion:assert (all)
 }
@@ -98,7 +98,7 @@ echo ⚛ Failure message retrieval
 {
   echo ▶ On division by zero
 
-  exception:get-fail-message ?(/ 8 0) |
+  exception:get-fail-content ?(/ 8 0) |
     eq (all) $nil |
     assertion:assert (all)
 }
@@ -106,7 +106,7 @@ echo ⚛ Failure message retrieval
 {
   echo ▶ On fail
 
-  exception:get-fail-message ?(fail DODO) |
+  exception:get-fail-content ?(fail DODO) |
     eq (all) DODO |
     assertion:assert (all)
 }
@@ -115,7 +115,7 @@ echo ⚛ Failure message retrieval
   echo ▶ On fail, passed via pipeline
 
   put ?(fail DODO) |
-    exception:get-fail-message |
+    exception:get-fail-content |
     eq (all) DODO |
     assertion:assert (all)
 }
@@ -123,7 +123,7 @@ echo ⚛ Failure message retrieval
 {
   echo ▶ On return
 
-  exception:get-fail-message ?(return) |
+  exception:get-fail-content ?(return) |
     eq (all) $nil |
     assertion:assert (all)
 }
@@ -169,7 +169,7 @@ echo ⚛ Expecting an exception
 
     fail 'No exception was thrown by the expectation!'
   } catch e {
-    exception:get-fail-message $e |
+    exception:get-fail-content $e |
       eq (all) 'The given code block did not fail!' |
       assertion:assert (all)
   }
@@ -181,7 +181,7 @@ echo ⚛ Expecting an exception
   exception:throws {
     fail DODO
   } |
-    exception:get-fail-message |
+    exception:get-fail-content |
     eq (all) DODO |
     assertion:assert (all)
 }
@@ -192,7 +192,7 @@ echo ⚛ Expecting an exception
   exception:throws {
     fail CIOP
   } |
-    exception:get-fail-message |
+    exception:get-fail-content |
     eq (all) CIOP |
     assertion:assert (all)
 }

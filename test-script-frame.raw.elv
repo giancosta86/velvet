@@ -30,7 +30,7 @@ raw:suite 'Frame - Running a block' { |test~|
     exception:throws {
       $alpha[run-block] $block
     } |
-      exception:get-fail-message |
+      exception:get-fail-content |
       assertions:should-be 'Block result already set in frame: alpha'
   }
 }
@@ -42,7 +42,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
     exception:throws {
       $alpha[to-artifact]
     } |
-      exception:get-fail-message |
+      exception:get-fail-content |
       assertions:should-be 'Cannot obtain artifact when block result is not set, in frame: alpha'
   }
 
