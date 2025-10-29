@@ -1,4 +1,5 @@
 use ./utils/diff
+use ./utils/lang
 use ./utils/string
 
 fn -print-expected-and-actual { |inputs|
@@ -41,15 +42,15 @@ fn should-be { |&strict=$false expected|
       fail 'strict should-be assertion failed'
     }
   } else {
-    var expected-string = (string:get-minimal $expected)
-    var actual-string = (string:get-minimal $actual)
+    var expected-minimal = (lang:minimize $expected)
+    var actual-minimal = (lang:minimize $actual)
 
-    if (not-eq $expected-string $actual-string) {
+    if (not-eq $expected-minimal $actual-minimal) {
       -print-expected-and-actual [
         &expected-description='Expected'
-        &expected=$expected
+        &expected=$expected-minimal
         &actual-description='Actual'
-        &actual=$actual
+        &actual=$actual-minimal
       ]
 
       fail 'should-be assertion failed'
@@ -67,11 +68,11 @@ fn should-not-be { |&strict=$false unexpected|
       fail 'strict should-not-be assertion failed'
     }
   } else {
-    var unexpected-string = (string:get-minimal $unexpected)
-    var actual-string = (string:get-minimal $actual)
+    var unexpected-minimal = (lang:minimize $unexpected)
+    var actual-minimal = (lang:minimize $actual)
 
-    if (eq $unexpected-string $actual-string) {
-      -print-unexpected $unexpected
+    if (eq $unexpected-minimal $actual-minimal) {
+      -print-unexpected $unexpected-minimal
 
       fail 'should-not-be assertion failed'
     }

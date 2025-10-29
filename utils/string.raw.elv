@@ -3,38 +3,6 @@ use ./assertion
 use ./raw
 use ./string
 
-raw:suite 'Minimal string' { |test~|
-  test 'With string' {
-    string:get-minimal Dodo |
-      eq (all) Dodo |
-      assertion:assert (all)
-  }
-
-  test 'With number' {
-    string:get-minimal (num 90) |
-      eq (all) 90 |
-      assertion:assert (all)
-  }
-
-  test 'With bool' {
-    string:get-minimal $false |
-      eq (all) '$false' |
-      assertion:assert (all)
-  }
-
-  test 'With list' {
-    string:get-minimal [A (num 90) (num 92)] |
-      eq (all) '[A 90 92]' |
-      assertion:assert (all)
-  }
-
-  test 'With map' {
-    string:get-minimal [&(num 90)=(num 92)] |
-      eq (all) '[&90=92]' |
-      assertion:assert (all)
-  }
-}
-
 raw:suite 'Indenting lines' { |test~|
   test 'With empty string' {
     put '' |
