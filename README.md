@@ -161,16 +161,16 @@ The **test output** - on both _stdout_ and _stderr_ - is displayed, together wit
 
   The `&strict` equality flag works precisely like described above.
 
-- `expect-throws <block>`: requires `block` to _throw an exception_ - failing if it completed successfully.
+- `throws <block>`: requires `block` to _throw an exception_ - failing if it completed successfully.
 
   ```elvish
   # This works fine
-  expect-throws {
+  throws {
     fail DODO
   }
 
   # This will fail, saying a failure was expected!
-  expect-throws {
+  throws {
     # This blocks throws nothing
   }
   ```
@@ -178,7 +178,7 @@ The **test output** - on both _stdout_ and _stderr_ - is displayed, together wit
   As a plus, the exception itself is output as a value, so it can be further inspected - especially via `get-fail-message`, which returns the message passed to the `fail` command, or `$nil` otherwise.
 
   ```elvish
-  expect-throws {
+  throws {
     fail DODO
   } |
     get-fail-message |

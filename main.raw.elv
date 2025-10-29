@@ -121,7 +121,7 @@ raw:suite 'Top-level command' { |test~|
   test 'Running all aggregator tests and asserting success' {
     tmp pwd = (path:join $this-script-dir tests aggregator)
 
-    exception:expect-throws {
+    exception:throws {
       main:velvet &must-pass &reporters=[]
     } |
       exception:get-fail-message |

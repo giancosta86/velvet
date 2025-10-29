@@ -23,7 +23,7 @@ use str
   >> 'division' {
     >> 'when dividing by 0' {
       >> 'should fail' {
-        expect-throws {
+        throws {
           / 92 0
         } |
           to-string (all)[reason] |
@@ -35,7 +35,7 @@ use str
 
   >> 'custom fail' {
     >> 'should be handled and inspectable' {
-      expect-throws {
+      throws {
         if (== (% 8 2) 0) {
           fail '8 is even!'
         }

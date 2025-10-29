@@ -27,7 +27,7 @@ use ../../utils/lang
   >> 'should be available' {
     all [
       $'>>~'
-      $expect-throws~
+      $throws~
       $fail-test~
       $get-fail-message~
       $should-be~

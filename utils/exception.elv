@@ -50,7 +50,7 @@ fn is-return { |potential-exception|
   and (eq $reason[type] flow) (eq $reason[name] return)
 }
 
-fn expect-throws { |block|
+fn throws { |block|
   try {
     $block | only-bytes >&2
   } catch e {

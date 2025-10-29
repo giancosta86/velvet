@@ -165,7 +165,7 @@ echo ⚛ Expecting an exception
   echo ▶ When no exception is thrown
 
   try {
-    exception:expect-throws { }
+    exception:throws { }
 
     fail 'No exception was thrown by the expectation!'
   } catch e {
@@ -178,7 +178,7 @@ echo ⚛ Expecting an exception
 {
   echo ▶ When there is an exception
 
-  exception:expect-throws {
+  exception:throws {
     fail DODO
   } |
     exception:get-fail-message |
@@ -189,7 +189,7 @@ echo ⚛ Expecting an exception
 {
   echo ▶ In a pipeline, without arguments
 
-  exception:expect-throws {
+  exception:throws {
     fail CIOP
   } |
     exception:get-fail-message |

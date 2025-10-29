@@ -16,7 +16,7 @@ fn with-strictness-determiner { |&strict=$false message|
 }
 
 fn expect-should-be-failure { |&strict=$false expected actual-block|
-  exception:expect-throws {
+  exception:throws {
     $actual-block |
       only-values |
       assertions:should-be &strict=$strict $expected
@@ -27,7 +27,7 @@ fn expect-should-be-failure { |&strict=$false expected actual-block|
 }
 
 fn expect-should-not-be-failure { |&strict=$false expected actual-block|
-  exception:expect-throws {
+  exception:throws {
     $actual-block |
       only-values |
       assertions:should-not-be &strict=$strict $expected
@@ -190,7 +190,7 @@ raw:suite 'Assertions: should-not-be (non-strict)' { |test~|
 
 raw:suite 'Assertions: fail-test' { |test~|
   test 'Raising a test failure' {
-    exception:expect-throws {
+    exception:throws {
       assertions:fail-test
     } |
       exception:get-fail-message |

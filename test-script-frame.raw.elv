@@ -27,7 +27,7 @@ raw:suite 'Frame - Running a block' { |test~|
 
     $alpha[run-block] $block
 
-    exception:expect-throws {
+    exception:throws {
       $alpha[run-block] $block
     } |
       exception:get-fail-message |
@@ -39,7 +39,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
   test 'With no block' {
     var alpha = (create-test-frame 'alpha')
 
-    exception:expect-throws {
+    exception:throws {
       $alpha[to-artifact]
     } |
       exception:get-fail-message |

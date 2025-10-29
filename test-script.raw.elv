@@ -149,7 +149,7 @@ raw:suite 'Test script execution' { |test~|
   }
 
   test 'Root test without title' {
-    exception:expect-throws {
+    exception:throws {
       run-test-script root-test-without-title
     } |
       print (all)[reason] |

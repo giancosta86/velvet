@@ -2,7 +2,7 @@
   >> 'handling and detection' {
     var message = DODO
 
-    expect-throws {
+    throws {
       fail $message
     } |
       get-fail-message |

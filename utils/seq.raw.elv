@@ -6,7 +6,7 @@ use ./seq
 
 raw:suite 'Splitting a sequence by chunk count' { |test~|
   test 'With chunk count < 0' {
-    exception:expect-throws {
+    exception:throws {
       all [Alpha Beta] |
         seq:split-by-chunk-count -1
     } |
@@ -16,7 +16,7 @@ raw:suite 'Splitting a sequence by chunk count' { |test~|
   }
 
   test 'With chunk count 0' {
-    exception:expect-throws {
+    exception:throws {
       all [Alpha Beta] |
         seq:split-by-chunk-count 0
     } |
