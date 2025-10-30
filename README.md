@@ -150,11 +150,13 @@ The **test output** - on both _stdout_ and _stderr_ - is displayed, together wit
 
     **PLEASE, NOTE**: the _minimized representation_ for any value is defined as follows:
 
+    - if the value is a **number**, return the _string_ denoting the number
+
     - if the value is a **list**, return a list whose items are the _minimized representations_ of its items
 
     - if the value is a **map**, return a map whose keys and values are the _minimized representations_ of the keys and values
 
-    - otherwise, the _minimized representation_ is the output of `to-string`
+    - otherwise, return _the value itself_
 
 - `should-not-be [&strict] <unexpected>`: if the value passed via pipe (`|`) is equal to the `<unexpected>` argument:
 
@@ -240,6 +242,8 @@ otherwise, all the test scripts located in the directory tree below the current 
 ## Frequently asked questions
 
 - **setup** and **teardown**
+
+- **Why can't I see the test output?**
 
 ## Credits
 

@@ -32,13 +32,13 @@ raw:suite 'Minimized value' { |test~|
 
   test 'For boolean' {
     lang:minimize $true |
-      eq (all) '$true' |
+      eq (all) $true |
       assertion:assert (all)
   }
 
   test 'For $nil' {
     lang:minimize $nil |
-      eq (all) '$nil' |
+      eq (all) $nil |
       assertion:assert (all)
   }
 
@@ -46,7 +46,7 @@ raw:suite 'Minimized value' { |test~|
     var ex = ?(fail DODO)
 
     lang:minimize $ex |
-      eq (all) (to-string $ex) |
+      eq (all) $ex |
       assertion:assert (all)
   }
 
@@ -60,8 +60,8 @@ raw:suite 'Minimized value' { |test~|
       eq (all) [
         Alpha
         '92'
-        '$nil'
-        '$false'
+        $nil
+        $false
       ] |
       assertion:assert (all)
   }
@@ -82,8 +82,8 @@ raw:suite 'Minimized value' { |test~|
           Beta
           [Gamma 95 Delta]
         ]
-        '$nil'
-        '$false'
+        $nil
+        $false
       ] |
       assertion:assert (all)
   }
@@ -102,17 +102,17 @@ raw:suite 'Minimized value' { |test~|
 
   test 'For multi-level map' {
     lang:minimize [
-      &[alpha beta (num 95)]=[
+      &[alpha $true (num 95)]=[
         gamma
         [(num 98) epsilon]
-        [&ro=[sigma (num 99)]]
+        [&ro=[$nil (num 99)]]
       ]
     ] |
       eq (all) [
-        &[alpha beta 95]=[
+        &[alpha $true 95]=[
           gamma
           [98 epsilon]
-          [&ro=[sigma 99]]
+          [&ro=[$nil 99]]
         ]
       ] |
       assertion:assert (all)

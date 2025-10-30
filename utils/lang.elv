@@ -11,11 +11,14 @@ fn minimize { |value|
   if (has-key $-minimal-transforms-by-kind $kind) {
     $-minimal-transforms-by-kind[$kind] $value
   } else {
-    to-string $value
+    put $value
   }
 }
 
 set -minimal-transforms-by-kind = [
+  &number={ |value|
+    to-string $value
+  }
   &list={ |list|
     all $list |
       each $minimize~ |
