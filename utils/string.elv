@@ -1,5 +1,4 @@
 use re
-use ./map
 
 fn indent-lines { |indent|
   to-lines |
