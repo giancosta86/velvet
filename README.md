@@ -191,6 +191,60 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
 
 - `fail-test` takes _no arguments_ and _always fails_ - with a predefined message: it's perfect for _quickly sketching out a new test_ in test iterations.
 
+### Example test script
+
+The following script could be saved as a `.test.elv` file - ready to be run via the `velvet` command.
+
+```elvish
+use str
+
+>> 'In arithmetic' {
+  >> 'addition' {
+    >> 'should work' {
+      + 89 1 |
+        should-be 90
+    }
+  }
+
+  >> 'multiplication' {
+    >> 'should return just the expected value' {
+      var result = (* 15 6)
+
+      put $result |
+        should-be 90
+
+      put $result |
+        should-not-be 12
+    }
+  }
+
+  >> 'division' {
+    >> 'when dividing by 0' {
+      >> 'should fail' {
+        throws {
+          / 92 0
+        } |
+          to-string (all)[reason] |
+          str:contains (all) divisor |
+          should-be $true
+      }
+    }
+  }
+
+  >> 'custom fail' {
+    >> 'should be handled and inspectable' {
+      throws {
+        if (== (% 8 2) 0) {
+          fail '8 is even!'
+        }
+      } |
+        get-fail-content |
+        should-be '8 is even!'
+    }
+  }
+}
+```
+
 ## Running tests
 
 To run _all the tests_ within a directory containing _one or more test scripts_ in its _file system tree_, just run this command in the Elvish shell:
