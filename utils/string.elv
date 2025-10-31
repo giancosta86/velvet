@@ -17,7 +17,7 @@ fn unstyled { |source|
   re:replace '\x1b\[[0-9;]*m' '' $source
 }
 
-fn fancy { |value|
+fn pretty { |value|
   var kind = (kind-of $value)
 
   if (eq $kind string) {

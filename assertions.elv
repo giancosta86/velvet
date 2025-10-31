@@ -5,11 +5,11 @@ use ./utils/string
 fn -print-expected-and-actual { |inputs|
   var expected-description = $inputs[expected-description]
   var expected = $inputs[expected]
-  var formatted-expected = (string:fancy $expected)
+  var formatted-expected = (string:pretty $expected)
 
   var actual-description = $inputs[actual-description]
   var actual = $inputs[actual]
-  var formatted-actual = (string:fancy $actual)
+  var formatted-actual = (string:pretty $actual)
 
   echo (styled $expected-description':' red bold)
   echo $formatted-expected
@@ -24,7 +24,7 @@ fn -print-expected-and-actual { |inputs|
 
 fn -print-unexpected { |unexpected|
   echo (styled 'Unexpected:' red bold)
-  echo (string:fancy $unexpected)
+  echo (string:pretty $unexpected)
 }
 
 fn should-be { |&strict=$false expected|

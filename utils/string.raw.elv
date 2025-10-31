@@ -64,11 +64,11 @@ raw:suite 'Unstyling a string' { |test~|
   }
 }
 
-raw:suite 'Fancy string from value' { |test~|
+raw:suite 'Pretty string from value' { |test~|
   test 'Applied to single-line string' {
     var source = 'Hello, world!'
 
-    string:fancy $source |
+    string:pretty $source |
       eq (all) $source"\n" |
       assertion:assert (all)
   }
@@ -76,19 +76,19 @@ raw:suite 'Fancy string from value' { |test~|
   test 'Applied to multi-line string' {
     var source = "Hello!\n   world!"
 
-    string:fancy $source |
+    string:pretty $source |
       eq (all) $source"\n" |
       assertion:assert (all)
   }
 
   test 'Applied to number' {
-    string:fancy (num 90) |
+    string:pretty (num 90) |
       eq (all) "(num 90)\n" |
       assertion:assert (all)
   }
 
   test 'Applied to list' {
-    string:fancy [A B C] |
+    string:pretty [A B C] |
       eq (all) "[\n A\n B\n C\n]\n" |
       assertion:assert (all)
   }
@@ -96,7 +96,7 @@ raw:suite 'Fancy string from value' { |test~|
   test 'Applied to exception' {
     var exception = ?(fail DODO)
 
-    string:fancy $exception |
+    string:pretty $exception |
       string:unstyled (all) |
       str:has-prefix (all) "Exception: DODO\n" |
       assertion:assert (all)
