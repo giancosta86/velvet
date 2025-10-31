@@ -13,4 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: giancosta86/aurora-github/actions/verify-elvish-package@v11
+      - uses: elves/setup-elvish@v1
+        with:
+          elvish-version: 0.21.0
+
+      - shell: bash
+        run: elvish verify.elv

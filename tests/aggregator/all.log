@@ -1,0 +1,31 @@
+In alpha
+    should work ✅
+    should work too ✅
+
+    In sub-level
+        should fail ❌
+            *** OUTPUT LOG (stdout + stderr) ***
+
+            Cip
+            Ciop
+
+            *** EXCEPTION LOG ***
+
+            Exception: DODO
+              <VELVET>/tests/aggregator/gamma.test.elv:24:7-15:       fail DODO
+
+
+        In sub-sub-level
+            should be ok ✅
+
+In beta
+    has duplicate in third source file ❌
+        *** EXCEPTION LOG ***
+
+        DUPLICATE TEST!
+
+
+In gamma
+    should pass ✅
+
+❌ Total tests: 6. Passed: 4. Failed: 2.

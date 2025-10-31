@@ -1,0 +1,9 @@
+{
+  "description": "Smooth, functional testing in the Elvish shell",
+
+  "maintainers": ["Gianluca Costa <gianluca@gianlucacosta.info>"],
+
+  "homepage": "https://github.com/giancosta86/velvet",
+
+  "dependencies": []
+}
