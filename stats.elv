@@ -1,5 +1,4 @@
 use ./outcomes
-use ./utils/map
 
 var -raw-empty = [
   &passed=0
