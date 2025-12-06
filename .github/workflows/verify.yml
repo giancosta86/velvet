@@ -17,5 +17,17 @@ jobs:
         with:
           elvish-version: 0.21.0
 
+      - shell: elvish {0}
+        run: |
+          use epm
+
+          epm:install github.com/giancosta86/epm-plus
+
+          use github.com/giancosta86/epm-plus/epm-plus
+
+          epm-plus:patch-epm
+
+          epm:install
+
       - shell: bash
         run: elvish verify.elv
