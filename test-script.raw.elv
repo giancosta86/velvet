@@ -5,7 +5,6 @@ use ./outcomes
 use ./stats
 use ./test-script
 use ./tests/script-gallery
-use ./utils/exception
 use ./utils/raw
 
 raw:suite 'Test script execution' { |test~|
@@ -149,7 +148,7 @@ raw:suite 'Test script execution' { |test~|
   }
 
   test 'Root test without title' {
-    exception:throws {
+    assertions:throws {
       run-test-script root-test-without-title
     } |
       print (all)[reason] |

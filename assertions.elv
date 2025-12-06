@@ -1,6 +1,16 @@
-use ./utils/diff
-use ./utils/lang
-use ./utils/string
+use github.com/giancosta86/ethereal/v1/diff
+use github.com/giancosta86/ethereal/v1/lang
+use github.com/giancosta86/ethereal/v1/string
+
+fn throws { |block|
+  try {
+    $block | only-bytes >&2
+  } catch e {
+    put $e
+  } else {
+    fail 'The given code block did not fail!'
+  }
+}
 
 fn -print-expected-and-actual { |inputs|
   var expected-description = $inputs[expected-description]
@@ -42,8 +52,8 @@ fn should-be { |&strict=$false expected|
       fail 'strict should-be assertion failed'
     }
   } else {
-    var expected-minimal = (lang:minimize $expected)
-    var actual-minimal = (lang:minimize $actual)
+    var expected-minimal = (lang:flat-num $expected)
+    var actual-minimal = (lang:flat-num $actual)
 
     if (not-eq $expected-minimal $actual-minimal) {
       -print-expected-and-actual [
@@ -68,8 +78,8 @@ fn should-not-be { |&strict=$false unexpected|
       fail 'strict should-not-be assertion failed'
     }
   } else {
-    var unexpected-minimal = (lang:minimize $unexpected)
-    var actual-minimal = (lang:minimize $actual)
+    var unexpected-minimal = (lang:flat-num $unexpected)
+    var actual-minimal = (lang:flat-num $actual)
 
     if (eq $unexpected-minimal $actual-minimal) {
       -print-unexpected $unexpected-minimal

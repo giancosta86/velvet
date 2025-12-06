@@ -1,6 +1,6 @@
 use str
+use github.com/giancosta86/ethereal/v1/string
 use ../outcomes
-use ../utils/string
 
 var -styles-by-outcome = [
   &$outcomes:passed=[
@@ -43,7 +43,9 @@ fn -display-test-result { |test-title test-result level|
       echo (str:trim-space $test-result[exception-log])
       echo
     } |
-      string:indent-lines $logging-indentation |
+      string:prefix-lines $logging-indentation |
+      slurp |
+      put (all)[..-1] |
       echo (all)
   }
 }

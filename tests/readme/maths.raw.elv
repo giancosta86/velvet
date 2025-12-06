@@ -1,9 +1,9 @@
 use path
 use str
+use github.com/giancosta86/ethereal/v1/string
 use ../../assertions
 use ../../main
 use ../../utils/raw
-use ../../utils/string
 
 raw:suite 'README tests' { |test~|
   tmp pwd = (path:join tests readme)

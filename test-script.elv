@@ -1,8 +1,8 @@
 use path
+use github.com/giancosta86/ethereal/v1/exception
 use ./assertions
 use ./section
 use ./test-script-frame
-use ./utils/exception
 
 fn run { |script-path|
   var abs-script-path = (path:abs $script-path)
@@ -63,7 +63,7 @@ fn run { |script-path|
   var namespace = (ns [
     &src~=$custom-src~
     &'>>'~=$'>>~'
-    &throws~=$exception:throws~
+    &throws~=$assertions:throws~
     &fail-test~=$assertions:fail-test~
     &get-fail-content~=$exception:get-fail-content~
     &should-be~=$assertions:should-be~

@@ -1,6 +1,6 @@
 use path
+use github.com/giancosta86/ethereal/v1/seq
 use ./section
-use ./utils/seq
 
 var DEFAULT-NUM-WORKERS = 8
 
