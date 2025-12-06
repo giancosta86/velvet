@@ -1,10 +1,10 @@
 use str
+use github.com/giancosta86/ethereal/v1/command
+use github.com/giancosta86/ethereal/v1/exception
+use ./exception-lines
 use ./outcomes
 use ./section
 use ./test-result
-use ./utils/command
-use ./utils/exception
-use ./utils/exception-lines
 
 fn create { |script-path title|
   var block-result = $nil
@@ -15,7 +15,7 @@ fn create { |script-path title|
       fail 'Block result already set in frame: '$title
     }
 
-    set block-result = (command:capture $block)
+    set block-result = (command:capture &type=bytes $block)
   }
 
   fn add-sub-frame { |sub-frame|
@@ -48,8 +48,14 @@ fn create { |script-path title|
       }
     )
 
+    var output = (
+      all $block-result[data] |
+        to-lines |
+        slurp
+    )
+
     put [
-      &output=$block-result[output]
+      &output=$output
       &exception-log=$exception-log
       &outcome=$outcome
     ]

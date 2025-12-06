@@ -1,7 +1,7 @@
 use os
 use str
-use ../../utils/fs
-use ../../utils/lang
+use github.com/giancosta86/ethereal/v1/fs
+use github.com/giancosta86/ethereal/v1/lang
 
 >> 'The script source' {
   var script-src = (src)
@@ -41,13 +41,12 @@ use ../../utils/lang
 
 >> 'Redirection - appending to file' {
   >> 'should work' {
-    var temp-path = (fs:temp-file-path)
-    defer { os:remove $temp-path }
+    fs:with-temp-file { |temp-path|
+      echo alpha >> $temp-path
+      echo beta >> $temp-path
 
-    echo alpha >> $temp-path
-    echo beta >> $temp-path
-
-    slurp < $temp-path |
-      should-be "alpha\nbeta\n"
+      slurp < $temp-path |
+        should-be "alpha\nbeta\n"
+    }
   }
 }

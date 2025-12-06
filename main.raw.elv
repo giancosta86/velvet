@@ -1,14 +1,14 @@
 use path
 use re
 use str
+use github.com/giancosta86/ethereal/v1/exception
+use github.com/giancosta86/ethereal/v1/string
 use ./assertions
 use ./main
 use ./summary
 use ./tests/aggregator/summaries
 use ./tests/script-gallery
-use ./utils/exception
 use ./utils/raw
-use ./utils/string
 
 var this-script-dir = (path:dir (src)[name])
 
@@ -120,7 +120,7 @@ raw:suite 'Top-level command' { |test~|
   test 'Running all aggregator tests and asserting success' {
     tmp pwd = (path:join $this-script-dir tests aggregator)
 
-    exception:throws {
+    assertions:throws {
       main:velvet &must-pass &reporters=[]
     } |
       exception:get-fail-content |

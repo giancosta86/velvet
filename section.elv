@@ -1,5 +1,5 @@
+use github.com/giancosta86/ethereal/v1/map
 use ./test-result
-use ./utils/map
 
 var empty = [
   &test-results=[&]
@@ -12,13 +12,13 @@ fn is-section { |artifact|
 
 fn map-test-results-in-tree { |root-section test-result-mapper|
   var updated-test-results = (
-    map:filter-map $root-section[test-results] { |test-title test-result|
+    map:transform $root-section[test-results] { |test-title test-result|
       put [$test-title ($test-result-mapper $test-result)]
     }
   )
 
   var updated-sub-sections = (
-    map:filter-map $root-section[sub-sections] { |sub-title sub-section|
+    map:transform $root-section[sub-sections] { |sub-title sub-section|
       put [$sub-title (map-test-results-in-tree $sub-section $test-result-mapper)]
     }
   )

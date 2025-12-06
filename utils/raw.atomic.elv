@@ -1,7 +1,7 @@
 use str
+use github.com/giancosta86/ethereal/v1/command
+use github.com/giancosta86/ethereal/v1/exception
 use ./assertion
-use ./command
-use ./exception
 use ./raw
 
 echo ⚛ Raw testing
@@ -9,7 +9,7 @@ echo ⚛ Raw testing
 {
   echo ▶ Single test with no exceptions
 
-  var command-result = (command:capture {
+  var command-result = (command:capture &type=bytes {
     raw:suite Description { |test~|
       test 'Test title' {
         print Never shown
@@ -19,14 +19,13 @@ echo ⚛ Raw testing
     }
   })
 
-  all [
+  put [
     '🎭 '(styled Description bold | to-string (all))
     '▶ Test title'
     🎭✅
-    "\n"
+    ''
    ] |
-    str:join "\n" |
-    eq $command-result[output] (all) |
+    eq $command-result[data] (all) |
     assertion:assert (all)
 
   eq $command-result[exception] $nil |
@@ -36,7 +35,7 @@ echo ⚛ Raw testing
 {
   echo ▶ Single test with exception
 
-  var command-result = (command:capture {
+  var command-result = (command:capture &type=bytes {
     raw:suite Description { |test~|
       test 'Test title' {
         echo Cip
@@ -48,15 +47,14 @@ echo ⚛ Raw testing
     }
   })
 
-  all [
+  put [
     '🎭 '(styled Description bold | to-string (all))
     '▶ Test title'
     Cip
     Ciop
-    "\n"
+    ''
   ] |
-    str:join "\n" |
-    eq $command-result[output] (all) |
+    eq $command-result[data] (all) |
     assertion:assert (all)
 
   exception:get-fail-content $command-result[exception] |
@@ -67,7 +65,7 @@ echo ⚛ Raw testing
 {
   echo ▶ Multiple tests with no exceptions
 
-  var command-result = (command:capture {
+  var command-result = (command:capture &type=bytes {
     raw:suite Description { |test~|
       test 'Alpha title' {
         print Never shown
@@ -83,15 +81,14 @@ echo ⚛ Raw testing
     }
   })
 
-  all [
+  put [
     '🎭 '(styled Description bold | to-string (all))
     '▶ Alpha title'
     '▶ Beta title'
     🎭✅
-    "\n"
+    ''
   ] |
-    str:join "\n" |
-    eq $command-result[output] (all) |
+    eq $command-result[data] (all) |
     assertion:assert (all)
 
   eq $command-result[exception] $nil |
@@ -101,7 +98,7 @@ echo ⚛ Raw testing
 {
   echo ▶ Multiple tests with exception
 
-  var command-result = (command:capture {
+  var command-result = (command:capture &type=bytes {
     raw:suite Description { |test~|
       test 'Alpha title' {
         print Never shown
@@ -126,16 +123,15 @@ echo ⚛ Raw testing
     }
   })
 
-  all [
+  put [
     '🎭 '(styled Description bold | to-string (all))
     '▶ Alpha title'
     '▶ Beta title'
     Yogi
     Bubu
-    "\n"
+    ''
    ] |
-    str:join "\n" |
-    eq $command-result[output] (all) |
+    eq $command-result[data] (all) |
     assertion:assert (all)
 
   exception:get-fail-content $command-result[exception] |

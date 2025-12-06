@@ -1,12 +1,16 @@
-use ./command
+use github.com/giancosta86/ethereal/v1/command
 
 fn -test { |test-title test-block|
   echo ▶ $test-title
 
-  var capture-result = (command:capture $test-block)
+  var capture-result = (command:capture &type=bytes $test-block)
 
   if (not-eq $capture-result[exception] $nil) {
-    echo $capture-result[output]
+    all $capture-result[data] |
+      to-lines |
+      slurp |
+      echo (all)
+
     fail $capture-result[exception]
   }
 }

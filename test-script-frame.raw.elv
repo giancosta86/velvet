@@ -1,10 +1,10 @@
 use str
+use github.com/giancosta86/ethereal/v1/exception
 use ./assertions
 use ./outcomes
 use ./section
 use ./test-result
 use ./test-script-frame
-use ./utils/exception
 use ./utils/raw
 
 fn create-test-frame { |title|
@@ -27,7 +27,7 @@ raw:suite 'Frame - Running a block' { |test~|
 
     $alpha[run-block] $block
 
-    exception:throws {
+    assertions:throws {
       $alpha[run-block] $block
     } |
       exception:get-fail-content |
@@ -39,7 +39,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
   test 'With no block' {
     var alpha = (create-test-frame 'alpha')
 
-    exception:throws {
+    assertions:throws {
       $alpha[to-artifact]
     } |
       exception:get-fail-content |

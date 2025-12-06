@@ -1,8 +1,8 @@
 use str
-use ./assertion
-use ./command
+use github.com/giancosta86/ethereal/v1/command
 use ./exception-lines
-use ./raw
+use ./utils/assertion
+use ./utils/raw
 
 raw:suite 'Exception lines - trimming clockwork stack' { |test~|
   test 'With no lines' {
@@ -32,7 +32,7 @@ raw:suite 'Exception lines - trimming clockwork stack' { |test~|
 
   test 'With stack induced by command capturing' {
     var capture-result = (
-      command:capture {
+      command:capture &type=bytes {
         fail DODUS
       }
     )
@@ -148,7 +148,7 @@ raw:suite 'Exception lines - replacing eval' { |test~|
   }
 
   test 'With bottom eval within command capturing' {
-    var capture-result = (command:capture {
+    var capture-result = (command:capture &type=bytes {
       var code = '
         fn beta {
           fail DODO

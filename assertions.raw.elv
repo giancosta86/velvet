@@ -1,7 +1,39 @@
+use github.com/giancosta86/ethereal/v1/exception
 use ./assertions
 use ./utils/assertion
-use ./utils/exception
 use ./utils/raw
+
+raw:suite 'Expecting an exception' { |test~|
+  test 'When no exception is thrown' {
+    try {
+      assertions:throws { }
+
+      fail 'No exception was thrown by the expectation!'
+    } catch e {
+      exception:get-fail-content $e |
+        eq (all) 'The given code block did not fail!' |
+        assertion:assert (all)
+    }
+  }
+
+  test 'When there is an exception' {
+    assertions:throws {
+      fail DODO
+    } |
+      exception:get-fail-content |
+      eq (all) DODO |
+      assertion:assert (all)
+  }
+
+  test 'In a pipeline, without arguments' {
+    assertions:throws {
+      fail CIOP
+    } |
+      exception:get-fail-content |
+      eq (all) CIOP |
+      assertion:assert (all)
+  }
+}
 
 fn with-strictness-determiner { |&strict=$false message|
   var strictness-prefix
@@ -16,7 +48,7 @@ fn with-strictness-determiner { |&strict=$false message|
 }
 
 fn expect-should-be-failure { |&strict=$false expected actual-block|
-  exception:throws {
+  assertions:throws {
     $actual-block |
       only-values |
       assertions:should-be &strict=$strict $expected
@@ -27,7 +59,7 @@ fn expect-should-be-failure { |&strict=$false expected actual-block|
 }
 
 fn expect-should-not-be-failure { |&strict=$false expected actual-block|
-  exception:throws {
+  assertions:throws {
     $actual-block |
       only-values |
       assertions:should-not-be &strict=$strict $expected
@@ -190,7 +222,7 @@ raw:suite 'Assertions: should-not-be (non-strict)' { |test~|
 
 raw:suite 'Assertions: fail-test' { |test~|
   test 'Raising a test failure' {
-    exception:throws {
+    assertions:throws {
       assertions:fail-test
     } |
       exception:get-fail-content |

@@ -1,7 +1,7 @@
 use re
 use str
 
-var -first-clockwork-line-mark = '/velvet/utils/command.elv:11:9-14'
+var -first-clockwork-line-mark = 'github.com/giancosta86/ethereal/v1/command.elv:'
 
 fn trim-clockwork-stack {
   each { |line|
