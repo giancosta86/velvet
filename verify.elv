@@ -1,35 +1,19 @@
-use path
+use github.com/giancosta86/ethereal/v1/set
+use github.com/giancosta86/velvet/v1/main velvet
 
-fn run-script { |script-path|
-  elvish -norc $script-path
-}
+var all-tests = (
+  put **.test.elv |
+    set:of
+)
 
-all [
-  assertion
-  raw
-] | each { |atomic-script-basename|
-  run-script (path:join utils $atomic-script-basename'.atomic.elv')
-}
+var excluded-tests = (
+  put tests/**.test.elv |
+    set:of
+)
 
-all [
-  exception-lines
-  assertions
-  test-result
-  section
-  stats
-  summary
-  reporting/console
-  test-script-frame
-  test-script
-  sandbox
-  aggregator
-  main
-] | each { |raw-script-basename|
-  run-script $raw-script-basename'.raw.elv'
-}
+var actual-tests = (
+  set:difference $all-tests $excluded-tests |
+  set:to-list
+)
 
-all [
-  maths
-] | each { |raw-script-basename|
-  run-script (path:join tests readme $raw-script-basename'.raw.elv')
-}
+velvet:velvet &must-pass $@actual-tests

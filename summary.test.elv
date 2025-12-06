@@ -1,11 +1,9 @@
-use ./assertions
 use ./outcomes
-use ./utils/raw
 use ./summary
 use ./test-result
 
-raw:suite 'Summary creation' { |test~|
-  test 'From section' {
+>> 'Summary creation' {
+  >> 'from section' {
     var section = [
       &test-results=[
         &alpha=[
@@ -42,7 +40,7 @@ raw:suite 'Summary creation' { |test~|
     ]
 
     summary:from-section $section |
-      assertions:should-be [
+      should-be [
         &section=$section
         &stats=[
           &total=5
@@ -53,8 +51,8 @@ raw:suite 'Summary creation' { |test~|
   }
 }
 
-raw:suite 'Summary simplification' { |test~|
-  test 'With section tree' {
+>> 'Summary simplification' {
+  >> 'with section tree' {
     var section = [
       &test-results=[
         &Yogi=[
@@ -86,7 +84,7 @@ raw:suite 'Summary simplification' { |test~|
 
     summary:from-section $section |
       summary:simplify (all) |
-      assertions:should-be [
+      should-be [
         &section=[
           &test-results=[
             &Yogi=[

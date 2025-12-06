@@ -1,65 +1,62 @@
 use str
-use github.com/giancosta86/ethereal/v1/exception
-use ./assertions
 use ./outcomes
 use ./section
 use ./test-result
 use ./test-script-frame
-use ./utils/raw
 
 fn create-test-frame { |title|
   test-script-frame:create 'fake-script.elv' $title
 }
 
-raw:suite 'Frame - Running a block' { |test~|
+>> 'Frame - Running a block' {
   var block = {
     echo Wiii!
   }
 
-  test 'Once' {
+  >> 'once' {
     var alpha = (create-test-frame 'alpha')
 
     $alpha[run-block] $block
   }
 
-  test 'Twice' {
+  >> 'twice' {
     var alpha = (create-test-frame 'alpha')
 
     $alpha[run-block] $block
 
-    assertions:throws {
+    throws {
       $alpha[run-block] $block
     } |
-      exception:get-fail-content |
-      assertions:should-be 'Block result already set in frame: alpha'
+      get-fail-content |
+      should-be 'Block result already set in frame: alpha'
   }
 }
 
-raw:suite 'Frame - Converting to artifact' { |test~|
-  test 'With no block' {
+>> 'Frame - Converting to artifact' {
+  >> 'with no block' {
     var alpha = (create-test-frame 'alpha')
 
-    assertions:throws {
+    throws {
       $alpha[to-artifact]
     } |
-      exception:get-fail-content |
-      assertions:should-be 'Cannot obtain artifact when block result is not set, in frame: alpha'
+      get-fail-content |
+      should-be 'Cannot obtain artifact when block result is not set, in frame: alpha'
   }
 
-  test 'With empty test' {
+  >> 'with empty test' {
     var alpha = (create-test-frame 'alpha')
 
     $alpha[run-block] { }
 
     $alpha[to-artifact] |
-      assertions:should-be [
+      should-be [
         &output=''
         &outcome=$outcomes:passed
         &exception-log=$nil
       ]
   }
 
-  test 'With passing test' {
+  >> 'with passing test' {
     var alpha = (create-test-frame 'alpha')
 
     $alpha[run-block] {
@@ -71,14 +68,14 @@ raw:suite 'Frame - Converting to artifact' { |test~|
     var test-result = ($alpha[to-artifact])
 
     put $test-result |
-      assertions:should-be [
+      should-be [
         &output="Wiii!\nWiii2!\n"
         &outcome=$outcomes:passed
         &exception-log=$nil
       ]
   }
 
-  test 'With failing test' {
+  >> 'with failing test' {
     var alpha = (create-test-frame 'alpha')
 
     $alpha[run-block] {
@@ -92,16 +89,16 @@ raw:suite 'Frame - Converting to artifact' { |test~|
 
     put $test-result |
       test-result:simplify (all) |
-      assertions:should-be [
+      should-be [
         &output="Wooo\nWooo2\n"
         &outcome=$outcomes:failed
       ]
 
     str:contains $test-result[exception-log] 'Dodo' |
-      assertions:should-be $true
+      should-be $true
   }
 
-  test 'With section having passing test' {
+  >> 'with section having passing test' {
     var alpha = (create-test-frame 'alpha')
 
     $alpha[run-block] {
@@ -118,7 +115,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
     var section = ($alpha[to-artifact])
 
     put $section |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &beta=[
             &output="Wiii!\nWiii2!\n"
@@ -130,7 +127,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
       ]
   }
 
-  test 'With section having failing test' {
+  >> 'with section having failing test' {
     var alpha = (create-test-frame 'alpha')
 
     $alpha[run-block] {
@@ -148,7 +145,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
     var section = ($alpha[to-artifact])
 
     section:simplify $section |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &gamma=[
             &output="Wooo\nWooo2\n"
@@ -160,10 +157,10 @@ raw:suite 'Frame - Converting to artifact' { |test~|
 
     put $section[test-results][gamma][exception-log] |
       str:contains (all) 'Dodo' |
-      assertions:should-be $true
+      should-be $true
   }
 
-  test 'With section having passing and failing test' {
+  >> 'with section having passing and failing test' {
     var alpha = (create-test-frame 'alpha')
 
     $alpha[run-block] {
@@ -190,7 +187,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
     var section = ($alpha[to-artifact])
 
     section:simplify $section |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &beta=[
             &output="Wiii!\nWiii2!\n"
@@ -205,7 +202,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
       ]
   }
 
-  test 'With section having duplicate passing test' {
+  >> 'with section having duplicate passing test' {
     var passing-block = {
       echo Wiii!
       echo Wiii2! >&2
@@ -225,7 +222,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
     }
 
     $alpha[to-artifact] |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &beta=$test-result:duplicate
         ]
@@ -233,7 +230,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
       ]
   }
 
-  test 'With section whose sub-sections have the same name' {
+  >> 'with section whose sub-sections have the same name' {
     var passing-block = {
       echo Wiii!
       echo Wiii2! >&2
@@ -265,7 +262,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
     }
 
     $alpha[to-artifact] |
-      assertions:should-be [
+      should-be [
         &test-results=[&]
         &sub-sections=[
           &beta=[
@@ -287,7 +284,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
       ]
   }
 
-  test 'With section having multi-level tests' {
+  >> 'with section having multi-level tests' {
     var alpha = (create-test-frame 'alpha')
 
     $alpha[run-block] {
@@ -327,7 +324,7 @@ raw:suite 'Frame - Converting to artifact' { |test~|
     var section = ($alpha[to-artifact])
 
     section:simplify $section |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &beta=[
             &output="Beta!\n"
@@ -362,6 +359,6 @@ raw:suite 'Frame - Converting to artifact' { |test~|
       put (all)[test-results][zeta] |
       put (all)[exception-log] |
       str:contains (all) DODO |
-      assertions:should-be $true
+      should-be $true
   }
 }

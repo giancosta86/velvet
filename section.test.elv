@@ -1,35 +1,33 @@
-use ./assertions
 use ./outcomes
 use ./section
-use ./utils/raw
 use ./test-result
 
-raw:suite 'Section detection' { |test~|
-  test 'Applied to test result' {
+>> 'Section detection' {
+  >> 'applied to test result' {
     section:is-section [
       &output=""
       &exception-log=$nil
     ] |
-      assertions:should-be $false
+      should-be $false
   }
 
-  test 'Applied to section' {
+  >> 'applied to section' {
     section:is-section $section:empty |
-      assertions:should-be $true
+      should-be $true
   }
 }
 
-raw:suite 'Section - Mapping test results within an entire tree' { |test~|
+>> 'Section - Mapping test results within an entire tree' {
   fn add-asterisk-to-output { |test-result|
     assoc $test-result output $test-result[output]'*'
   }
 
-  test 'With empty section' {
+  >> 'with empty section' {
     section:map-test-results-in-tree $section:empty $add-asterisk-to-output~ |
-      assertions:should-be $section:empty
+      should-be $section:empty
   }
 
-  test 'With single root test' {
+  >> 'with single root test' {
     var source = [
       &test-results=[
         &alpha=[
@@ -41,7 +39,7 @@ raw:suite 'Section - Mapping test results within an entire tree' { |test~|
     ]
 
     section:map-test-results-in-tree $source $add-asterisk-to-output~ |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &alpha=[
             &output='Cip*'
@@ -52,7 +50,7 @@ raw:suite 'Section - Mapping test results within an entire tree' { |test~|
       ]
   }
 
-  test 'With two root tests' {
+  >> 'with two root tests' {
     var source = [
       &test-results=[
         &alpha=[
@@ -69,7 +67,7 @@ raw:suite 'Section - Mapping test results within an entire tree' { |test~|
     ]
 
     section:map-test-results-in-tree $source $add-asterisk-to-output~ |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &alpha=[
             &output='Cip*'
@@ -85,7 +83,7 @@ raw:suite 'Section - Mapping test results within an entire tree' { |test~|
       ]
   }
 
-  test 'With single test in sub-section' {
+  >> 'with single test in sub-section' {
     var source = [
       &test-results=[&]
       &sub-sections=[
@@ -102,7 +100,7 @@ raw:suite 'Section - Mapping test results within an entire tree' { |test~|
     ]
 
     section:map-test-results-in-tree $source $add-asterisk-to-output~ |
-      assertions:should-be [
+      should-be [
         &test-results=[&]
         &sub-sections=[
           &alpha=[
@@ -118,7 +116,7 @@ raw:suite 'Section - Mapping test results within an entire tree' { |test~|
       ]
   }
 
-  test 'With tests at different levels' {
+  >> 'with tests at different levels' {
     var source = [
       &test-results=[
         &alpha=[
@@ -154,7 +152,7 @@ raw:suite 'Section - Mapping test results within an entire tree' { |test~|
     ]
 
     section:map-test-results-in-tree $source $add-asterisk-to-output~ |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &alpha=[
             &output='Alpha*'
@@ -190,13 +188,13 @@ raw:suite 'Section - Mapping test results within an entire tree' { |test~|
   }
 }
 
-raw:suite 'Section simplification' { |test~|
-  test 'On empty section' {
+>> 'Section simplification' {
+  >> 'on empty section' {
     section:simplify $section:empty |
-      assertions:should-be $section:empty
+      should-be $section:empty
   }
 
-  test 'With just one test' {
+  >> 'with just one test' {
     var source = [
       &test-results=[
         &Yogi=[
@@ -209,7 +207,7 @@ raw:suite 'Section simplification' { |test~|
     ]
 
     section:simplify $source |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &Yogi=[
             &output=Wiii!
@@ -220,7 +218,7 @@ raw:suite 'Section simplification' { |test~|
       ]
   }
 
-  test 'With test in sub-section' {
+  >> 'with test in sub-section' {
     var source = [
       &test-results=[
         &Yogi=[
@@ -244,7 +242,7 @@ raw:suite 'Section simplification' { |test~|
     ]
 
     section:simplify $source |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &Yogi=[
             &output="Wiii!"
@@ -267,7 +265,7 @@ raw:suite 'Section simplification' { |test~|
   }
 }
 
-raw:suite 'Section merging' { |test~|
+>> 'Section merging' {
   var alpha-test-result = [
     &output="Alpha!"
     &outcome=$outcomes:passed
@@ -304,21 +302,21 @@ raw:suite 'Section merging' { |test~|
     &sub-sections=[&]
   ]
 
-  test 'With 0 operands' {
+  >> 'with 0 operands' {
     section:merge |
-      assertions:should-be $section:empty
+      should-be $section:empty
   }
 
-  test 'With 1 operand' {
+  >> 'with 1 operand' {
     put $section-with-alpha |
       section:merge |
-      assertions:should-be $section-with-alpha
+      should-be $section-with-alpha
   }
 
-  test 'With 2 operands' {
+  >> 'with 2 operands' {
     put $section-with-alpha $section-with-beta |
       section:merge |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &alpha=$alpha-test-result
           &beta=$beta-test-result
@@ -327,10 +325,10 @@ raw:suite 'Section merging' { |test~|
       ]
   }
 
-  test 'With 3 operands' {
+  >> 'with 3 operands' {
     put $section-with-alpha $section-with-beta $section-with-gamma |
       section:merge |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &alpha=$alpha-test-result
           &beta=$beta-test-result
@@ -341,7 +339,7 @@ raw:suite 'Section merging' { |test~|
   }
 }
 
-raw:suite 'Section merging with two operands' { |test~|
+>> 'Section merging with two operands' {
   var passed-test = [
     &output="Wiii!"
     &outcome=$outcomes:passed
@@ -352,17 +350,17 @@ raw:suite 'Section merging with two operands' { |test~|
     &outcome=$outcomes:failed
   ]
 
-  test 'When both sides are empty' {
+  >> 'when both sides are empty' {
     var left = $section:empty
 
     var right = $section:empty
 
     put $left $right |
       section:merge |
-      assertions:should-be $section:empty
+      should-be $section:empty
   }
 
-  test 'When only left is non-empty' {
+  >> 'when only left is non-empty' {
     var left = [
       &test-results=[
         &Alpha=$passed-test
@@ -374,10 +372,10 @@ raw:suite 'Section merging with two operands' { |test~|
 
     put $left $right |
       section:merge |
-      assertions:should-be $left
+      should-be $left
   }
 
-  test 'When only right is non-empty' {
+  >> 'when only right is non-empty' {
     var left = $section:empty
 
     var right = [
@@ -389,10 +387,10 @@ raw:suite 'Section merging with two operands' { |test~|
 
     put $left $right |
       section:merge |
-      assertions:should-be $right
+      should-be $right
   }
 
-  test 'When both left and right have just a test each' {
+  >> 'when both left and right have just a test each' {
     var left = [
       &test-results=[
         &Alpha=$passed-test
@@ -409,7 +407,7 @@ raw:suite 'Section merging with two operands' { |test~|
 
     put $left $right |
       section:merge |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &Alpha=$passed-test
           &Beta=$failed-test
@@ -418,7 +416,7 @@ raw:suite 'Section merging with two operands' { |test~|
       ]
   }
 
-  test 'When two passing tests at the same level have the same name' {
+  >> 'when two passing tests at the same level have the same name' {
     var left = [
       &test-results=[
         &Alpha=$passed-test
@@ -435,7 +433,7 @@ raw:suite 'Section merging with two operands' { |test~|
 
     put $left $right |
       section:merge |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &Alpha=$test-result:duplicate
         ]
@@ -443,7 +441,7 @@ raw:suite 'Section merging with two operands' { |test~|
       ]
   }
 
-  test 'When two passing tests at the same level have the same name and different outcomes' {
+  >> 'when two passing tests at the same level have the same name and different outcomes' {
     var left = [
       &test-results=[
         &Alpha=$passed-test
@@ -460,7 +458,7 @@ raw:suite 'Section merging with two operands' { |test~|
 
     put $left $right |
       section:merge |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &Alpha=$test-result:duplicate
         ]
@@ -468,7 +466,7 @@ raw:suite 'Section merging with two operands' { |test~|
       ]
   }
 
-  test 'When there are multiple levels of tests' {
+  >> 'when there are multiple levels of tests' {
     var left = [
       &test-results=[
         &Alpha=$passed-test
@@ -514,7 +512,7 @@ raw:suite 'Section merging with two operands' { |test~|
 
     put $left $right |
       section:merge |
-      assertions:should-be [
+      should-be [
         &test-results=[
           &Alpha=$passed-test
           &Sigma=$passed-test

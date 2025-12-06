@@ -1,12 +1,10 @@
 use str
-use ../assertions
 use ../outcomes
 use ../section
 use ../summary
-use ../utils/raw
 use ./console
 
-raw:suite 'Command-line reporting' { |test~|
+>> 'Command-line reporting' {
   fn create-output-tester { |section|
     var summary = (summary:from-section $section)
 
@@ -19,20 +17,20 @@ raw:suite 'Command-line reporting' { |test~|
       &expect-in-output={ |snippets|
         all $snippets | each { |snippet|
           str:contains $report-output $snippet |
-            assertions:should-be $true
+            should-be $true
         }
       }
 
       &expect-not-in-output={ |snippets|
         all $snippets | each { |snippet|
           str:contains $report-output $snippet |
-            assertions:should-be $false
+            should-be $false
         }
       }
     ]
   }
 
-  test 'With empty section' {
+  >> 'with empty section' {
     var output-tester = (create-output-tester $section:empty)
 
     $output-tester[expect-in-output] [
@@ -48,7 +46,7 @@ raw:suite 'Command-line reporting' { |test~|
     ]
   }
 
-  test 'With single passed test' {
+  >> 'with single passed test' {
     var section = [
       &test-results=[
         &Alpha=[
@@ -76,7 +74,7 @@ raw:suite 'Command-line reporting' { |test~|
     ]
   }
 
-  test 'With single failed test - having output' {
+  >> 'with single failed test - having output' {
     var section = [
       &test-results=[
         &Beta=[
@@ -102,7 +100,7 @@ raw:suite 'Command-line reporting' { |test~|
     ]
   }
 
-  test 'With single failed test - having no output' {
+  >> 'with single failed test - having no output' {
     var section = [
       &test-results=[
         &Beta=[
@@ -130,7 +128,7 @@ raw:suite 'Command-line reporting' { |test~|
     ]
   }
 
-  test 'With multi-level describe result' {
+  >> 'with multi-level describe result' {
     var section = [
       &test-results=[
         &Alpha=[

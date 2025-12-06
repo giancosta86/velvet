@@ -1,37 +1,32 @@
 use github.com/giancosta86/ethereal/v1/exception
 use ./assertions
-use ./utils/assertion
-use ./utils/raw
 
-raw:suite 'Expecting an exception' { |test~|
-  test 'When no exception is thrown' {
+>> 'Expecting an exception' {
+  >> 'when no exception is thrown' {
     try {
       assertions:throws { }
 
       fail 'No exception was thrown by the expectation!'
     } catch e {
       exception:get-fail-content $e |
-        eq (all) 'The given code block did not fail!' |
-        assertion:assert (all)
+        should-be 'The given code block did not fail!'
     }
   }
 
-  test 'When there is an exception' {
+  >> 'when there is an exception' {
     assertions:throws {
       fail DODO
     } |
       exception:get-fail-content |
-      eq (all) DODO |
-      assertion:assert (all)
+      should-be DODO
   }
 
-  test 'In a pipeline, without arguments' {
+  >> 'in a pipeline, without arguments' {
     assertions:throws {
       fail CIOP
     } |
       exception:get-fail-content |
-      eq (all) CIOP |
-      assertion:assert (all)
+      should-be CIOP
   }
 }
 
@@ -54,8 +49,7 @@ fn expect-should-be-failure { |&strict=$false expected actual-block|
       assertions:should-be &strict=$strict $expected
   } |
     exception:get-fail-content |
-    eq (all) (with-strictness-determiner &strict=$strict 'should-be assertion failed') |
-    assertion:assert (all)
+    should-be (with-strictness-determiner &strict=$strict 'should-be assertion failed')
 }
 
 fn expect-should-not-be-failure { |&strict=$false expected actual-block|
@@ -65,34 +59,33 @@ fn expect-should-not-be-failure { |&strict=$false expected actual-block|
       assertions:should-not-be &strict=$strict $expected
   } |
     exception:get-fail-content |
-    eq (all) (with-strictness-determiner &strict=$strict 'should-not-be assertion failed') |
-    assertion:assert (all)
+    should-be (with-strictness-determiner &strict=$strict 'should-not-be assertion failed')
 }
 
-raw:suite 'Assertions: should-be (strict)' { |test~|
-  test 'Equal strings' {
+>> 'Assertions: should-be (strict)' {
+  >> 'with equal strings' {
     put Alpha |
       assertions:should-be &strict Alpha
   }
 
-  test 'Different strings' {
+  >> 'with different strings' {
     expect-should-be-failure &strict Beta {
       put Alpha
     }
   }
 
-  test 'Equal numbers' {
+  >> 'with equal numbers' {
     put (num 90) |
       assertions:should-be &strict (num 90)
   }
 
-  test 'String and number denoting the same value' {
+  >> 'with string and number denoting the same value' {
     expect-should-be-failure &strict (num 90) {
       put 90
     }
   }
 
-  test 'Equal booleans' {
+  >> 'with equal booleans' {
     put $false |
       assertions:should-be &strict $false
 
@@ -100,14 +93,14 @@ raw:suite 'Assertions: should-be (strict)' { |test~|
       assertions:should-be &strict $true
   }
 
-  test 'Equal multi-level lists' {
+  >> 'with equal multi-level lists' {
     var test-list = [Alpha [Beta [Gamma Delta] Epsilon] Zeta Eta Theta]
 
     put $test-list |
       assertions:should-be &strict $test-list
   }
 
-  test 'Equal multi-level maps' {
+  >> 'with equal multi-level maps' {
     var test-map = [
       &alpha=90
       &beta=92
@@ -125,67 +118,67 @@ raw:suite 'Assertions: should-be (strict)' { |test~|
   }
 }
 
-raw:suite 'Assertions: should-be (non-strict)' { |test~|
-  test 'Equal strings' {
+>> 'Assertions: should-be (non-strict)' {
+  >> 'with equal strings' {
     put Alpha |
       assertions:should-be Alpha
   }
 
-  test 'Different strings' {
+  >> 'with different strings' {
     expect-should-be-failure Beta {
       put Alpha
     }
   }
 
-  test 'String and number having same value' {
+  >> 'with string and number having same value' {
     put 90 |
       assertions:should-be (num 90)
   }
 }
 
-raw:suite 'Assertions: should-not-be (strict)' { |test~|
-  test 'Equal strings' {
+>> 'Assertions: should-not-be (strict)' {
+  >> 'with equal strings' {
     expect-should-not-be-failure &strict Alpha {
       put Alpha
     }
   }
 
-  test 'Different strings' {
+  >> 'with different strings' {
     put Alpha |
       assertions:should-not-be &strict Beta
   }
 
-  test 'Equal numbers' {
+  >> 'with equal numbers' {
     expect-should-not-be-failure &strict (num 90) {
       put (num 90)
     }
   }
 
-  test 'String and number denoting the same value' {
+  >> 'with string and number denoting the same value' {
     put 90 |
       assertions:should-not-be &strict (num 90)
   }
 }
 
-raw:suite 'Assertions: should-not-be (non-strict)' { |test~|
-  test 'Equal strings' {
+>> 'Assertions: should-not-be (non-strict)' {
+  >> 'with equal strings' {
     expect-should-not-be-failure Alpha {
       put Alpha
     }
   }
 
-  test 'Different strings' {
+  >> 'with different strings' {
     put Alpha |
       assertions:should-not-be Beta
   }
 
-  test 'String and number having same value' {
+  >> 'with string and number having same value' {
     expect-should-not-be-failure (num 90) {
       put 90
     }
   }
 
-  test 'Different booleans' {
+  >> 'with different booleans' {
     put $false |
       assertions:should-not-be $true
 
@@ -193,7 +186,7 @@ raw:suite 'Assertions: should-not-be (non-strict)' { |test~|
       assertions:should-not-be $false
   }
 
-  test 'Equal multi-level lists' {
+  >> 'with equal multi-level lists' {
     var test-list = [Alpha [Beta [Gamma Delta] Epsilon] Zeta Eta Theta]
 
     expect-should-not-be-failure $test-list {
@@ -201,7 +194,7 @@ raw:suite 'Assertions: should-not-be (non-strict)' { |test~|
     }
   }
 
-  test 'Equal multi-level maps' {
+  >> 'with equal multi-level maps' {
     var test-map = [
       &alpha=90
       &beta=92
@@ -220,8 +213,8 @@ raw:suite 'Assertions: should-not-be (non-strict)' { |test~|
   }
 }
 
-raw:suite 'Assertions: fail-test' { |test~|
-  test 'Raising a test failure' {
+>> 'Assertions: fail-test' {
+  >> 'when raising a test failure' {
     assertions:throws {
       assertions:fail-test
     } |

@@ -1,18 +1,16 @@
 use str
 use github.com/giancosta86/ethereal/v1/command
 use ./exception-lines
-use ./utils/assertion
-use ./utils/raw
 
-raw:suite 'Exception lines - trimming clockwork stack' { |test~|
-  test 'With no lines' {
+>> 'Exception lines - trimming clockwork stack' {
+  >> 'with no lines' {
     all [] |
       exception-lines:trim-clockwork-stack |
-      eq [(all)] [] |
-      assertion:assert (all)
+      put [(all)] |
+      should-be []
   }
 
-  test 'With hand-made clockwork stack' {
+  >> 'with hand-made clockwork stack' {
     all [
       Alpha
       Beta
@@ -22,15 +20,15 @@ raw:suite 'Exception lines - trimming clockwork stack' { |test~|
       CLOCKWORK 2
     ] |
       exception-lines:trim-clockwork-stack |
-      eq [(all)] [
+      put [(all)] |
+      should-be [
         Alpha
         Beta
         Gamma
-      ] |
-      assertion:assert (all)
+      ]
   }
 
-  test 'With stack induced by command capturing' {
+  >> 'with stack induced by command capturing' {
     var capture-result = (
       command:capture &type=bytes {
         fail DODUS
@@ -41,20 +39,19 @@ raw:suite 'Exception lines - trimming clockwork stack' { |test~|
       exception-lines:trim-clockwork-stack |
       str:join "\n" |
       str:contains (all) command.elv |
-      not (all) |
-      assertion:assert (all)
+      should-be $false
   }
 }
 
-raw:suite 'Exception lines - replacing eval' { |test~|
-  test 'With no lines' {
+>> 'Exception lines - replacing eval' {
+  >> 'with no lines' {
     all [] |
       exception-lines:replace-bottom-eval ciop.elv |
-      eq [(all)] [] |
-      assertion:assert (all)
+      put [(all)] |
+      should-be []
   }
 
-  test 'With no eval' {
+  >> 'with no eval' {
     var lines = [
       Alpha
       Beta
@@ -63,26 +60,26 @@ raw:suite 'Exception lines - replacing eval' { |test~|
 
     all $lines |
       exception-lines:replace-bottom-eval ciop.elv |
-      eq [(all)] $lines |
-      assertion:assert (all)
+      put [(all)] |
+      should-be $lines
   }
 
-  test 'With single bottom eval' {
+  >> 'with single bottom eval' {
     all [
       Alpha
       Beta
       '[eval 123]:45:8-11: Fake error'
     ] |
       exception-lines:replace-bottom-eval ciop.elv |
-      eq [(all)] [
+      put [(all)] |
+      should-be [
         Alpha
         Beta
         'ciop.elv:45:8-11: Fake error'
-      ] |
-      assertion:assert (all)
+      ]
   }
 
-  test 'With different initial spaces for same eval' {
+  >> 'with different initial spaces for same eval' {
     all [
       Alpha
       Beta
@@ -91,17 +88,17 @@ raw:suite 'Exception lines - replacing eval' { |test~|
       '  [eval 123]:45:8-11: Gamma'
     ] |
       exception-lines:replace-bottom-eval ciop.elv |
-      eq [(all)] [
+      put [(all)] |
+      should-be [
         Alpha
         Beta
         'ciop.elv:65:4-18: Alpha'
         ' ciop.elv:23:7-13: Beta'
         '  ciop.elv:45:8-11: Gamma'
-      ] |
-      assertion:assert (all)
+      ]
   }
 
-  test 'With multiple instances of eval' {
+  >> 'with multiple instances of eval' {
     all [
       Alpha
       Beta
@@ -112,7 +109,8 @@ raw:suite 'Exception lines - replacing eval' { |test~|
       Delta
     ] |
       exception-lines:replace-bottom-eval ciop.elv |
-      eq [(all)] [
+      put [(all)] |
+      should-be [
         Alpha
         Beta
         '[eval 456]:123:7: Yet another fake error'
@@ -120,11 +118,10 @@ raw:suite 'Exception lines - replacing eval' { |test~|
         Gamma
         'ciop.elv:45:8-11: Fake error'
         Delta
-      ] |
-      assertion:assert (all)
+      ]
   }
 
-  test 'With eval occurrences not at the beginning of the line' {
+  >> 'with eval occurrences not at the beginning of the line' {
     all [
       Alpha
       Beta
@@ -135,7 +132,8 @@ raw:suite 'Exception lines - replacing eval' { |test~|
       Delta
     ] |
       exception-lines:replace-bottom-eval ciop.elv |
-      eq [(all)] [
+      put [(all)] |
+      should-be [
         Alpha
         Beta
         '[eval 456]:123:7: Yet another fake error, but not in [eval 123]'
@@ -143,11 +141,10 @@ raw:suite 'Exception lines - replacing eval' { |test~|
         Gamma
         'ciop.elv:45:8-11: Fake error'
         Delta
-      ] |
-      assertion:assert (all)
+      ]
   }
 
-  test 'With bottom eval within command capturing' {
+  >> 'with bottom eval within command capturing' {
     var capture-result = (command:capture &type=bytes {
       var code = '
         fn beta {
@@ -172,13 +169,12 @@ raw:suite 'Exception lines - replacing eval' { |test~|
     )
 
     str:contains $exception-log DODO |
-      assertion:assert (all)
+      should-be $true
 
     str:contains $exception-log '[eval' |
-      not (all) |
-      assertion:assert (all)
+      should-be $true
 
     str:contains $exception-log ciop.elv |
-      assertion:assert (all)
+      should-be $true
   }
 }
