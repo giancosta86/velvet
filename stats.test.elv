@@ -1,10 +1,8 @@
-use ./assertions
 use ./outcomes
-use ./utils/raw
 use ./section
 use ./stats
 
-raw:suite 'Stats' { |test~|
+>> 'Stats' {
   var passed-test = [
     &output="Wiii!"
     &outcome=$outcomes:passed
@@ -15,44 +13,44 @@ raw:suite 'Stats' { |test~|
     &outcome=$outcomes:failed
   ]
 
-  test 'From empty section' {
+  >> 'from empty section' {
     stats:from-section $section:empty |
-      assertions:should-be [
+      should-be [
         &total=0
         &passed=0
         &failed=0
       ]
   }
 
-  test 'From single passed test' {
+  >> 'from single passed test' {
     stats:from-section [
       &test-results=[
         &Cip=$passed-test
       ]
       &sub-sections=[&]
     ] |
-      assertions:should-be [
+      should-be [
         &total=1
         &passed=1
         &failed=0
       ]
   }
 
-  test 'From single failed test' {
+  >> 'from single failed test' {
     stats:from-section [
       &test-results=[
         &Ciop=$failed-test
       ]
       &sub-sections=[&]
     ] |
-      assertions:should-be [
+      should-be [
         &total=1
         &passed=0
         &failed=1
       ]
   }
 
-  test 'From both passed and failed test' {
+  >> 'from both passed and failed test' {
     stats:from-section [
       &test-results=[
         &Cip=$passed-test
@@ -60,14 +58,14 @@ raw:suite 'Stats' { |test~|
       ]
       &sub-sections=[&]
     ] |
-      assertions:should-be [
+      should-be [
         &total=2
         &passed=1
         &failed=1
       ]
   }
 
-  test 'From multi-level tests' {
+  >> 'from multi-level tests' {
     stats:from-section [
       &test-results=[
         &Cip=$passed-test
@@ -95,7 +93,7 @@ raw:suite 'Stats' { |test~|
         ]
       ]
     ] |
-      assertions:should-be [
+      should-be [
         &total=5
         &passed=3
         &failed=2

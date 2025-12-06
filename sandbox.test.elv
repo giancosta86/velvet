@@ -1,10 +1,8 @@
 use path
 use str
-use ./assertions
 use ./outcomes
 use ./section
 use ./tests/script-gallery
-use ./utils/raw
 
 fn run-test-sandbox { |basename|
   var this-script-dir = (path:dir (src)[name])
@@ -17,10 +15,10 @@ fn run-test-sandbox { |basename|
     from-json
 }
 
-raw:suite 'Running in sandbox' { |test~|
-  test 'Passing test' {
+>> 'Running in sandbox' {
+  >> 'passing test' {
     run-test-sandbox in-section-ok |
-      assertions:should-be [
+      should-be [
         &test-results=[&]
         &sub-sections=[
           &'My test'=[
@@ -37,11 +35,11 @@ raw:suite 'Running in sandbox' { |test~|
       ]
   }
 
-  test 'Failing test' {
+  >> 'failing test' {
     var section = (run-test-sandbox in-section-failing)
 
     section:simplify $section |
-      assertions:should-be [
+      should-be [
         &test-results=[&]
         &sub-sections=[
           &'My test'=[
@@ -59,6 +57,6 @@ raw:suite 'Running in sandbox' { |test~|
     var exception-log = $section[sub-sections]['My test'][test-results]['should fail'][exception-log]
 
     str:contains $exception-log DODO |
-      assertions:should-be $true
+      should-be $true
   }
 }
