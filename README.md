@@ -4,13 +4,15 @@ _Smooth, functional testing in the Elvish shell_
 
 **velvet** is a minimalist - yet _sophisticated_ - **test framework** and **runner**, enabling its users to _run tests organized in hierarchical structures_ leveraging the _functional programming_ elegance of the [Elvish](https://elv.sh/) shell.
 
-![Console summary](docs/console-summary.png)
+![Logo](logo.png)
 
 ## Why Velvet?
 
 I am personally fond of the expressive, **Gherkin**-like syntax supported by testing infrastructures like [Jest](https://jestjs.io/), [Vitest](https://vitest.dev/) and [ScalaTest](https://www.scalatest.org/), but each of them is based on a specific language - which usually doesn't feel as _natural_ as a shell when dealing with _system aspects_ like files, networks or _inter-process communication_.
 
 Given my passion for the [Elvish](https://elv.sh/) shell, I've designed this _testing architecture_ by combining my favorite aspects of such frameworks, while applying my own perspective - especially focused on _cross-technology integration scenarios_.
+
+![Console summary](docs/console-summary.png)
 
 ## Installation
 
