@@ -2,7 +2,7 @@ use path
 use re
 use str
 use github.com/giancosta86/ethereal/v1/string
-use ./main
+use ./velvet
 use ./summary
 use ./tests/aggregator/summaries
 use ./tests/script-gallery
@@ -33,7 +33,7 @@ fn create-reporter-spy {
   >> 'in directory with no tests' {
     tmp pwd = $dir-with-no-tests
 
-    main:get-test-scripts |
+    velvet:get-test-scripts |
       put [(all)] |
       should-be []
   }
@@ -46,7 +46,7 @@ fn create-reporter-spy {
         each $path:base~
     )]
 
-    main:get-test-scripts |
+    velvet:get-test-scripts |
       order |
       put [(all)] |
       should-be $expected-scripts
@@ -55,7 +55,7 @@ fn create-reporter-spy {
   >> 'in directory with nested tests' {
     tmp pwd = (path:join $this-script-dir tests)
 
-    main:get-test-scripts |
+    velvet:get-test-scripts |
       order |
       put [(all)] |
       should-be $script-gallery:all
@@ -66,21 +66,21 @@ fn create-reporter-spy {
   >> 'in directory with no tests' {
     tmp pwd = $dir-with-no-tests
 
-    main:has-test-scripts |
+    velvet:has-test-scripts |
       should-be $false
   }
 
   >> 'in directory with tests' {
     tmp pwd = (path:join $this-script-dir tests aggregator)
 
-    main:has-test-scripts |
+    velvet:has-test-scripts |
       should-be $true
   }
 
   >> 'in directory having nested tests' {
     tmp pwd = (path:join $this-script-dir tests)
 
-    main:has-test-scripts |
+    velvet:has-test-scripts |
       should-be $true
   }
 }
@@ -89,7 +89,7 @@ fn create-reporter-spy {
   >> 'running one aggregator script' {
     var spy = (create-reporter-spy)
 
-    main:velvet &reporters=[$spy[reporter]] (get-test-script alpha)
+    velvet:velvet &reporters=[$spy[reporter]] (get-test-script alpha)
 
     $spy[get-summary] |
       should-be $summaries:alpha
@@ -98,7 +98,7 @@ fn create-reporter-spy {
   >> 'running two aggregator scripts' {
     var spy = (create-reporter-spy)
 
-    main:velvet &reporters=[$spy[reporter]] (get-test-script alpha) (get-test-script beta)
+    velvet:velvet &reporters=[$spy[reporter]] (get-test-script alpha) (get-test-script beta)
 
     $spy[get-summary] |
       should-be $summaries:alpha-beta
@@ -109,7 +109,7 @@ fn create-reporter-spy {
 
     var spy = (create-reporter-spy)
 
-    main:velvet &reporters=[$spy[reporter]]
+    velvet:velvet &reporters=[$spy[reporter]]
     $spy[get-summary] |
       summary:simplify (all) |
       should-be $summaries:alpha-beta-gamma-simplified
@@ -119,7 +119,7 @@ fn create-reporter-spy {
     tmp pwd = (path:join $this-script-dir tests aggregator)
 
     throws {
-      main:velvet &must-pass &reporters=[]
+      velvet:velvet &must-pass &reporters=[]
     } |
       get-fail-content |
       should-be '❌ There are failed tests!'
@@ -128,7 +128,7 @@ fn create-reporter-spy {
   >> 'running all the aggregator tests and requesting a summary' {
     tmp pwd = (path:join $this-script-dir tests aggregator)
 
-    main:velvet &put &reporters=[] |
+    velvet:velvet &put &reporters=[] |
       summary:simplify (all) |
       should-be $summaries:alpha-beta-gamma-simplified
   }
@@ -142,7 +142,7 @@ fn create-reporter-spy {
 
     var expected-log = (slurp < $expected-log-path)
 
-    main:velvet |
+    velvet:velvet |
       slurp |
       string:unstyled (all) |
       str:trim-space (all) |
