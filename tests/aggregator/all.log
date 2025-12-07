@@ -1,9 +1,9 @@
 In alpha
-    should work ✅
-    should work too ✅
+    ✅ should work
+    ✅ should work too
 
     In sub-level
-        should fail ❌
+        ❌ should fail
             *** OUTPUT LOG (stdout + stderr) ***
 
             Cip
@@ -16,16 +16,16 @@ In alpha
 
 
         In sub-sub-level
-            should be ok ✅
+            ✅ should be ok
 
 In beta
-    has duplicate in third source file ❌
+    ❌ has duplicate in third source file
         *** EXCEPTION LOG ***
 
         DUPLICATE TEST!
 
 
 In gamma
-    should pass ✅
+    ✅ should pass
 
 ❌ Total tests: 6. Passed: 4. Failed: 2.

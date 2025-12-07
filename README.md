@@ -12,8 +12,6 @@ I am personally fond of the expressive, **Gherkin**-like syntax supported by tes
 
 Given my passion for the [Elvish](https://elv.sh/) shell, I've designed this _testing architecture_ by combining my favorite aspects of such frameworks, while applying my own perspective - especially focused on _cross-technology integration scenarios_.
 
-![Console summary](docs/console-summary.png)
-
 ## Installation
 
 Velvet can be installed via **epm** - in particular:

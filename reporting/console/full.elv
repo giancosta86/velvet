@@ -25,7 +25,7 @@ fn -display-test-result { |test-title test-result level|
 
   var indentation = (-get-indentation $level)
 
-  echo $indentation''(styled $test-title $style[color] bold) $style[emoji]
+  echo $indentation''$style[emoji] (styled $test-title $style[color] bold)
 
   if (eq $outcome $outcomes:failed) {
     var logging-indentation = (-get-indentation (+ $level 1))
