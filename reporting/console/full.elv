@@ -1,6 +1,6 @@
 use str
 use github.com/giancosta86/ethereal/v1/string
-use ../outcomes
+use ../../outcomes
 
 var -styles-by-outcome = [
   &$outcomes:passed=[

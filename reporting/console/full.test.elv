@@ -1,15 +1,15 @@
 use str
-use ../outcomes
-use ../section
-use ../summary
-use ./console
+use ../../outcomes
+use ../../section
+use ../../summary
+use ./full
 
 >> 'Command-line reporting' {
   fn create-output-tester { |section|
     var summary = (summary:from-section $section)
 
     var report-output = (
-      console:report $summary |
+      full:report $summary |
         slurp
     )
 
