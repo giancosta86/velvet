@@ -29,7 +29,7 @@ epm:install github.com/giancosta86/velvet
 In **rc.elv**, it is recommended to add the following lines:
 
 ```elvish
-use github.com/giancosta86/velvet/main velvet
+use github.com/giancosta86/velvet/velvet
 
 var velvet~ = $velvet:velvet~
 ```
