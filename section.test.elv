@@ -538,3 +538,111 @@ use ./test-result
       ]
   }
 }
+
+>> 'Section - Keeping failed test results' {
+  var passed-test = [
+    &output='This is a passed test!'
+    &outcome=$outcomes:passed
+  ]
+
+  var failed-test = [
+      &output='This is a failed test!'
+      &outcome=$outcomes:failed
+    ]
+
+  >> 'when the section is empty' {
+    section:keep-failed-test-results $section:empty |
+      should-be $section:empty
+  }
+
+  >> 'when the section contains a passed test' {
+    section:keep-failed-test-results [
+      &test-results=[
+        &alpha=$passed-test
+      ]
+      &sub-sections=[&]
+    ] |
+      should-be $section:empty
+  }
+
+  >> 'when the section contains a passing and a failing test' {
+    section:keep-failed-test-results [
+      &test-results=[
+        &alpha=$passed-test
+        &beta=$failed-test
+      ]
+      &sub-sections=[&]
+    ] |
+      should-be [
+        &test-results=[
+          &beta=$failed-test
+        ]
+        &sub-sections=[&]
+      ]
+  }
+
+  >> 'when the section contains a sub-section with mixed tests' {
+    section:keep-failed-test-results [
+      &test-results=[&]
+      &sub-sections=[
+        &my-nested-section=[
+          &test-results=[
+            &alpha=$passed-test
+            &beta=$failed-test
+          ]
+          &sub-sections=[&]
+        ]
+      ]
+    ] |
+      should-be [
+        &test-results=[&]
+        &sub-sections=[
+          &my-nested-section=[
+            &test-results=[
+              &beta=$failed-test
+            ]
+            &sub-sections=[&]
+          ]
+        ]
+      ]
+  }
+
+  >> 'with more complex source' {
+    section:keep-failed-test-results [
+      &test-results=[
+        &some-passed=$passed-test
+        &some-failed=$failed-test
+      ]
+      &sub-sections=[
+        &with-only-passed=[
+          &test-results=[
+            &omicron=$passed-test
+            &ro=$passed-test
+            &sigma=$passed-test
+          ]
+          &sub-sections=[&]
+        ]
+        &my-nested-section=[
+          &test-results=[
+            &alpha=$passed-test
+            &beta=$failed-test
+          ]
+          &sub-sections=[&]
+        ]
+      ]
+    ] |
+      should-be [
+        &test-results=[
+          &some-failed=$failed-test
+        ]
+        &sub-sections=[
+          &my-nested-section=[
+            &test-results=[
+              &beta=$failed-test
+            ]
+            &sub-sections=[&]
+          ]
+        ]
+      ]
+  }
+}

@@ -1,4 +1,5 @@
 use github.com/giancosta86/ethereal/v1/map
+use ./outcomes
 use ./test-result
 
 var empty = [
@@ -92,4 +93,27 @@ fn merge {
   }
 
   put $result
+}
+
+fn keep-failed-test-results { |section|
+  var filtered-test-results = (
+    map:keep-if $section[test-results] { |_ test-result|
+      eq $test-result[outcome] $outcomes:failed
+    }
+  )
+
+  var updated-sub-sections = (
+    map:transform $section[sub-sections] { |sub-section-title sub-section|
+      var updated-sub-section = (keep-failed-test-results $sub-section)
+
+      if (not-eq $updated-sub-section $empty) {
+        put [$sub-section-title $updated-sub-section]
+      }
+    }
+  )
+
+  put [
+    &test-results=$filtered-test-results
+    &sub-sections=$updated-sub-sections
+  ]
 }
