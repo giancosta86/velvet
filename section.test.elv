@@ -2,6 +2,16 @@ use ./outcomes
 use ./section
 use ./test-result
 
+var passed-test = [
+  &output='This is a passed test!'
+  &outcome=$outcomes:passed
+]
+
+var failed-test = [
+  &output='This is a failed test!'
+  &outcome=$outcomes:failed
+]
+
 >> 'Section detection' {
   >> 'applied to test result' {
     section:is-section [
@@ -539,17 +549,116 @@ use ./test-result
   }
 }
 
->> 'Section - Keeping failed test results' {
-  var passed-test = [
-    &output='This is a passed test!'
-    &outcome=$outcomes:passed
-  ]
+>> 'Section - Trimming empty' {
+  >> 'when the section is empty' {
+    section:trim-empty $section:empty |
+      should-be $section:empty
+  }
 
-  var failed-test = [
-      &output='This is a failed test!'
-      &outcome=$outcomes:failed
+  >> 'when the section contains just a test' {
+    var section = [
+      &test-results=[
+        &alpha=$passed-test
+      ]
+      &sub-sections=[&]
     ]
 
+    section:trim-empty $section |
+      should-be $section
+  }
+
+  >> 'when the section contains just a non-empty sub-section' {
+    var section = [
+      &test-results=[&]
+      &sub-sections=[
+        &omega=[
+          &test-results=[
+            &alpha=$passed-test
+          ]
+          &sub-sections=[&]
+        ]
+      ]
+    ]
+
+    section:trim-empty $section |
+      should-be $section
+  }
+
+  >> 'when the section contains just an empty sub-section' {
+    var section = [
+      &test-results=[&]
+      &sub-sections=[
+        &omega=$section:empty
+      ]
+    ]
+
+    section:trim-empty $section |
+      should-be $section:empty
+  }
+
+  >> 'in a more complex structure' {
+    var section = [
+      &test-results=[&]
+      &sub-sections=[
+        &ro=[
+          &test-results=[&]
+          &sub-sections=[
+            &sigma=$section:empty
+            &tau=[
+              &test-results=[
+                &ciop=$passed-test
+              ]
+              &sub-sections=[&]
+            ]
+          ]
+        ]
+        &level-1=[
+          &test-results=[&]
+          &sub-sections=[
+            &level-2=[
+              &test-results=[&]
+              &sub-sections=[
+                &level-3=$section:empty
+              ]
+            ]
+          ]
+        ]
+        &omega=[
+          &test-results=[
+            &alpha=$failed-test
+          ]
+          &sub-sections=[&]
+        ]
+      ]
+    ]
+
+    section:trim-empty $section |
+      should-be [
+        &test-results=[&]
+        &sub-sections=[
+          &ro=[
+            &test-results=[&]
+            &sub-sections=[
+              &tau=[
+                &test-results=[
+                  &ciop=$passed-test
+                ]
+                &sub-sections=[&]
+              ]
+            ]
+          ]
+          &omega=[
+            &test-results=[
+              &alpha=$failed-test
+            ]
+            &sub-sections=[&]
+          ]
+        ]
+      ]
+  }
+}
+
+>> 'Section - Keeping failed test results' {
   >> 'when the section is empty' {
     section:keep-failed-test-results $section:empty |
       should-be $section:empty

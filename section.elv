@@ -95,6 +95,23 @@ fn merge {
   put $result
 }
 
+fn trim-empty { |section|
+  var updated-sub-sections = (
+    map:transform $section[sub-sections] { |sub-section-title sub-section|
+      var updated-sub-section = (trim-empty $sub-section)
+
+      if (not-eq $updated-sub-section $empty) {
+        put [$sub-section-title $updated-sub-section]
+      }
+    }
+  )
+
+  put [
+    &test-results=$section[test-results]
+    &sub-sections=$updated-sub-sections
+  ]
+}
+
 fn keep-failed-test-results { |section|
   var filtered-test-results = (
     map:keep-if $section[test-results] { |_ test-result|
@@ -106,14 +123,13 @@ fn keep-failed-test-results { |section|
     map:transform $section[sub-sections] { |sub-section-title sub-section|
       var updated-sub-section = (keep-failed-test-results $sub-section)
 
-      if (not-eq $updated-sub-section $empty) {
-        put [$sub-section-title $updated-sub-section]
-      }
+      put [$sub-section-title $updated-sub-section]
     }
   )
 
   put [
     &test-results=$filtered-test-results
     &sub-sections=$updated-sub-sections
-  ]
+  ] |
+    trim-empty (all)
 }
