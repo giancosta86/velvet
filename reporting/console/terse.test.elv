@@ -1,11 +1,11 @@
 use ../../outcomes
 use ../../section
-use ./full
+use ./terse
 use ./test-shared
 
-var create-output-tester~ = (test-shared:create-output-tester-constructor $full:report~)
+var create-output-tester~ = (test-shared:create-output-tester-constructor $terse:report~)
 
->> 'Full command-line reporting' {
+>> 'Terse command-line reporting' {
   >> 'with empty section' {
     var output-tester = (create-output-tester $section:empty)
 
@@ -38,11 +38,11 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $full:
 
     $output-tester[expect-in-output] [
       ✅
-      Alpha
       'Total tests: 1.'
     ]
 
     $output-tester[expect-not-in-output] [
+      Alpha
       'Passed: 1.'
       'Failed: 0.'
       Wiii!
@@ -108,14 +108,18 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $full:
 
   >> 'with multi-level describe result' {
     var section = [
-      &test-results=[
-        &Alpha=[
-          &outcome=$outcomes:passed
-          &output="Wiii!\n"
-          &exception-log=$nil
-        ]
-      ]
+      &test-results=[&]
       &sub-sections=[
+        &WithPassed=[
+          &test-results=[
+            &Alpha=[
+              &outcome=$outcomes:passed
+              &output="Wiii!\n"
+              &exception-log=$nil
+            ]
+          ]
+          &sub-sections=[&]
+        ]
         &SomeOther=[
           &test-results=[&]
           &sub-sections=[
@@ -137,8 +141,6 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $full:
     var output-tester = (create-output-tester $section)
 
     $output-tester[expect-in-output] [
-      ✅
-      Alpha
       SomeOther
       YetAnother
       ❌
@@ -153,6 +155,9 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $full:
     ]
 
     $output-tester[expect-not-in-output] [
+      WithPassed
+      ✅
+      Alpha
       Wiii!
     ]
   }

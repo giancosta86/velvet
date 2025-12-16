@@ -1,6 +1,7 @@
 use path
 use str
 use github.com/giancosta86/ethereal/v1/string
+use ./reporting/console/full
 use ./velvet
 
 >> 'README tests' {
@@ -16,10 +17,20 @@ use ./velvet
       ]
   }
 
-  >> 'console reporter log' {
-    var expected-log = (slurp < maths.log)
+  >> 'default console reporter log' {
+    var expected-log = (slurp < terse.log)
 
     velvet:velvet |
+      slurp |
+      string:unstyled (all) |
+      str:trim-space (all) |
+      should-be $expected-log
+  }
+
+  >> 'full console reporter log' {
+    var expected-log = (slurp < full.log)
+
+    velvet:velvet &reporters=[$full:report~] |
       slurp |
       string:unstyled (all) |
       str:trim-space (all) |
