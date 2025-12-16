@@ -1,5 +1,5 @@
 use ./aggregator
-use ./reporting/console/full
+use ./reporting/console/terse
 use ./summary
 
 fn get-test-scripts {
@@ -13,7 +13,7 @@ fn has-test-scripts {
     != (all) 0
 }
 
-fn velvet { |&must-pass=$false &put=$false &reporters=[$full:report~] &num-workers=$aggregator:DEFAULT-NUM-WORKERS @script-paths|
+fn velvet { |&must-pass=$false &put=$false &reporters=[$terse:report~] &num-workers=$aggregator:DEFAULT-NUM-WORKERS @script-paths|
   var actual-test-scripts = (
     if (> (count $script-paths) 0) {
       put $script-paths

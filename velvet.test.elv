@@ -2,10 +2,11 @@ use path
 use re
 use str
 use github.com/giancosta86/ethereal/v1/string
-use ./velvet
+use ./reporting/console/full
 use ./summary
 use ./tests/aggregator/summaries
 use ./tests/script-gallery
+use ./velvet
 
 var this-script-dir = (path:dir (src)[name])
 var dir-with-no-tests = (path:join $this-script-dir docs)
@@ -133,16 +134,33 @@ fn create-reporter-spy {
       should-be $summaries:alpha-beta-gamma-simplified
   }
 
-  >> 'running all the aggregator tests and checking the byte output' {
+  >> 'running all the aggregator tests and checking the report output' {
     tmp pwd = (path:join $this-script-dir tests aggregator)
 
     var home-directory = (put ~)
 
-    var expected-log-path = (path:join $this-script-dir tests aggregator all.log)
+    var expected-log-path = (path:join $this-script-dir tests aggregator terse.log)
 
     var expected-log = (slurp < $expected-log-path)
 
     velvet:velvet |
+      slurp |
+      string:unstyled (all) |
+      str:trim-space (all) |
+      re:replace '([ \t]*?)\S+?/velvet/(?:velvet/)?' '$1<VELVET>/' (all) |
+      should-be $expected-log
+  }
+
+  >> 'running all the aggregator tests and checking the full report output' {
+    tmp pwd = (path:join $this-script-dir tests aggregator)
+
+    var home-directory = (put ~)
+
+    var expected-log-path = (path:join $this-script-dir tests aggregator full.log)
+
+    var expected-log = (slurp < $expected-log-path)
+
+    velvet:velvet &must-pass=$false &reporters=[$full:report~] |
       slurp |
       string:unstyled (all) |
       str:trim-space (all) |

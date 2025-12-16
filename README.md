@@ -257,7 +257,7 @@ The command can be customized via a few _optional parameters_:
 
 - `&reporters`: a list of _functions to report the test summary_; each reporter receives a `summary` map object - processing it as needed.
 
-  **Default**: the reporter writing to the console with _colors_ and _emojis_.
+  **Default**: the reporter writing just failed tests to the console with _colors_ and _emojis_.
 
 - `&put`: outputs the summary to the _value channel_. In this case, you'll probably want to set `&reporters=[]` or to a list containing _reporters not writing to the console_ - or simply pipe to `only-values`.
 
@@ -287,9 +287,11 @@ otherwise, _all the test scripts located in the directory tree_ below the curren
 
   - on the other hand, _each test must have a unique path in the test tree_ - that is, the sequence of its **section titles** combined with its own **test title**; otherwise, _all the duplicate occurrences will be merged_ into a _single_ `DUPLICATE!` failing test result
 
-## The default reporter
+## Predefined reporters
 
-The _default reporter_ writes the overall **summary** to the _console_, with the following rules:
+### Console
+
+There are _2 console reporters_, writing the overall **summary** to the _console_ and sharing these presentation rules:
 
 - In each section, **test results** come _before_ **sub-sections**
 
@@ -298,6 +300,12 @@ The _default reporter_ writes the overall **summary** to the _console_, with the
 - **Sections** are listed in _alphabetical order_, too
 
 - The **stats** are displayed at the end
+
+As for _the differences_ between such reporters:
+
+- the **terse** reporter - at `reporting/console/terse:report~`- only displays _failed tests_. It is the **default** one when running the `velvet` command
+
+- the **full** reporter - `reporting/console/full:report~`- lists _all tests_ - each one with its outcome
 
 ## Frequently asked questions
 
