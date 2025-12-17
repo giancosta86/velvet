@@ -1,6 +1,10 @@
+use str
 use github.com/giancosta86/ethereal/v1/diff
+use github.com/giancosta86/ethereal/v1/exception
 use github.com/giancosta86/ethereal/v1/lang
 use github.com/giancosta86/ethereal/v1/string
+
+var -should-be-error-message = 'should-be assertion failed'
 
 fn throws { |block|
   try {
@@ -49,7 +53,7 @@ fn should-be { |&strict=$false expected|
         &actual=$actual
       ]
 
-      fail 'strict should-be assertion failed'
+      fail 'strict '$-should-be-error-message
     }
   } else {
     var expected-minimal = (lang:flat-num $expected)
@@ -63,7 +67,7 @@ fn should-be { |&strict=$false expected|
         &actual=$actual-minimal
       ]
 
-      fail 'should-be assertion failed'
+      fail $-should-be-error-message
     }
   }
 }
@@ -85,6 +89,37 @@ fn should-not-be { |&strict=$false unexpected|
       -print-unexpected $unexpected-minimal
 
       fail 'should-not-be assertion failed'
+    }
+  }
+}
+
+fn should-emit { |&strict=$false &order-key=$nil expected|
+  if (not-eq (kind-of $expected) list) {
+    fail 'The expected argument must be a list of values'
+  }
+
+  var actual = (
+    if $order-key {
+      put [(
+        all |
+          order &key=$order-key
+      )]
+    } else {
+      put [(all)]
+    }
+  )
+
+  try {
+    put $actual |
+      should-be &strict=$strict $expected
+  } catch e {
+    var original-error-message = (exception:get-fail-content $e)
+
+    if (str:has-suffix $original-error-message $-should-be-error-message) {
+      str:replace should-be should-emit $original-error-message |
+        fail (all)
+    } else {
+      fail $e
     }
   }
 }

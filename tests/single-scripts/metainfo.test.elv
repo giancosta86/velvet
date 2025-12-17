@@ -32,6 +32,7 @@ use github.com/giancosta86/ethereal/v1/lang
       $get-fail-content~
       $should-be~
       $should-not-be~
+      $should-emit~
     ] | each { |provided-fn|
       lang:is-function $provided-fn |
         should-be $true
