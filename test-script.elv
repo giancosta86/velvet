@@ -68,6 +68,7 @@ fn run { |script-path|
     &get-fail-content~=$exception:get-fail-content~
     &should-be~=$assertions:should-be~
     &should-not-be~=$assertions:should-not-be~
+    &should-emit~=$assertions:should-emit~
   ])
 
   tmp pwd = (path:dir $abs-script-path)

@@ -159,6 +159,40 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
 
   The input mechanism and the equality logic are the same as those described for `should-be`.
 
+- `should-emit`: ensures that the values passed via pipe (`|`) are _exactly the values_ in the `expected` list; _emission order matters_, unless the `order-key` option is set; on the other hand, the `strict` option works according to the equality rules described within the context of `should-be`.
+
+  The overall command is equivalent to:
+
+  ```elvish
+  put [(
+    all |
+      order &key=$order-key | #Only if &order-key is set
+  )] |
+    should-be &strict=$strict $expected
+  ```
+
+  Example:
+
+  ```elvish
+  {
+    put Hello
+    put 90
+  } |
+    assertions:should-emit [
+      Hello
+      90
+    ]
+
+  {
+    echo Hello
+    echo World
+  } |
+    assertions:should-emit [
+      Hello
+      World
+    ]
+  ```
+
 - `throws <block>`: requires `block` to _throw an exception_ - failing if it _completed successfully_.
 
   ```elvish

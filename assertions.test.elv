@@ -1,3 +1,4 @@
+use str
 use github.com/giancosta86/ethereal/v1/exception
 use ./assertions
 
@@ -49,7 +50,7 @@ fn expect-should-be-failure { |&strict=$false expected actual-block|
       assertions:should-be &strict=$strict $expected
   } |
     exception:get-fail-content |
-    should-be (with-strictness-determiner &strict=$strict 'should-be assertion failed')
+    should-be (with-strictness-determiner &strict=$strict $assertions:-should-be-error-message)
 }
 
 fn expect-should-not-be-failure { |&strict=$false expected actual-block|
@@ -210,6 +211,139 @@ fn expect-should-not-be-failure { |&strict=$false expected actual-block|
     expect-should-not-be-failure $test-map {
       put $test-map
     }
+  }
+}
+
+>> 'Assertions: should-emit' {
+  >> 'when not expecting a list' {
+    throws {
+      {
+        put 90
+      } |
+        assertions:should-emit 90
+    } |
+      get-fail-content |
+      should-be 'The expected argument must be a list of values'
+  }
+
+  >> 'when emitting nothing' {
+    { } |
+      assertions:should-emit []
+  }
+
+  >> 'when emitting a string' {
+    {
+      put 'Hello, world!'
+    } |
+      assertions:should-emit [
+        'Hello, world!'
+      ]
+  }
+
+  >> 'when emitting a number' {
+    >> 'when in string format' {
+      {
+        put 90
+      } |
+        assertions:should-emit [
+          90
+        ]
+    }
+
+    >> 'when in different formats' {
+      {
+        put 90
+      } |
+        assertions:should-emit [
+          (num 90)
+        ]
+    }
+  }
+
+  >> 'when emitting both a string and a number' {
+    {
+      put Hello
+      put 90
+    } |
+      assertions:should-emit [
+        Hello
+        90
+      ]
+  }
+
+  >> 'when emitting via echo' {
+    {
+      echo Hello
+      echo World
+    } |
+      assertions:should-emit [
+        Hello
+        World
+      ]
+  }
+
+  >> 'when enabling strict equality' {
+    >> 'when the data type is the same' {
+      {
+        put 90
+      } |
+        assertions:should-emit &strict [
+          90
+        ]
+    }
+
+    >> 'when the data type is different' {
+      throws {
+      {
+        put 90
+      } |
+        assertions:should-emit &strict [
+          (num 90)
+        ]
+    } |
+      get-fail-content |
+      str:contains (all) 'should-emit assertion failed' |
+      should-be $true
+    }
+  }
+
+  >> 'when the order is wrong' {
+    throws {
+      {
+        put 95
+        put 90
+        put 98
+        put 100
+        put 92
+      } |
+        assertions:should-emit [
+          90
+          92
+          95
+          98
+          100
+        ]
+    } |
+      get-fail-content |
+      str:contains (all) 'should-emit assertion failed' |
+      should-be $true
+  }
+
+  >> 'when ordering via a key' {
+    {
+      put 95
+      put 90
+      put 98
+      put 100
+      put 92
+    } |
+      assertions:should-emit &order-key=$num~ [
+        90
+        92
+        95
+        98
+        100
+      ]
   }
 }
 
