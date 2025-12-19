@@ -1,7 +1,5 @@
 use os
 use str
-use github.com/giancosta86/ethereal/v1/fs
-use github.com/giancosta86/ethereal/v1/lang
 
 >> 'The script source' {
   var script-src = (src)
@@ -37,6 +35,14 @@ use github.com/giancosta86/ethereal/v1/lang
       lang:is-function $provided-fn |
         should-be $true
     }
+  }
+}
+
+>> 'The namespaces from Ethereal' {
+  >> 'should be available' {
+    all [2 3 5] |
+      seq:reduce 90 $'+~' |
+      should-be 100
   }
 }
 

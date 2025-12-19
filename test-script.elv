@@ -1,6 +1,8 @@
 use path
 use github.com/giancosta86/ethereal/v1/exception
+use github.com/giancosta86/ethereal/v1/map
 use ./assertions
+use ./ethereal
 use ./section
 use ./test-script-frame
 
@@ -60,7 +62,7 @@ fn run { |script-path|
       section:merge
   }
 
-  var namespace = (ns [
+  var default-functions = [
     &src~=$custom-src~
     &'>>'~=$'>>~'
     &throws~=$assertions:throws~
@@ -69,7 +71,13 @@ fn run { |script-path|
     &should-be~=$assertions:should-be~
     &should-not-be~=$assertions:should-not-be~
     &should-emit~=$assertions:should-emit~
-  ])
+  ]
+
+  var namespace-map = (
+    map:merge $default-functions $ethereal:namespaces
+  )
+
+  var namespace = (ns $namespace-map)
 
   tmp pwd = (path:dir $abs-script-path)
   eval &ns=$namespace $script-code |
