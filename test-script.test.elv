@@ -24,7 +24,7 @@ use ./tests/script-gallery
     )
 
     put $stats[passed] |
-      should-be 5
+      should-be 6
 
     put $stats[failed] |
       should-be 0
