@@ -1,5 +1,6 @@
 use str
 use github.com/giancosta86/ethereal/v1/exception
+use github.com/giancosta86/ethereal/v1/set
 use ./assertions
 
 >> 'Expecting an exception' {
@@ -344,6 +345,129 @@ fn expect-should-not-be-failure { |&strict=$false expected actual-block|
         98
         100
       ]
+  }
+}
+
+>> 'Assertions: should-contain' {
+  >> 'when the container is not supported' {
+    throws {
+      put (num 90) |
+        assertions:should-contain 92
+    } |
+      get-fail-content |
+      should-be 'Cannot assert should-contain - unexpected container kind: number'
+  }
+
+  >> 'when the container is a string' {
+    >> 'when the sub-string is present' {
+      put 'Greetings, magic world!' |
+        assertions:should-contain magic
+    }
+
+    >> 'when the sub-string is missing' {
+      throws {
+        put 'Hello, everybody!' |
+          assertions:should-contain world
+      } |
+        get-fail-content |
+        should-be $assertions:-should-contain-error-message
+    }
+  }
+
+  >> 'when the container is a list' {
+    >> 'when the item is present' {
+      put [alpha beta gamma] |
+        assertions:should-contain beta
+    }
+
+    >> 'when the item is missing' {
+      throws {
+        put [alpha beta gamma] |
+          assertions:should-contain ro
+      } |
+        get-fail-content |
+        should-be $assertions:-should-contain-error-message
+    }
+
+    >> 'when the list contains string representations of numbers' {
+      >> 'when the item is a number' {
+        >> 'by default' {
+          put [90 92 95 98] |
+            assertions:should-contain (num 92)
+        }
+
+        >> 'when strict equality is enabled' {
+          throws {
+            put [90 92 95 98] |
+              assertions:should-contain &strict (num 92)
+          } |
+            get-fail-content |
+            should-be 'strict '$assertions:-should-contain-error-message
+        }
+      }
+    }
+  }
+
+  >> 'when the container is a map' {
+    >> 'when the key is present' {
+      put [
+        &a=90
+        &b=92
+        &c=95
+      ] |
+        assertions:should-contain b
+    }
+
+    >> 'when the key is missing' {
+      throws {
+        put [
+          &a=90
+          &b=92
+          &c=95
+        ] |
+          assertions:should-contain omega
+      } |
+        get-fail-content |
+        should-be $assertions:-should-contain-error-message
+    }
+  }
+
+  >> 'when the container is a set from Ethereal' {
+    >> 'when the item is present' {
+      all [alpha beta gamma] |
+        set:of |
+        assertions:should-contain beta
+    }
+
+    >> 'when the item is missing' {
+      throws {
+        all [alpha beta gamma] |
+          set:of |
+          assertions:should-contain ro
+      } |
+        get-fail-content |
+        should-be $assertions:-should-contain-error-message
+    }
+
+    >> 'when the set contains string representations of numbers' {
+      >> 'when the item is a number' {
+        >> 'by default' {
+          all [90 92 95 98] |
+            set:of |
+            assertions:should-contain (num 92)
+        }
+
+        >> 'when strict equality is enabled' {
+          throws {
+            all [90 92 95 98] |
+              set:of |
+              assertions:should-contain &strict (num 92)
+          } |
+            get-fail-content |
+            should-be 'strict '$assertions:-should-contain-error-message
+        }
+      }
+    }
   }
 }
 

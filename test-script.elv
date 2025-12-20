@@ -71,6 +71,7 @@ fn run { |script-path|
     &should-be~=$assertions:should-be~
     &should-not-be~=$assertions:should-not-be~
     &should-emit~=$assertions:should-emit~
+    &should-contain~=$assertions:should-contain~
   ]
 
   var namespace-map = (

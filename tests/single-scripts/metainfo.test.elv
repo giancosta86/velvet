@@ -31,6 +31,7 @@ use str
       $should-be~
       $should-not-be~
       $should-emit~
+      $should-contain~
     ] | each { |provided-fn|
       lang:is-function $provided-fn |
         should-be $true
