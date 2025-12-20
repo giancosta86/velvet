@@ -2,6 +2,7 @@ use str
 use github.com/giancosta86/ethereal/v1/diff
 use github.com/giancosta86/ethereal/v1/exception
 use github.com/giancosta86/ethereal/v1/lang
+use github.com/giancosta86/ethereal/v1/set
 use github.com/giancosta86/ethereal/v1/string
 
 var -should-be-error-message = 'should-be assertion failed'
@@ -122,6 +123,120 @@ fn should-emit { |&strict=$false &order-key=$nil expected|
       fail $e
     }
   }
+}
+
+var -should-contain-error-message = 'should-contain assertion failed'
+
+fn -fail-display-should-contain { |inputs|
+  var source-description = $inputs[source-description]
+  var source = $inputs[source]
+  var missing-value-description = $inputs[missing-value-description]
+  var missing-value = $inputs[missing-value]
+  var error-message = $inputs[error-message]
+
+  echo (styled $missing-value-description':' red bold)
+  echo (string:pretty $missing-value)
+
+  echo (styled $source-description':' green bold)
+  echo (string:pretty $source)
+
+  fail $error-message
+}
+
+var -should-contain-assertions = [
+  &string={ |source-string sub-string error-message|
+    if (not (str:contains $source-string $sub-string)) {
+      -fail-display-should-contain [
+        &source-description='Current string'
+        &source=$source-string
+        &missing-value-description='Missing sub-string'
+        &missing-value=$sub-string
+        &error-message=$error-message
+      ]
+    }
+  }
+
+  &list={ |source-list item error-message|
+    if (not (has-value $source-list $item)) {
+      -fail-display-should-contain [
+        &source-description='Current list'
+        &source=$source-list
+        &missing-value-description='Missing item'
+        &missing-value=$item
+        &error-message=$error-message
+      ]
+    }
+  }
+
+  &map={ |source-map key error-message|
+    if (not (has-key $source-map $key)) {
+      -fail-display-should-contain [
+        &source-description='Current map'
+        &source=$source-map
+        &missing-value-description='Missing key'
+        &missing-value=$key
+        &error-message=$error-message
+      ]
+    }
+  }
+
+  &ethereal-set={ |source-set item error-message|
+    if (not (set:has-value $source-set $item)) {
+      -fail-display-should-contain [
+        &source-description='Current set'
+        &source=(set:to-list $source-set)
+        &missing-value-description='Missing item'
+        &missing-value=$item
+        &error-message=$error-message
+      ]
+    }
+  }
+]
+
+fn -get-container-kind { |container|
+  if (set:is-set $container) {
+    put ethereal-set
+  } else {
+    kind-of $container
+  }
+}
+
+fn should-contain { |&strict=$false value|
+  var source = (one)
+
+  var source-kind = (-get-container-kind $source)
+
+  if (not (has-key $-should-contain-assertions $source-kind)) {
+    fail 'Cannot assert should-contain - unexpected container kind: '$source-kind
+  }
+
+  var assertion = $-should-contain-assertions[$source-kind]
+
+  var actual-source = (
+    if $strict {
+      put $source
+    } else {
+      lang:flat-num $source
+    }
+  )
+
+  var actual-value = (
+    if $strict {
+      put $value
+    } else {
+      lang:flat-num $value
+    }
+  )
+
+  var error-message = (
+    if $strict {
+      put 'strict '$-should-contain-error-message
+    } else {
+      put $-should-contain-error-message
+    }
+  )
+
+  $assertion $actual-source $actual-value $error-message
 }
 
 fn fail-test {

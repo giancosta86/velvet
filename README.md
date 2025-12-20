@@ -223,6 +223,45 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     should-be DODO
   ```
 
+- `should-contain`: receives a _container_ via pipe (`|`) and a `value` as argument, then:
+
+  - if the container is a **string**, ensures that `value` is _a substring_
+
+  - if the container is a **list**, ensures that `value` is _contained in the list_
+
+  - if the container is a **map**, ensures that `value` is _a key of the map_
+
+  - if the container is a **set** from [Ethereal](https://github.com/giancosta86/ethereal), ensures that `value` belongs to the set
+
+  In all cases, the `strict` flag is supported - enabling _strict equality_, as described in the related section above.
+
+  Examples:
+
+  ```elvish
+  # String container
+  put 'Greetings, magic world!' |
+    assertions:should-contain magic
+
+  # List container
+  put [alpha beta gamma] |
+    assertions:should-contain beta
+
+  # Map container
+  put [
+    &a=90
+    &b=92
+    &c=95
+  ] |
+    assertions:should-contain b
+
+  # Set container
+  use github.com/giancosta86/ethereal/v1/set
+
+  all [alpha beta gamma] |
+    set:of |
+    assertions:should-contain beta
+  ```
+
 - `fail-test` takes _no arguments_ and _always fails_ - with a predefined message: it's perfect for _quickly sketching out a new test_ in test iterations.
 
 ### Example test script
