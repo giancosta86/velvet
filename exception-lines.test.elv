@@ -10,12 +10,12 @@ use ./exception-lines
       should-be []
   }
 
-  >> 'with hand-made clockwork stack' {
+  >> 'with hand-made exception stack from Ethereal' {
     all [
       Alpha
       Beta
       Gamma
-      giancosta86$exception-lines:-first-clockwork-line-mark
+      github.com/giancosta86/ethereal/v1/command.elv:56:103
       CLOCKWORK 1
       CLOCKWORK 2
     ] |
@@ -28,9 +28,27 @@ use ./exception-lines
       ]
   }
 
-  >> 'with stack induced by command capturing' {
+  >> 'with hand-made exception stack from the test script runner' {
+    all [
+      '[eval 1]:8:9-12: var v = $asd'
+      Beta
+      Alpha
+      '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v2/test-script.elv:83:3-35:   eval &ns=$namespace $script-code |'
+      SomeOtherLine
+      '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v2/sandbox.elv:7:3-25:   each $test-script:run~ |'
+    ] |
+      exception-lines:trim-clockwork-stack |
+      put [(all)] |
+      should-be [
+        '[eval 1]:8:9-12: var v = $asd'
+        Beta
+        Alpha
+      ]
+  }
+
+  >> 'with stack obtained from command capturing' {
     var capture-result = (
-      command:capture &type=bytes {
+      command:capture {
         fail DODUS
       }
     )
@@ -102,6 +120,7 @@ use ./exception-lines
     all [
       Alpha
       Beta
+      '[eval 123]:12:15:17-23: First eval here'
       '[eval 456]:123:7: Yet another fake error'
       '[eval 123]:80:3:4-67: Another fake error'
       Gamma
@@ -113,6 +132,7 @@ use ./exception-lines
       should-be [
         Alpha
         Beta
+        'ciop.elv:12:15:17-23: First eval here'
         '[eval 456]:123:7: Yet another fake error'
         'ciop.elv:80:3:4-67: Another fake error'
         Gamma
@@ -121,31 +141,8 @@ use ./exception-lines
       ]
   }
 
-  >> 'with eval occurrences not at the beginning of the line' {
-    all [
-      Alpha
-      Beta
-      '[eval 456]:123:7: Yet another fake error, but not in [eval 123]'
-      '[eval 123]:80:3:4-67: Another fake error'
-      Gamma
-      '[eval 123]:45:8-11: Fake error'
-      Delta
-    ] |
-      exception-lines:replace-bottom-eval ciop.elv |
-      put [(all)] |
-      should-be [
-        Alpha
-        Beta
-        '[eval 456]:123:7: Yet another fake error, but not in [eval 123]'
-        'ciop.elv:80:3:4-67: Another fake error'
-        Gamma
-        'ciop.elv:45:8-11: Fake error'
-        Delta
-      ]
-  }
-
-  >> 'with bottom eval within command capturing' {
-    var capture-result = (command:capture &type=bytes {
+  >> 'with eval call within command capturing' {
+    var capture-result = (command:capture {
       var code = '
         fn beta {
           fail DODO
@@ -169,9 +166,6 @@ use ./exception-lines
     )
 
     str:contains $exception-log DODO |
-      should-be $true
-
-    str:contains $exception-log '[eval' |
       should-be $true
 
     str:contains $exception-log ciop.elv |

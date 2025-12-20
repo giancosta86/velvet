@@ -1,13 +1,11 @@
 use re
-use str
 
-var -first-clockwork-line-mark = 'github.com/giancosta86/ethereal/v1/command.elv:'
+var -first-clockwork-line-pattern = 'github.com/giancosta86/'
 
 fn trim-clockwork-stack {
   each { |line|
     if (
-      str:trim-space $line |
-        str:contains (all) $-first-clockwork-line-mark
+      re:match $-first-clockwork-line-pattern $line
     ) {
       break
     }
