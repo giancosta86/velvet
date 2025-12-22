@@ -1,6 +1,6 @@
 use path
 use github.com/giancosta86/ethereal/v1/seq
-use ./section
+use ./sandbox-result
 
 var DEFAULT-NUM-WORKERS = 8
 
@@ -17,5 +17,5 @@ fn run-test-scripts { |&num-workers=$DEFAULT-NUM-WORKERS @script-paths|
       elvish -norc $-sandbox-script-path $@chunk-of-script-paths |
         from-json
     } |
-      section:merge
+      sandbox-result:merge
 }

@@ -2,8 +2,16 @@ use ./outcomes
 use ./summary
 use ./test-result
 
+var crashed-scripts = [
+  &park/yogi.test.elv=[
+    alpha
+    beta
+    gamma
+  ]
+]
+
 >> 'Summary creation' {
-  >> 'from section' {
+  >> 'from sandbox result' {
     var section = [
       &test-results=[
         &alpha=[
@@ -39,7 +47,12 @@ use ./test-result
       ]
     ]
 
-    summary:from-section $section |
+    var sandbox-result = [
+      &section=$section
+      &crashed-scripts=$crashed-scripts
+    ]
+
+    summary:from-sandbox-result $sandbox-result |
       should-be [
         &section=$section
         &stats=[
@@ -47,6 +60,7 @@ use ./test-result
           &passed=3
           &failed=2
         ]
+        &crashed-scripts=$crashed-scripts
       ]
   }
 }
@@ -82,7 +96,12 @@ use ./test-result
       ]
     ]
 
-    summary:from-section $section |
+    var sandbox-result = [
+      &section=$section
+      &crashed-scripts=$crashed-scripts
+    ]
+
+    summary:from-sandbox-result $sandbox-result |
       summary:simplify (all) |
       should-be [
         &section=[
@@ -119,6 +138,7 @@ use ./test-result
           &passed=1
           &failed=2
         ]
+        &crashed-scripts=$crashed-scripts
       ]
   }
 }

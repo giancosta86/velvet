@@ -1,6 +1,6 @@
 use re
 
-var -first-clockwork-line-pattern = 'github.com/giancosta86/'
+var -first-clockwork-line-pattern = 'github.com/giancosta86/|/velvet/test-script.elv:'
 
 fn trim-clockwork-stack {
   each { |line|

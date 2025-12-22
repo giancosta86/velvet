@@ -1,5 +1,5 @@
 use ../../outcomes
-use ../../section
+use ../../sandbox-result
 use ./terse
 use ./test-shared
 
@@ -7,7 +7,7 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
 
 >> 'Terse command-line reporting' {
   >> 'with empty section' {
-    var output-tester = (create-output-tester $section:empty)
+    var output-tester = (create-output-tester $sandbox-result:empty)
 
     $output-tester[expect-in-output] [
       💬
@@ -23,18 +23,21 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
   }
 
   >> 'with single passed test' {
-    var section = [
-      &test-results=[
-        &Alpha=[
-          &outcome=$outcomes:passed
-          &output="Wiii!\n"
-          &exception-log=$nil
+    var sandbox-result = [
+      &section=[
+        &test-results=[
+          &Alpha=[
+            &outcome=$outcomes:passed
+            &output="Wiii!\n"
+            &exception-log=$nil
+          ]
         ]
+        &sub-sections=[&]
       ]
-      &sub-sections=[&]
+      &crashed-scripts=[&]
     ]
 
-    var output-tester = (create-output-tester $section)
+    var output-tester = (create-output-tester $sandbox-result)
 
     $output-tester[expect-in-output] [
       ✅
@@ -51,18 +54,21 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
   }
 
   >> 'with single failed test - having output' {
-    var section = [
-      &test-results=[
-        &Beta=[
-          &outcome=$outcomes:failed
-          &output="Wooo!\n"
-          &exception-log=DODO
+    var sandbox-result = [
+      &section=[
+        &test-results=[
+          &Beta=[
+            &outcome=$outcomes:failed
+            &output="Wooo!\n"
+            &exception-log=DODO
+          ]
         ]
+        &sub-sections=[&]
       ]
-      &sub-sections=[&]
+      &crashed-scripts=[&]
     ]
 
-    var output-tester = (create-output-tester $section)
+    var output-tester = (create-output-tester $sandbox-result)
 
     $output-tester[expect-in-output] [
       ❌
@@ -78,18 +84,21 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
   }
 
   >> 'with single failed test - having no output' {
-    var section = [
-      &test-results=[
-        &Beta=[
-          &outcome=$outcomes:failed
-          &output=''
-          &exception-log=DODO
+    var sandbox-result = [
+      &section=[
+        &test-results=[
+          &Beta=[
+            &outcome=$outcomes:failed
+            &output=''
+            &exception-log=DODO
+          ]
         ]
+        &sub-sections=[&]
       ]
-      &sub-sections=[&]
+      &crashed-scripts=[&]
     ]
 
-    var output-tester = (create-output-tester $section)
+    var output-tester = (create-output-tester $sandbox-result)
 
     $output-tester[expect-in-output] [
       ❌
@@ -138,7 +147,12 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
       ]
     ]
 
-    var output-tester = (create-output-tester $section)
+    var sandbox-result = [
+      &section=$section
+      &crashed-scripts=[&]
+    ]
+
+    var output-tester = (create-output-tester $sandbox-result)
 
     $output-tester[expect-in-output] [
       SomeOther
