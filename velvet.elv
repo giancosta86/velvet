@@ -22,9 +22,9 @@ fn velvet { |&must-pass=$false &put=$false &reporters=[$terse:report~] &num-work
     }
   )
 
-  var section = (aggregator:run-test-scripts &num-workers=$num-workers $@actual-test-scripts)
+  var sandbox-result = (aggregator:run-test-scripts &num-workers=$num-workers $@actual-test-scripts)
 
-  var summary = (summary:from-section $section)
+  var summary = (summary:from-sandbox-result $sandbox-result)
 
   all $reporters | each { |reporter|
     $reporter $summary |
