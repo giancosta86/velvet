@@ -3,8 +3,8 @@ use ../../assertions
 use ../../summary
 
 fn create-output-tester-constructor { |reporter|
-  put { |section|
-    var summary = (summary:from-section $section)
+  put { |sandbox-result|
+    var summary = (summary:from-sandbox-result $sandbox-result)
 
     var report-output = (
       $reporter $summary |
