@@ -334,7 +334,7 @@ To run _all the tests_ within a directory containing _one or more test scripts_ 
 
 The command can be customized via a few _optional parameters_:
 
-- `&must-pass`: if _at least one test fails_, the command _throws an exception_. **Default**: disabled.
+- `&must-pass`: if _at least one test fails_, or if _at least one test script fails_, the command _throws an exception_. **Default**: disabled.
 
 - `&reporters`: a list of _functions to report the test summary_; each reporter receives a `summary` map object - processing it as needed.
 

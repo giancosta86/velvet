@@ -1,3 +1,4 @@
+use github.com/giancosta86/ethereal/v1/seq
 use ./aggregator
 use ./reporting/console/terse
 use ./summary
@@ -31,7 +32,13 @@ fn velvet { |&must-pass=$false &put=$false &reporters=[$terse:report~] &num-work
       only-bytes
   }
 
-  if (and $must-pass (> $summary[stats][failed] 0)) {
+  var has-failed-tests = (> $summary[stats][failed] 0)
+
+  var has-crashed-scripts = (seq:is-non-empty $summary[crashed-scripts])
+
+  var has-flaws = (or $has-failed-tests $has-crashed-scripts)
+
+  if (and $must-pass $has-flaws) {
     fail '❌ There are failed tests!'
   }
 
