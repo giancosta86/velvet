@@ -1,4 +1,5 @@
 use str
+use github.com/giancosta86/ethereal/v1/seq
 use github.com/giancosta86/ethereal/v1/string
 use ../../outcomes
 
@@ -108,6 +109,32 @@ fn -display-stats { |stats|
   echo $@fragments
 }
 
+fn -display-crashed-scripts { |crashed-scripts|
+  if (seq:is-empty $crashed-scripts) {
+    return
+  }
+
+  echo
+  echo
+  echo ⛔⛔⛔ (styled 'CRASHED SCRIPTS' bold red) ⛔⛔⛔
+
+  keys $crashed-scripts | each { |crashed-script-path|
+    var exception-lines = $crashed-scripts[$crashed-script-path]
+
+    var exception-log = (
+      all $exception-lines |
+        str:join "\n"
+    )
+
+    echo
+    echo ⛔ (styled $crashed-script-path bold red)
+    echo
+    echo $exception-log
+    echo
+    echo
+  }
+}
+
 fn report { |summary|
   var stats = $summary[stats]
 
@@ -121,4 +148,6 @@ fn report { |summary|
   echo
 
   -display-stats $summary[stats]
+
+  -display-crashed-scripts $summary[crashed-scripts]
 }
