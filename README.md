@@ -388,6 +388,20 @@ As for _the differences_ between such reporters:
 
 - the **full** reporter - `reporting/console/full:report~`- lists _all tests_ - each one with its outcome
 
+### JSON
+
+Writes the passed `summary` object to a given JSON file.
+
+The reporter must be created via a _factory function_ - `reporting/json/report`, which takes in input a file path and emits the actual _reporter function_.
+
+For example:
+
+```elvish
+var json-reporter = (json:report $json-report-path)
+
+velvet:velvet &reporters=[$json-reporter]
+```
+
 ### Reporter spy
 
 A _reporter spy_ is an object providing both a _reporter function_ and a _getter_ emitting the latest **summary** passed to the former function - which can be especially useful when _testing custom reporters_.
