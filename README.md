@@ -388,6 +388,28 @@ As for _the differences_ between such reporters:
 
 - the **full** reporter - `reporting/console/full:report~`- lists _all tests_ - each one with its outcome
 
+### Reporter spy
+
+A _reporter spy_ is an object providing both a _reporter function_ and a _getter_ emitting the latest **summary** passed to the former function - which can be especially useful when _testing custom reporters_.
+
+It is provided by the `reporting/spy` module, exporting the `create` _factory function_:
+
+```elvish
+var spy = (spy:create)
+```
+
+which instantiates an object having the following methods:
+
+- `reporter`: the actual function to be passed to the `velvet` command, via its `reporters` list option
+
+- `get-summary`: returns the latest value passed to the associated `reporter`
+
+```elvish
+velvet:velvet &reporters=[$spy]
+
+var summary = ($spy[get-summary])
+```
+
 ## Ethereal namespaces
 
 The [Ethereal](https://github.com/giancosta86/ethereal) library provides a rich set of _general-purpose modules_ for the Elvish shell; Velvet automatically imports some of such modules, to _simplify the development_ of test scripts. For example:
