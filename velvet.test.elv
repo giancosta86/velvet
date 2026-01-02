@@ -3,6 +3,7 @@ use re
 use str
 use github.com/giancosta86/ethereal/v1/string
 use ./reporting/console/full
+use ./reporting/json
 use ./reporting/spy
 use ./summary
 use ./tests/aggregator/summaries
@@ -74,12 +75,34 @@ fn get-test-script { |basename|
 
 >> 'Top-level command' {
   >> 'running one aggregator script' {
-    var spy = (spy:create)
+    >> 'with a single reporter' {
+      var spy = (spy:create)
 
-    velvet:velvet &reporters=[$spy[reporter]] (get-test-script alpha)
+      velvet:velvet &reporters=[$spy[reporter]] (get-test-script alpha)
 
-    $spy[get-summary] |
-      should-be $summaries:alpha
+      $spy[get-summary] |
+        should-be $summaries:alpha
+    }
+
+    >> 'with multiple reporters' {
+      var spies = [(
+        range 1 3 |
+          each { |_| spy:create }
+      )]
+
+      var reporters = [(
+        all $spies | each { |spy|
+          put $spy[reporter]
+        }
+      )]
+
+      velvet:velvet &reporters=$reporters (get-test-script alpha)
+
+      all $spies | each { |spy|
+        $spy[get-summary] |
+          should-be $summaries:alpha
+      }
+    }
   }
 
   >> 'running two aggregator scripts' {
@@ -152,5 +175,20 @@ fn get-test-script { |basename|
       str:trim-space (all) |
       re:replace '([ \t]*?)\S+?/velvet/(?:velvet/)?' '$1<VELVET>/' (all) |
       should-be $expected-log
+  }
+
+  >> 'running all the aggregator tests and checking the JSON report' {
+    tmp pwd = (path:join $this-script-dir tests aggregator)
+
+    var spy = (spy:create)
+
+    fs:with-temp-file { |json-report-path|
+      var json-reporter = (json:report $json-report-path)
+
+      velvet:velvet &must-pass=$false &reporters=[$json-reporter $spy[reporter]]
+
+      from-json < $json-report-path |
+        should-be ($spy[get-summary])
+    }
   }
 }
