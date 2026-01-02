@@ -3,6 +3,7 @@ use re
 use str
 use github.com/giancosta86/ethereal/v1/string
 use ./reporting/console/full
+use ./reporting/spy
 use ./summary
 use ./tests/aggregator/summaries
 use ./tests/script-gallery
@@ -13,21 +14,6 @@ var dir-with-no-tests = (path:join $this-script-dir docs)
 
 fn get-test-script { |basename|
   script-gallery:get-script-path aggregator $basename
-}
-
-fn create-reporter-spy {
-  var summary
-
-  var reporter = { |actual-summary|
-    set summary = $actual-summary
-  }
-
-  put [
-    &reporter=$reporter
-    &get-summary={
-      put $summary
-    }
-  ]
 }
 
 >> 'Listing test scripts' {
@@ -88,7 +74,7 @@ fn create-reporter-spy {
 
 >> 'Top-level command' {
   >> 'running one aggregator script' {
-    var spy = (create-reporter-spy)
+    var spy = (spy:create)
 
     velvet:velvet &reporters=[$spy[reporter]] (get-test-script alpha)
 
@@ -97,7 +83,7 @@ fn create-reporter-spy {
   }
 
   >> 'running two aggregator scripts' {
-    var spy = (create-reporter-spy)
+    var spy = (spy:create)
 
     velvet:velvet &reporters=[$spy[reporter]] (get-test-script alpha) (get-test-script beta)
 
@@ -108,7 +94,7 @@ fn create-reporter-spy {
   >> 'running all aggregator scripts via inference' {
     tmp pwd = (path:join $this-script-dir tests aggregator)
 
-    var spy = (create-reporter-spy)
+    var spy = (spy:create)
 
     velvet:velvet &reporters=[$spy[reporter]]
     $spy[get-summary] |
