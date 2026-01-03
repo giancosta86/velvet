@@ -186,7 +186,7 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     put Hello
     put 90
   } |
-    assertions:should-emit [
+    should-emit [
       Hello
       90
     ]
@@ -195,41 +195,36 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     echo Hello
     echo World
   } |
-    assertions:should-emit [
+    should-emit [
       Hello
       World
     ]
   ```
 
-- `throws <block>`: requires `block` to _throw an exception_ - failing if it _completed successfully_.
+- `should-not-emit`: ensures that the values passed via pipe (`|`) _do not include any_ of the values in the `unexpected-values` list; the `strict` option works according to the equality rules described within the context of `should-be`.
+
+  Example:
 
   ```elvish
-  # This works fine
-  throws {
-    fail DODO
-  }
-
-  # This will fail, saying a failure was expected!
-  throws {
-    # This block throws nothing
-  }
-  ```
-
-  As a plus, the exception itself is _output as a value_, so it can be further inspected - especially via `get-fail-content`, which returns:
-
-  - the value - usually _a message string_ - passed to the `fail` command
-
-  - `$nil` if the input value was not an _exception_ thrown by `fail`
-
-  For example:
-
-  ```elvish
-  throws {
-    fail DODO
+  {
+    put Hello
+    put 90
   } |
-    get-fail-content |
-    should-be DODO
+    should-not-emit [
+      World
+      4
+      SomeOtherValue
+    ]
   ```
+
+- `fails <block>`: requires `block` to _throw a fail exception_ - via `fail` - outputting the **content** of such failure and _failing if no fail was actually thrown_; if another type of exception is thrown by `block` - for example, a syntax error - it simply passes through. This assertion is preferable to `throws`, which is more general-purpose.
+
+```elvish
+fails {
+  fail Dodo
+} |
+  should-be Dodo
+```
 
 - `should-contain`: receives a _container_ via pipe (`|`) and a `value` as argument, then:
 
@@ -246,28 +241,86 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
   Examples:
 
   ```elvish
-  # String container
+  # String
   put 'Greetings, magic world!' |
-    assertions:should-contain magic
+    should-contain magic
 
-  # List container
+  # List
   put [alpha beta gamma] |
-    assertions:should-contain beta
+    should-contain beta
 
-  # Map container
+  # Map
   put [
     &a=90
     &b=92
     &c=95
   ] |
-    assertions:should-contain b
+    should-contain b
 
-  # Set container
+  # Set
   use github.com/giancosta86/ethereal/v1/set
 
   all [alpha beta gamma] |
     set:of |
-    assertions:should-contain beta
+    should-contain beta
+  ```
+
+- `should-not-contain`: the negation of `should-contain` - please, see its documentation for aspects such as the supported container types.
+
+  Examples:
+
+  ```elvish
+  # String
+  put 'Hello, everybody!' |
+    should-not-contain world
+
+  # List
+  put [alpha beta gamma] |
+    should-not-contain ro
+
+  # Map
+  put [
+    &a=90
+    &b=92
+    &c=95
+  ] |
+    should-not-contain omega
+
+  # Set
+  use github.com/giancosta86/ethereal/v1/set
+
+  set:of alpha beta gamma |
+    should-not-contain ro
+  ```
+
+- `throws <block>`: most general way to assert that `block` _throws an exception_ of any kind - failing if it _completed successfully_. In general, you should use the `fails` assertion, as it focuses on `fail`-based exceptions.
+
+  ```elvish
+  # This works fine
+  throws {
+    fail DODO
+  }
+
+  # This will fail, saying a failure was expected!
+  throws {
+    # This block throws nothing
+  }
+  ```
+
+  As a plus, the exception itself is _output as a value_, so it can be further inspected - especially via `exception:get-fail-content`, which returns:
+
+  - the value - usually _a message string_ - passed to the `fail` command
+
+  - `$nil` if the input value was not an _exception_ thrown by `fail`
+
+  For example:
+
+  ```elvish
+  throws {
+    fail DODO
+  } |
+    exception:get-fail-content |
+    should-be DODO
   ```
 
 - `fail-test` takes _no arguments_ and _always fails_ - with a predefined message: it's perfect for _quickly sketching out a new test_ in test iterations.
