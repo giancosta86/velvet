@@ -186,7 +186,7 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     put Hello
     put 90
   } |
-    assertions:should-emit [
+    should-emit [
       Hello
       90
     ]
@@ -195,9 +195,25 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     echo Hello
     echo World
   } |
-    assertions:should-emit [
+    should-emit [
       Hello
       World
+    ]
+  ```
+
+- `should-not-emit`: ensures that the values passed via pipe (`|`) _do not include any_ of the values in the `unexpected-values` list; the `strict` option works according to the equality rules described within the context of `should-be`.
+
+  Example:
+
+  ```elvish
+  {
+    put Hello
+    put 90
+  } |
+    should-not-emit [
+      World
+      4
+      SomeOtherValue
     ]
   ```
 
@@ -248,11 +264,11 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
   ```elvish
   # String container
   put 'Greetings, magic world!' |
-    assertions:should-contain magic
+    should-contain magic
 
   # List container
   put [alpha beta gamma] |
-    assertions:should-contain beta
+    should-contain beta
 
   # Map container
   put [
@@ -260,14 +276,14 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     &b=92
     &c=95
   ] |
-    assertions:should-contain b
+    should-contain b
 
   # Set container
   use github.com/giancosta86/ethereal/v1/set
 
   all [alpha beta gamma] |
     set:of |
-    assertions:should-contain beta
+    should-contain beta
   ```
 
 - `fail-test` takes _no arguments_ and _always fails_ - with a predefined message: it's perfect for _quickly sketching out a new test_ in test iterations.

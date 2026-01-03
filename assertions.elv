@@ -2,10 +2,9 @@ use str
 use github.com/giancosta86/ethereal/v1/diff
 use github.com/giancosta86/ethereal/v1/exception
 use github.com/giancosta86/ethereal/v1/lang
+use github.com/giancosta86/ethereal/v1/seq
 use github.com/giancosta86/ethereal/v1/set
 use github.com/giancosta86/ethereal/v1/string
-
-var -should-be-error-message = 'should-be assertion failed'
 
 fn throws { |block|
   try {
@@ -42,6 +41,8 @@ fn -print-unexpected { |unexpected|
   echo (string:pretty $unexpected)
 }
 
+var -should-be-error-message = 'should-be assertion failed'
+
 fn should-be { |&strict=$false expected|
   var actual = (one)
 
@@ -73,6 +74,8 @@ fn should-be { |&strict=$false expected|
   }
 }
 
+var -should-not-be-error-message = 'should-not-be assertion failed'
+
 fn should-not-be { |&strict=$false unexpected|
   var actual = (one)
 
@@ -80,7 +83,7 @@ fn should-not-be { |&strict=$false unexpected|
     if (eq $unexpected $actual) {
       -print-unexpected $unexpected
 
-      fail 'strict should-not-be assertion failed'
+      fail 'strict '$-should-not-be-error-message
     }
   } else {
     var unexpected-minimal = (lang:flat-num $unexpected)
@@ -89,7 +92,7 @@ fn should-not-be { |&strict=$false unexpected|
     if (eq $unexpected-minimal $actual-minimal) {
       -print-unexpected $unexpected-minimal
 
-      fail 'should-not-be assertion failed'
+      fail $-should-not-be-error-message
     }
   }
 }
@@ -122,6 +125,54 @@ fn should-emit { |&strict=$false &order-key=$nil expected|
     } else {
       fail $e
     }
+  }
+}
+
+var -should-not-emit-error-message = 'should-not-emit assertion failed'
+
+fn should-not-emit { |&strict=$false unexpected-values|
+  if (not-eq (kind-of $unexpected-values) list) {
+    fail 'The argument must be a list of values'
+  }
+
+  var actual = (
+    if $strict {
+      put [(all)]
+    } else {
+      lang:flat-num [(all)]
+    }
+  )
+
+  var unexpected-found = []
+
+  all $unexpected-values | each { |raw-unexpected|
+    var unexpected = (
+      if $strict {
+        put $raw-unexpected
+      } else {
+        lang:flat-num $raw-unexpected
+      }
+    )
+
+    if (has-value $actual $unexpected) {
+      set unexpected-found = [$@unexpected-found $unexpected]
+    }
+  }
+
+  if (seq:is-non-empty $unexpected-found) {
+    echo (styled 'Unexpected values found:' red bold)
+    echo (string:pretty $unexpected-found)
+
+    echo (styled 'Emitted values:' green bold)
+    echo (string:pretty $actual)
+
+    fail (
+      if $strict {
+        put 'strict '$-should-not-emit-error-message
+      } else {
+        put $-should-not-emit-error-message
+      }
+    )
   }
 }
 

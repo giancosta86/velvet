@@ -216,7 +216,7 @@ fn expect-should-not-be-failure { |&strict=$false expected actual-block|
 }
 
 >> 'Assertions: should-emit' {
-  >> 'when not expecting a list' {
+  >> 'when the argument is not a list' {
     throws {
       {
         put 90
@@ -345,6 +345,143 @@ fn expect-should-not-be-failure { |&strict=$false expected actual-block|
         98
         100
       ]
+  }
+}
+
+>> 'Assertions: should-not-emit' {
+  >> 'when the argument is not a list' {
+    throws {
+      {
+        put 90
+      } |
+        assertions:should-not-emit 90
+    } |
+      get-fail-content |
+      should-be 'The argument must be a list of values'
+  }
+
+  >> 'when not strict' {
+    >> 'when none of the unexpected value is emitted' {
+      {
+        put Alpha
+        put Beta
+        put Gamma
+      } |
+        assertions:should-not-emit [
+          90
+          Dodo
+          $true
+        ]
+    }
+
+    >> 'when one of the unexpected values is emitted' {
+      throws {
+        {
+          put Alpha
+          put Beta
+          put Dodo
+          put Delta
+        } |
+          assertions:should-not-emit [
+            90
+            Dodo
+            $true
+          ]
+      } |
+        get-fail-content |
+        should-be 'should-not-emit assertion failed'
+    }
+
+    >> 'when multiple unexpected values are emitted' {
+      try {
+        {
+          put Alpha
+          put Beta
+          put Dodo
+          put Delta
+        } |
+          assertions:should-not-emit [
+            90
+            Alpha
+            Dodo
+            $true
+          ]
+      } catch {
+      } |
+        should-emit [
+          "\e[;1;31mUnexpected values found:\e[m"
+          '['
+          ' Alpha'
+          ' Dodo'
+          ']'
+          "\e[;1;32mEmitted values:\e[m"
+          '['
+          ' Alpha'
+          ' Beta'
+          ' Dodo'
+          ' Delta'
+          ']'
+        ]
+    }
+
+    >> 'with numbers and numeric strings' {
+      throws {
+        {
+          put 90
+          put 91
+          put 92
+        } |
+          assertions:should-not-emit [
+            (num 91)
+          ]
+      } |
+        get-fail-content |
+        should-be 'should-not-emit assertion failed'
+    }
+  }
+
+  >> 'when strict' {
+    >> 'when none of the unexpected value is emitted' {
+      {
+        put Alpha
+        put Beta
+        put Gamma
+      } |
+        assertions:should-not-emit &strict [
+          90
+          Dodo
+          $true
+        ]
+    }
+
+    >> 'when one of the unexpected values is emitted' {
+      throws {
+        {
+          put Alpha
+          put Beta
+          put Dodo
+          put Delta
+        } |
+          assertions:should-not-emit &strict [
+            90
+            Dodo
+            $true
+          ]
+      } |
+        get-fail-content |
+        should-be 'strict should-not-emit assertion failed'
+    }
+
+    >> 'with numbers and numeric strings' {
+      {
+        put 90
+        put 91
+        put 92
+      } |
+        assertions:should-not-emit &strict [
+          (num 91)
+        ]
+    }
   }
 }
 
