@@ -65,13 +65,16 @@ fn run { |script-path|
   var default-functions = [
     &src~=$custom-src~
     &'>>'~=$'>>~'
+    &fails~=$assertions:fails~
     &throws~=$assertions:throws~
     &fail-test~=$assertions:fail-test~
     &get-fail-content~=$exception:get-fail-content~
     &should-be~=$assertions:should-be~
     &should-not-be~=$assertions:should-not-be~
     &should-emit~=$assertions:should-emit~
+    &should-not-emit~=$assertions:should-not-emit~
     &should-contain~=$assertions:should-contain~
+    &should-not-contain~=$assertions:should-not-contain~
   ]
 
   var namespace-map = (

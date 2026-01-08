@@ -217,35 +217,14 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     ]
   ```
 
-- `throws <block>`: requires `block` to _throw an exception_ - failing if it _completed successfully_.
+- `fails <block>`: requires `block` to _throw a fail exception_ - via `fail` - outputting the **content** of such failure and _failing if no fail was actually thrown_; if another type of exception is thrown by `block` - for example, a syntax error - it simply passes through. This assertion is preferable to `throws`, which is more general-purpose.
 
-  ```elvish
-  # This works fine
-  throws {
-    fail DODO
-  }
-
-  # This will fail, saying a failure was expected!
-  throws {
-    # This block throws nothing
-  }
-  ```
-
-  As a plus, the exception itself is _output as a value_, so it can be further inspected - especially via `get-fail-content`, which returns:
-
-  - the value - usually _a message string_ - passed to the `fail` command
-
-  - `$nil` if the input value was not an _exception_ thrown by `fail`
-
-  For example:
-
-  ```elvish
-  throws {
-    fail DODO
-  } |
-    get-fail-content |
-    should-be DODO
-  ```
+```elvish
+fails {
+  fail Dodo
+} |
+  should-be Dodo
+```
 
 - `should-contain`: receives a _container_ via pipe (`|`) and a `value` as argument, then:
 
@@ -262,15 +241,15 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
   Examples:
 
   ```elvish
-  # String container
+  # String
   put 'Greetings, magic world!' |
     should-contain magic
 
-  # List container
+  # List
   put [alpha beta gamma] |
     should-contain beta
 
-  # Map container
+  # Map
   put [
     &a=90
     &b=92
@@ -278,12 +257,70 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
   ] |
     should-contain b
 
-  # Set container
+  # Set
   use github.com/giancosta86/ethereal/v1/set
 
   all [alpha beta gamma] |
     set:of |
     should-contain beta
+  ```
+
+- `should-not-contain`: the negation of `should-contain` - please, see its documentation for aspects such as the supported container types.
+
+  Examples:
+
+  ```elvish
+  # String
+  put 'Hello, everybody!' |
+    should-not-contain world
+
+  # List
+  put [alpha beta gamma] |
+    should-not-contain ro
+
+  # Map
+  put [
+    &a=90
+    &b=92
+    &c=95
+  ] |
+    should-not-contain omega
+
+  # Set
+  use github.com/giancosta86/ethereal/v1/set
+
+  set:of alpha beta gamma |
+    should-not-contain ro
+  ```
+
+- `throws <block>`: most general way to assert that `block` _throws an exception_ of any kind - failing if it _completed successfully_. In general, you should use the `fails` assertion, as it focuses on `fail`-based exceptions.
+
+  ```elvish
+  # This works fine
+  throws {
+    fail DODO
+  }
+
+  # This will fail, saying a failure was expected!
+  throws {
+    # This block throws nothing
+  }
+  ```
+
+  As a plus, the exception itself is _output as a value_, so it can be further inspected - especially via `exception:get-fail-content`, which returns:
+
+  - the value - usually _a message string_ - passed to the `fail` command
+
+  - `$nil` if the input value was not an _exception_ thrown by `fail`
+
+  For example:
+
+  ```elvish
+  throws {
+    fail DODO
+  } |
+    exception:get-fail-content |
+    should-be DODO
   ```
 
 - `fail-test` takes _no arguments_ and _always fails_ - with a predefined message: it's perfect for _quickly sketching out a new test_ in test iterations.
