@@ -32,7 +32,7 @@ use ./shared
       throws {
         shared:fail-with-strict-prefix &strict=$false Yogi
       } |
-        get-fail-content |
+        exception:get-fail-content |
         should-be Yogi
     }
 
@@ -41,7 +41,7 @@ use ./shared
         put Bubu |
           shared:fail-with-strict-prefix &strict
       } |
-        get-fail-content |
+        exception:get-fail-content |
         should-be 'strict Bubu'
     }
   }

@@ -131,7 +131,7 @@ fn get-test-script { |basename|
     throws {
       velvet:velvet &must-pass &reporters=[]
     } |
-      get-fail-content |
+      exception:get-fail-content |
       should-be '❌ There are failed tests!'
   }
 

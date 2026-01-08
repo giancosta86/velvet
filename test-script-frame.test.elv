@@ -27,7 +27,7 @@ fn create-test-frame { |title|
     throws {
       $alpha[run-block] $block
     } |
-      get-fail-content |
+      exception:get-fail-content |
       should-be 'Block result already set in frame: alpha'
   }
 }
@@ -39,7 +39,7 @@ fn create-test-frame { |title|
     throws {
       $alpha[to-artifact]
     } |
-      get-fail-content |
+      exception:get-fail-content |
       should-be 'Cannot obtain artifact when block result is not set, in frame: alpha'
   }
 

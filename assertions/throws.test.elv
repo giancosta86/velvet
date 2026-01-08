@@ -9,7 +9,7 @@ var throws~ = $throws:throws~
 
       fail 'No exception was thrown by the expectation!'
     } catch e {
-      get-fail-content $e |
+      exception:get-fail-content $e |
         should-be 'The given code block did not fail!'
     }
   }
@@ -18,7 +18,7 @@ var throws~ = $throws:throws~
     throws {
       fail DODO
     } |
-      get-fail-content |
+      exception:get-fail-content |
       should-be DODO
   }
 
@@ -26,7 +26,7 @@ var throws~ = $throws:throws~
     throws {
       fail CIOP
     } |
-      get-fail-content |
+      exception:get-fail-content |
       should-be CIOP
   }
 }

@@ -8,7 +8,7 @@ var fail-test~ = $fail-test:fail-test~
     throws {
       fail-test
     } |
-      get-fail-content |
+      exception:get-fail-content |
       should-be 'TEST SET TO FAIL'
   }
 }
