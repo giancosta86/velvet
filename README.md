@@ -307,11 +307,7 @@ fails {
   }
   ```
 
-  As a plus, the exception itself is _output as a value_, so it can be further inspected - especially via `exception:get-fail-content`, which returns:
-
-  - the value - usually _a message string_ - passed to the `fail` command
-
-  - `$nil` if the input value was not an _exception_ thrown by `fail`
+  As a plus, the exception itself is _output as a value_, so it can be further inspected via the `exception` module provided by [Ethereal](https://github.com/giancosta86/ethereal).
 
   For example:
 
@@ -319,8 +315,8 @@ fails {
   throws {
     fail DODO
   } |
-    exception:get-fail-content |
-    should-be DODO
+    exception:is-return |
+    should-be $false
   ```
 
 - `fail-test` takes _no arguments_ and _always fails_ - with a predefined message: it's perfect for _quickly sketching out a new test_ in test iterations.
@@ -367,12 +363,11 @@ use str
 
   >> 'custom fail' {
     >> 'should be handled and inspectable' {
-      throws {
+      fails {
         if (== (% 8 2) 0) {
           fail '8 is even!'
         }
       } |
-        get-fail-content |
         should-be '8 is even!'
     }
   }
