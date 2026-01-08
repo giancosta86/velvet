@@ -10,7 +10,7 @@ var fails~ = $fails:fails~
         echo Hello
       }
     } |
-      get-fail-content |
+      exception:get-fail-content |
       should-be 'The given code block did not fail!'
   }
 
