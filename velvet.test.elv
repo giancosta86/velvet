@@ -50,6 +50,22 @@ fn get-test-script { |basename|
   }
 }
 
+>> 'Detecting test scripts' {
+  tmp pwd = (path:join $this-script-dir tests)
+
+  >> 'when requesting no scripts' {
+    velvet:-detect-test-scripts [] |
+      should-emit $script-gallery:all
+  }
+
+  >> 'when requesting directories' {
+    velvet:-detect-test-scripts [readme] |
+      should-emit [
+        (path:join readme maths.test.elv)
+      ]
+  }
+}
+
 >> 'Boolean detection of test scripts' {
   >> 'in directory with no tests' {
     tmp pwd = $dir-with-no-tests
