@@ -1,5 +1,5 @@
 use github.com/giancosta86/ethereal/v1/set
-use github.com/giancosta86/velvet/v2/velvet
+use github.com/giancosta86/velvet/v3/velvet
 
 var all-tests = (
   put **.test.elv |

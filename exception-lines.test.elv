@@ -33,9 +33,9 @@ use ./exception-lines
       '[eval 1]:8:9-12: var v = $asd'
       Beta
       Alpha
-      '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v2/test-script.elv:83:3-35:   eval &ns=$namespace $script-code |'
+      '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v3/test-script.elv:83:3-35:   eval &ns=$namespace $script-code |'
       SomeOtherLine
-      '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v2/sandbox.elv:7:3-25:   each $test-script:run~ |'
+      '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v3/sandbox.elv:7:3-25:   each $test-script:run~ |'
     ] |
       exception-lines:trim-clockwork-stack |
       put [(all)] |
