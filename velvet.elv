@@ -1,4 +1,5 @@
 use os
+use str
 use github.com/giancosta86/ethereal/v1/seq
 use ./aggregator
 use ./reporting/console/terse
@@ -24,6 +25,14 @@ fn -detect-test-scripts { |requested-scripts|
   all $requested-scripts | each { |script-path|
     if (os:is-dir $script-path) {
       put $script-path/**[nomatch-ok].test.elv
+    } elif (not (os:is-regular $script-path)) {
+      var path-with-extension = $script-path'.test.elv'
+
+      if (os:is-regular $path-with-extension) {
+        put $path-with-extension
+      } else {
+        put $script-path
+      }
     } else {
       put $script-path
     }

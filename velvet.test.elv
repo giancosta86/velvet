@@ -58,6 +58,13 @@ fn get-test-script { |basename|
       should-emit $script-gallery:all
   }
 
+  >> 'when requesting scripts without file extensions' {
+    velvet:-detect-test-scripts [readme/maths] |
+      should-emit [
+        (path:join readme maths.test.elv)
+      ]
+  }
+
   >> 'when requesting directories' {
     velvet:-detect-test-scripts [readme] |
       should-emit [
