@@ -1,4 +1,5 @@
 use ./outcomes
+use ./section
 
 var -raw-empty = [
   &passed=0
@@ -71,3 +72,5 @@ fn from-section { |section|
 
   assoc $raw-counts total (+ $raw-counts[passed] $raw-counts[failed])
 }
+
+var empty = (from-section $section:empty)
