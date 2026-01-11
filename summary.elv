@@ -1,6 +1,12 @@
 use ./section
 use ./stats
 
+var empty = [
+  &section=$section:empty
+  &stats=$stats:empty
+  &crashed-scripts=[&]
+]
+
 fn from-sandbox-result { |sandbox-result|
   var section = $sandbox-result[section]
   var stats = (stats:from-section $section)
