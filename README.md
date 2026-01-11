@@ -321,6 +321,12 @@ fails {
 
 - `fail-test` takes _no arguments_ and _always fails_ - with a predefined message: it's perfect for _quickly sketching out a new test_ in test iterations.
 
+#### Using assertions in shared .elv modules
+
+Assertions are already _injected_ by Velvet into the _default namespace_ when running **.test.elv** test script, but what if one needs to call them from within a **.elv** _utility module_ shared by multiple test scripts?
+
+In such a scenario, one can access _all the assertions_ provided by Velvet simply by importing the `assertions` module from Velvet's package; then, instead of calling - for example - `should-be`, one must qualify it: `assertions:should-be`.
+
 ### Example test script
 
 The following script could be saved as a `.test.elv` file - ready to be run via the `velvet` command.
