@@ -2,6 +2,7 @@ use str
 use github.com/giancosta86/ethereal/v1/seq
 use github.com/giancosta86/ethereal/v1/string
 use ../../outcomes
+use ../../summary
 
 var -styles-by-outcome = [
   &$outcomes:passed=[
@@ -136,9 +137,7 @@ fn -display-crashed-scripts { |crashed-scripts|
 }
 
 fn report { |summary|
-  var stats = $summary[stats]
-
-  if (== $stats[total] 0) {
+  if (eq $summary $summary:empty) {
     echo 💬 (styled 'No test structure found.' bold white)
     return
   }
