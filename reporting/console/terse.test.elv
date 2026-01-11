@@ -1,5 +1,6 @@
 use ../../outcomes
 use ../../sandbox-result
+use ../../section
 use ./terse
 use ./test-shared
 
@@ -159,9 +160,9 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
       YetAnother
       ❌
       Beta
-      OUTPUT LOG
+      'OUTPUT LOG'
       Wooo!
-      EXCEPTION LOG
+      'EXCEPTION LOG'
       DODO
       'Total tests: 2.'
       'Passed: 1.'
@@ -173,6 +174,38 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
       ✅
       Alpha
       Wiii!
+    ]
+  }
+
+  >> 'when running just crashed scripts' {
+    var output-tester = (create-output-tester [
+      &section=$section:empty
+      &crashed-scripts=[
+        &yogi.test.elv=[
+          alpha
+          beta
+          gamma
+        ]
+        &bubu.test.elv=[
+          ro
+          sigma
+        ]
+      ]
+    ])
+
+    $output-tester[expect-in-output] [
+      'Total tests: 0'
+      ⛔⛔⛔
+      'CRASHED SCRIPTS'
+      yogi.test.elv
+      alpha
+      bubu.test.elv
+      ro
+    ]
+
+    $output-tester[expect-not-in-output] [
+      💬
+      'No test structure found.'
     ]
   }
 }

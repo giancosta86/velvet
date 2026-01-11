@@ -1,4 +1,3 @@
-use str
 use ../../assertions
 use ../../summary
 
@@ -22,15 +21,15 @@ fn create-output-tester-constructor { |reporter|
 
       &expect-in-output={ |snippets|
         all $snippets | each { |snippet|
-          str:contains $report-output $snippet |
-            assertions:should-be $true
+          put $report-output |
+            assertions:should-contain $snippet
         }
       }
 
       &expect-not-in-output={ |snippets|
         all $snippets | each { |snippet|
-          str:contains $report-output $snippet |
-            assertions:should-be $false
+          put $report-output |
+            assertions:should-not-contain $snippet
         }
       }
     ]
