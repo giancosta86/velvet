@@ -19,7 +19,7 @@ fn create { |script-path title|
   }
 
   fn add-sub-frame { |sub-frame|
-    set sub-frames = [$@sub-frames $sub-frame]
+    set sub-frames = (conj $sub-frames $sub-frame)
   }
 
   fn to-test-result {

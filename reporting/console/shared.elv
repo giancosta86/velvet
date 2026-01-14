@@ -104,7 +104,7 @@ fn -display-stats { |stats|
     var passed-fragment = (styled 'Passed: '$stats[passed]'.' green bold)
     var failed-fragment = (styled 'Failed: '$stats[failed]'.' red bold)
 
-    set fragments = [$@fragments $passed-fragment $failed-fragment]
+    set fragments = (conj $fragments $passed-fragment $failed-fragment)
   }
 
   echo $@fragments

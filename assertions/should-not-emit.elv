@@ -19,7 +19,7 @@ fn should-not-emit { |&strict=$false unexpected-values|
     var unexpected = (shared:get-minimal &strict=$strict $raw-unexpected)
 
     if (has-value $actual $unexpected) {
-      set unexpected-found = [$@unexpected-found $unexpected]
+      set unexpected-found = (conj $unexpected-found $unexpected)
     }
   }
 

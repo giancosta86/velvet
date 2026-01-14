@@ -29,7 +29,7 @@ fn run { |script-path|
     if $parent-frame {
       $parent-frame[add-sub-frame] $this-frame
     } else {
-      set root-frames = [$@root-frames $this-frame]
+      set root-frames = (conj $root-frames $this-frame)
     }
 
     tmp current-frame = $this-frame
