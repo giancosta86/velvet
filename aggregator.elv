@@ -1,5 +1,5 @@
 use path
-use github.com/giancosta86/ethereal/v1/seq
+use github.com/giancosta86/ethereal/v1/parallel
 use ./sandbox-result
 
 var DEFAULT-NUM-WORKERS = 8
@@ -10,12 +10,12 @@ var -sandbox-script-path = (
     path:join (all) sandbox.elv
 )
 
+fn -run-chunk-in-elvish-sandbox { |@chunk-script-paths|
+  elvish -norc $-sandbox-script-path $@chunk-script-paths |
+    from-json
+}
+
 fn run-test-scripts { |&num-workers=$DEFAULT-NUM-WORKERS @script-paths|
   all $script-paths |
-    seq:split-by-chunk-count $num-workers |
-    peach &num-workers=$num-workers { |chunk-of-script-paths|
-      elvish -norc $-sandbox-script-path $@chunk-of-script-paths |
-        from-json
-    } |
-      sandbox-result:merge
+    parallel:fork-join &num-workers=$num-workers $-run-chunk-in-elvish-sandbox~ $sandbox-result:merge~
 }
