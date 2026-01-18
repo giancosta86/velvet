@@ -313,7 +313,8 @@ var failed-test = [
   ]
 
   >> 'with 0 operands' {
-    section:merge |
+    all [] |
+      section:merge |
       should-be $section:empty
   }
 

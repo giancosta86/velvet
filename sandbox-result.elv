@@ -1,5 +1,6 @@
 use github.com/giancosta86/ethereal/v1/lang
 use github.com/giancosta86/ethereal/v1/map
+use github.com/giancosta86/ethereal/v1/operator
 use github.com/giancosta86/ethereal/v1/seq
 use ./section
 
@@ -21,9 +22,4 @@ fn -merge-two { |left right|
   ]
 }
 
-fn merge { |@arguments|
-  lang:get-inputs $arguments |
-    seq:reduce $empty { |cumulated-result current-result|
-      -merge-two $cumulated-result $current-result
-    }
-}
+var merge~ = (operator:multi-value $empty $-merge-two~)
