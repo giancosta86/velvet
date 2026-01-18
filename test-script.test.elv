@@ -143,12 +143,10 @@ use ./tests/script-gallery
   }
 
   >> 'root test without title' {
-    throws {
+    fails {
       run-test-script root-test-without-title
     } |
-      print (all)[reason] |
-      str:contains (all) 'arity mismatch' |
-      should-be $true
+      should-be 'The title must be a string!'
   }
 
   >> 'section without title' {
@@ -166,8 +164,43 @@ use ./tests/script-gallery
       ]
 
     put $section[test-results][Alpha][exception-log] |
-      str:contains (all) 'arity mismatch' |
-      should-be $true
+      should-contain 'The title must be a string!'
+  }
+
+  >> 'test drafts' {
+    var section = (run-test-script test-drafts)
+
+    section:simplify $section |
+      should-be [
+        &test-results=[
+          &Alpha=[
+            &outcome=$outcomes:failed
+            &output=''
+          ]
+        ]
+        &sub-sections=[
+          &'In subsection'=[
+            &test-results=[
+              &Beta=[
+                &outcome=$outcomes:failed
+                &output=''
+              ]
+              &Gamma=[
+                &outcome=$outcomes:failed
+                &output=''
+              ]
+              &'Longer title'=[
+                &outcome=$outcomes:failed
+                &output=''
+              ]
+            ]
+            &sub-sections=[&]
+          ]
+        ]
+      ]
+
+    put $section[test-results][Alpha][exception-log] |
+      should-contain 'TEST SET TO FAIL'
   }
 
   >> 'with section having mixed outcomes' {

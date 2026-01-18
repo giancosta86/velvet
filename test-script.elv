@@ -1,5 +1,6 @@
 use path
 use github.com/giancosta86/ethereal/v1/exception
+use github.com/giancosta86/ethereal/v1/lang
 use github.com/giancosta86/ethereal/v1/map
 use ./assertions
 use ./ethereal
@@ -22,7 +23,23 @@ fn run { |script-path|
     ]
   }
 
-  fn '>>' { |title block|
+  fn '>>' { |title @rest|
+    if (not-eq (kind-of $title) string) {
+      fail 'The title must be a string!'
+    }
+
+    var block = (
+      var rest-length = (count $rest)
+
+      if (== $rest-length 1) {
+        put $rest[0]
+      } elif (== $rest-length 0) {
+        put $assertions:fail-test~
+      } else {
+        fail 'Only 1 or 2 arguments are allowed!'
+      }
+    )
+
     var this-frame = (test-script-frame:create $abs-script-path $title)
 
     var parent-frame = $current-frame

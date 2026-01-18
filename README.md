@@ -88,6 +88,20 @@ whereas all the other occurrences of `>>` define **sections** - and each section
 
 **Please, note**: tests can also reside _in the root of the script_ - of course, when they are not contained in another `>>` block.
 
+**Please, note**: `>>` can also be followed _just by the test title_, like in:
+
+```elvish
+>> 'This is a test draft'
+```
+
+This will define a **test draft**, whose body simply calls `fail-test` - thus equivalent to:
+
+```elvish
+>> 'This is a test draft' {
+  fail-test
+}
+```
+
 **Please, note**: the `>>` _function_ - called at the beginning of the line, has _no ambiguity_ with the `>>` _redirection operator_, which always appears _after a command_.
 
 ## Test outcome
