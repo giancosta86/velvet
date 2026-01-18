@@ -4,18 +4,18 @@ use ../../section
 use ./terse
 use ./test-shared
 
-var create-output-tester~ = (test-shared:create-output-tester-constructor $terse:report~)
+var create-console-tester~ = (test-shared:create-console-tester-constructor $terse:report~)
 
 >> 'Terse command-line reporting' {
   >> 'with empty section' {
-    var output-tester = (create-output-tester $sandbox-result:empty)
+    var output-tester = (create-console-tester $sandbox-result:empty)
 
-    $output-tester[expect-in-output] [
+    $output-tester[should-contain-all] [
       💬
       No test structure found.
     ]
 
-    $output-tester[expect-not-in-output] [
+    $output-tester[should-contain-none] [
       LOG
       Total
       Passed
@@ -38,14 +38,14 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
       &crashed-scripts=[&]
     ]
 
-    var output-tester = (create-output-tester $sandbox-result)
+    var output-tester = (create-console-tester $sandbox-result)
 
-    $output-tester[expect-in-output] [
+    $output-tester[should-contain-all] [
       ✅
       'Total tests: 1.'
     ]
 
-    $output-tester[expect-not-in-output] [
+    $output-tester[should-contain-none] [
       Alpha
       'Passed: 1.'
       'Failed: 0.'
@@ -69,9 +69,9 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
       &crashed-scripts=[&]
     ]
 
-    var output-tester = (create-output-tester $sandbox-result)
+    var output-tester = (create-console-tester $sandbox-result)
 
-    $output-tester[expect-in-output] [
+    $output-tester[should-contain-all] [
       ❌
       Beta
       'OUTPUT LOG'
@@ -99,9 +99,9 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
       &crashed-scripts=[&]
     ]
 
-    var output-tester = (create-output-tester $sandbox-result)
+    var output-tester = (create-console-tester $sandbox-result)
 
-    $output-tester[expect-in-output] [
+    $output-tester[should-contain-all] [
       ❌
       Beta
       'EXCEPTION LOG'
@@ -111,7 +111,7 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
       'Failed: 1.'
     ]
 
-    $output-tester[expect-not-in-output] [
+    $output-tester[should-contain-none] [
       'OUTPUT LOG'
     ]
   }
@@ -153,9 +153,9 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
       &crashed-scripts=[&]
     ]
 
-    var output-tester = (create-output-tester $sandbox-result)
+    var output-tester = (create-console-tester $sandbox-result)
 
-    $output-tester[expect-in-output] [
+    $output-tester[should-contain-all] [
       SomeOther
       YetAnother
       ❌
@@ -169,7 +169,7 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
       'Failed: 1.'
     ]
 
-    $output-tester[expect-not-in-output] [
+    $output-tester[should-contain-none] [
       WithPassed
       ✅
       Alpha
@@ -178,7 +178,7 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
   }
 
   >> 'when running just crashed scripts' {
-    var output-tester = (create-output-tester [
+    var output-tester = (create-console-tester [
       &section=$section:empty
       &crashed-scripts=[
         &yogi.test.elv=[
@@ -193,7 +193,7 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
       ]
     ])
 
-    $output-tester[expect-in-output] [
+    $output-tester[should-contain-all] [
       'Total tests: 0'
       ⛔⛔⛔
       'CRASHED SCRIPTS'
@@ -203,7 +203,7 @@ var create-output-tester~ = (test-shared:create-output-tester-constructor $terse
       ro
     ]
 
-    $output-tester[expect-not-in-output] [
+    $output-tester[should-contain-none] [
       💬
       'No test structure found.'
     ]

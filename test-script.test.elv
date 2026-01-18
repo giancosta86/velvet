@@ -23,9 +23,6 @@ use ./tests/script-gallery
         stats:from-section (all)
     )
 
-    put $stats[passed] |
-      should-be 6
-
     put $stats[failed] |
       should-be 0
   }

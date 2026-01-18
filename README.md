@@ -103,7 +103,6 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
 ### Assertions
 
 - `should-be [&strict] <expected>`: if the value passed via pipe (`|`) is not equal to the `<expected>` argument:
-
   1. Displays both values
 
   1. If the `diff` command is available on the system, also shows their differences
@@ -127,7 +126,6 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
   #### Equality
 
   In Velvet, _equality_ is defined as follows:
-
   - the **default behavior** consists in comparing via `eq` the _minimized representations_ of both operands.
 
     ```elvish
@@ -137,7 +135,6 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     ```
 
     **DEFINITION**: the _minimized representation_ for any value is defined as follows:
-
     - if the value is a **number**, it is the _string_ denoting the number
 
     - if the value is a **list**, it is a list whose items are the _minimized representations_ of its items
@@ -155,7 +152,6 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     ```
 
 - `should-not-be [&strict] <unexpected>`: if the value passed via pipe (`|`) is equal to the `<unexpected>` argument:
-
   1. Displays such value
 
   1. Fails.
@@ -179,7 +175,7 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     should-be &strict=$strict $expected
   ```
 
-  Example:
+  ##### Example
 
   ```elvish
   {
@@ -201,9 +197,11 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     ]
   ```
 
+  **Please, note**: for more _granular tests_ focused on the string output of a command, please refer to `create-output-tester`.
+
 - `should-not-emit`: ensures that the values passed via pipe (`|`) _do not include any_ of the values in the `unexpected-values` list; the `strict` option works according to the equality rules described within the context of `should-be`.
 
-  Example:
+  ##### Example
 
   ```elvish
   {
@@ -217,17 +215,22 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     ]
   ```
 
+  **Please, note**: for more _granular tests_ focused on the string output of a command, please refer to `create-output-tester`.
+
 - `fails <block>`: requires `block` to _throw a fail exception_ - via `fail` - outputting the **content** of such failure and _failing if no fail was actually thrown_; if another type of exception is thrown by `block` - for example, a syntax error - it simply passes through. This assertion is preferable to `throws`, which is more general-purpose.
 
-```elvish
-fails {
-  fail Dodo
-} |
-  should-be Dodo
-```
+  ##### Example
+
+  ```elvish
+  fails {
+    fail Dodo
+  } |
+    should-be Dodo
+  ```
+
+  **Please, note**: for more granular tests focused on the output of a command, please refer to `create-output-tester`.
 
 - `should-contain`: receives a _container_ via pipe (`|`) and a `value` as argument, then:
-
   - if the container is a **string**, ensures that `value` is _a substring_
 
   - if the container is a **list**, ensures that `value` is _contained in the list_
@@ -238,7 +241,7 @@ fails {
 
   In all cases, the `strict` flag is supported - enabling _strict equality_, as described in the related section above.
 
-  Examples:
+  ##### Example
 
   ```elvish
   # String
@@ -267,7 +270,7 @@ fails {
 
 - `should-not-contain`: the negation of `should-contain` - please, see its documentation for aspects such as the supported container types.
 
-  Examples:
+  ##### Example
 
   ```elvish
   # String
@@ -309,7 +312,7 @@ fails {
 
   As a plus, the exception itself is _output as a value_, so it can be further inspected via the `exception` module provided by [Ethereal](https://github.com/giancosta86/ethereal).
 
-  For example:
+  ##### Example
 
   ```elvish
   throws {
@@ -325,7 +328,65 @@ fails {
 
 Assertions are already _injected_ by Velvet into the _default namespace_ when running **.test.elv** test script, but what if one needs to call them from within a **.elv** _utility module_ shared by multiple test scripts?
 
-In such a scenario, one can access _all the assertions_ provided by Velvet simply by importing the `assertions` module from Velvet's package; then, instead of calling - for example - `should-be`, one must qualify it: `assertions:should-be`.
+In such a scenario, one can access _all the assertions_ provided by Velvet simply by importing the `assertions` module from Velvet's package:
+
+```elvish
+use github.com/giancosta86/velvet/<VERSION>/assertions
+```
+
+then, instead of calling - for example - `should-be`, one can pass through the module namespace: `assertions:should-be`.
+
+### Tools
+
+Tools are _utility constructs_ that can be used in _advanced test scripts_; just like assertions, they are all available in the _default namespace_ of any test scripts - whereas other Elvish scripts can access them via the following _module import_:
+
+```elvish
+use github.com/giancosta86/velvet/<VERSION>/tools
+```
+
+#### Output tester
+
+Enables _bulk tests_ - more precisely, multiple `should-contain` and `should-not-contain` assertions _on the same command output_ in the form of a **string** containing both **bytes** and **values**, all converted via `to-lines`.
+
+In particular, the `create-output-tester` function creates an object with 2 methods:
+
+- `should-contain-all`: takes a _list_ of **strings** and ensures, via `should-contain`, that the buffered command output contains _each and every_ given string.
+
+- `should-contain-none`: takes a _list_ of **strings** and ensures, via `should-not-contain`, that the buffered command output does **not** contain _each and every_ given string.
+
+Last but not least, the `text` field contains the _buffered output_ as a string.
+
+##### Example
+
+1. Create the output tester, by piping a command output into `create-output-tester`:
+
+   ```elvish
+   var tester = (
+    {
+      put Alpha
+      echo Beta
+      put Gamma
+      echo Delta
+    } |
+      output-tester:create
+   ```
+
+2. Invoke the assertions
+
+   ```elvish
+   $tester[should-contain-all] [
+     Alpha
+     Beta
+     Gamma
+     Delta
+   ]
+
+   $tester[should-contain-none] [
+     INEXISTENT
+     MISSING
+     'SOMETHING ELSE'
+   ]
+   ```
 
 ### Example test script
 
@@ -417,7 +478,6 @@ otherwise, _all the test scripts located in the directory tree_ below the curren
 - _Multiple test scripts_ are usually run **in parallel** - and _all the results are merged_ to a final **summary**, ready to be sent to the _requested reporters_ and/or emitted to Elvish's _value channel_.
 
   **Please, note**:
-
   - separate scripts can have _sections with the same titles_ - and _the test results will be merged_ as expected
 
   - on the other hand, _each test must have a unique path in the test tree_ - that is, the sequence of its **section titles** combined with its own **test title**; otherwise, _all the duplicate occurrences will be merged_ into a _single_ `DUPLICATE!` failing test result
