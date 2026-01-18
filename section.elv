@@ -1,4 +1,5 @@
 use github.com/giancosta86/ethereal/v1/map
+use github.com/giancosta86/ethereal/v1/operator
 use ./outcomes
 use ./test-result
 
@@ -85,15 +86,7 @@ set -merge-sub-sections~ = { |left right|
   put $sub-sections
 }
 
-fn merge {
-  var result = $empty
-
-  each { |section|
-    set result = (-merge-two-sections $result $section)
-  }
-
-  put $result
-}
+var merge~ = (operator:multi-value $empty $-merge-two-sections~)
 
 fn trim-empty { |section|
   var updated-sub-sections = (

@@ -1,3 +1,4 @@
+use github.com/giancosta86/ethereal/v1/operator
 use ./outcomes
 use ./section
 
@@ -13,15 +14,7 @@ fn -raw-sum-two { |left right|
   ]
 }
 
-fn -raw-sum {
-  var result = $-raw-empty
-
-  each { |current-stats|
-    set result = (-raw-sum-two $result $current-stats)
-  }
-
-  put $result
-}
+var -raw-sum~ = (operator:multi-value $-raw-empty $-raw-sum-two~)
 
 var -raw-from-test-results~
 var -raw-from-sub-sections~
