@@ -296,7 +296,17 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     should-not-contain ro
   ```
 
-- `throws <block>`: most general way to assert that `block` _throws an exception_ of any kind - failing if it _completed successfully_. In general, you should use the `fails` assertion, as it focuses on `fail`-based exceptions.
+- `throws <block>`: most general way to assert that `block` _throws an exception_ of any kind - failing if the block _completed successfully_. The function emits:
+  - by default:
+    - the **exception** itself, as a _value_
+
+    - the **bytes** emitted by the block, redirected to **stderr**
+
+  - if the `swallow` flag is enabled: the **actual output** of the block - both _bytes_ and _values_
+
+  **Please, note**: In general, you should use the `fails` assertion, as it focuses on `fail`-based exceptions.
+
+  ##### Example
 
   ```elvish
   # This works fine

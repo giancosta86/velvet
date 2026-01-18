@@ -1,8 +1,14 @@
-fn throws { |block|
+fn throws { |&swallow=$false block|
   try {
-    $block | only-bytes >&2
+    if $swallow {
+      $block
+    } else {
+      $block | only-bytes >&2
+    }
   } catch e {
-    put $e
+    if (not $swallow) {
+      put $e
+    }
   } else {
     fail 'The given code block did not fail!'
   }
