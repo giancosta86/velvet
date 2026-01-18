@@ -15,6 +15,7 @@ var single-scripts = [
   single-scripts/root-ok.test.elv
   single-scripts/root-test-without-title.test.elv
   single-scripts/sub-section-without-title.test.elv
+  single-scripts/test-drafts.test.elv
 ]
 
 var aggregator = [
