@@ -5,6 +5,7 @@ use ./assertions
 use ./ethereal
 use ./section
 use ./test-script-frame
+use ./tools
 
 fn run { |script-path|
   var abs-script-path = (path:abs $script-path)
@@ -62,22 +63,19 @@ fn run { |script-path|
       section:merge
   }
 
-  var default-functions = [
+  var core-functions = [
     &src~=$custom-src~
     &'>>'~=$'>>~'
-    &fails~=$assertions:fails~
-    &throws~=$assertions:throws~
-    &fail-test~=$assertions:fail-test~
-    &should-be~=$assertions:should-be~
-    &should-not-be~=$assertions:should-not-be~
-    &should-emit~=$assertions:should-emit~
-    &should-not-emit~=$assertions:should-not-emit~
-    &should-contain~=$assertions:should-contain~
-    &should-not-contain~=$assertions:should-not-contain~
   ]
 
   var namespace-map = (
-    map:merge $default-functions $ethereal:namespaces
+    all [
+      $core-functions
+      $ethereal:namespaces
+      $assertions:
+      $tools:
+    ] |
+      map:merge
   )
 
   var namespace = (ns $namespace-map)

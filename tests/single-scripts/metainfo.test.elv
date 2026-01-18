@@ -42,6 +42,23 @@ use str
   }
 }
 
+>> 'The provided tools' {
+  >> 'should be available' {
+    var output-tester = (
+      {
+        put Alpha
+        put Beta
+      } |
+        create-output-tester
+    )
+
+    $output-tester[should-contain-all] [
+      Alpha
+      Beta
+    ]
+  }
+}
+
 >> 'Redirection - appending to file' {
   >> 'should work' {
     fs:with-temp-file { |temp-path|
