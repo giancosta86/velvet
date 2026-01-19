@@ -1,3 +1,5 @@
+use str
+use github.com/giancosta86/ethereal/v1/string
 use ../assertions
 
 fn -assert-string { |value|
@@ -10,11 +12,19 @@ fn -assert-string { |value|
   }
 }
 
-fn create {
+fn create { |&unstyled=$false|
   var text = (
-    all |
-      to-lines |
-      slurp
+    var original-text = (
+      all |
+        to-lines |
+        slurp
+    )
+
+    if $unstyled {
+      string:unstyled $original-text
+    } else {
+      put $original-text
+    }
   )
 
   put [
@@ -36,6 +46,20 @@ fn create {
         put $text |
           assertions:should-not-contain $unexpected-string
       }
+    }
+
+    &should-contain-snippet={ |lines|
+      var snippet = (str:join "\n" $lines)
+
+      put $text |
+        assertions:should-contain $snippet
+    }
+
+    &should-not-contain-snippet={ |lines|
+      var snippet = (str:join "\n" $lines)
+
+      put $text |
+        assertions:should-not-contain $snippet
     }
   ]
 }
