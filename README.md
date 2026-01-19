@@ -372,13 +372,19 @@ use github.com/giancosta86/velvet/<VERSION>/tools
 
 Enables _bulk tests_ - more precisely, multiple `should-contain` and `should-not-contain` assertions _on the same command output_ in the form of a **string** containing both **bytes** and **values**, all converted via `to-lines`.
 
-In particular, the `create-output-tester` function creates an object with 2 methods:
+In particular, the `create-output-tester` function creates an object with the following methods:
 
 - `should-contain-all`: takes a _list_ of **strings** and ensures, via `should-contain`, that the buffered command output contains _each and every_ given string.
 
 - `should-contain-none`: takes a _list_ of **strings** and ensures, via `should-not-contain`, that the buffered command output does **not** contain _each and every_ given string.
 
-Last but not least, the `text` field contains the _buffered output_ as a string.
+- `should-contain-snippet`: takes a _list_ of **strings**, joins them into _a single string_ via the _newline character_, and ensures that such string is contained into _the command output text_.
+
+- `should-not-contain-snippet`: takes a _list_ of **strings**, joins them into _a single string_ via the _newline character_, and ensures that such string is _not_ contained into _the command output text_.
+
+As a plus, the `text` field contains the _buffered output_ as a string.
+
+**Please, note**: `create-output-tester` takes an optional `unstyled` flag, which removes any _style-related control sequence_ from the command output text - via the `string:unstyled` function provided by [Ethereal](https://github.com/giancosta86/ethereal).
 
 ##### Example
 
