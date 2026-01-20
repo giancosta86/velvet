@@ -46,7 +46,7 @@ var expect-failure~ = (shared:create-expect-failure $should-not-emit~ $should-no
     }
 
     >> 'when multiple unexpected values are emitted' {
-      try {
+      throws &swallow {
         {
           put Alpha
           put Beta
@@ -59,7 +59,6 @@ var expect-failure~ = (shared:create-expect-failure $should-not-emit~ $should-no
             Dodo
             $true
           ]
-      } catch {
       } |
         should-emit [
           "\e[;1;31mUnexpected values found:\e[m"
@@ -124,6 +123,40 @@ var expect-failure~ = (shared:create-expect-failure $should-not-emit~ $should-no
         should-not-emit &strict [
           (num 91)
         ]
+    }
+  }
+
+  >> 'when failing' {
+    >> 'the output should describe the context' {
+      var output-tester = (
+        throws &swallow {
+          {
+            put Alpha
+            put Beta
+            put Gamma
+          } |
+            should-not-emit [
+              Alpha
+              Omega
+              Beta
+            ]
+        } |
+          create-output-tester &unstyled
+      )
+
+      $output-tester[should-contain-snippet] [
+        'Unexpected values found:'
+        '['
+        ' Alpha'
+        ' Beta'
+        ']'
+        'Emitted values:'
+        '['
+        ' Alpha'
+        ' Beta'
+        ' Gamma'
+        ']'
+      ]
     }
   }
 }

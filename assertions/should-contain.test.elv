@@ -106,4 +106,82 @@ var expect-failure~ = (shared:create-expect-failure $should-contain~ $should-con
       }
     }
   }
+
+  >> 'when failing' {
+    >> 'the output should describe the context' {
+      >> 'for string' {
+        var output-tester = (
+          throws &swallow {
+            put Alpha |
+              should-contain Dodo
+          } |
+            create-output-tester &unstyled
+        )
+
+        $output-tester[should-contain-snippet] [
+          'Expected substring:'
+          Dodo
+          'Actual string:'
+          Alpha
+        ]
+      }
+
+      >> 'for list' {
+        var output-tester = (
+          throws &swallow {
+            put [Alpha] |
+              should-contain Dodo
+          } |
+            create-output-tester &unstyled
+        )
+
+        $output-tester[should-contain-snippet] [
+          'Expected item:'
+          Dodo
+          'Actual list:'
+          '['
+          ' Alpha'
+          ']'
+        ]
+      }
+
+      >> 'for map' {
+        var output-tester = (
+          throws &swallow {
+            put [&Alpha=90] |
+              should-contain Dodo
+          } |
+            create-output-tester &unstyled
+        )
+
+        $output-tester[should-contain-snippet] [
+          'Expected key:'
+          Dodo
+          'Actual map:'
+          '['
+          " &Alpha=\t90"
+          ']'
+        ]
+      }
+
+      >> 'for set' {
+        var output-tester = (
+          throws &swallow {
+            set:of Alpha |
+              should-contain Dodo
+          } |
+            create-output-tester &unstyled
+        )
+
+        $output-tester[should-contain-snippet] [
+          'Expected item:'
+          Dodo
+          'Actual ethereal-set:'
+          '['
+          ' Alpha'
+          ']'
+        ]
+      }
+    }
+  }
 }

@@ -123,4 +123,48 @@ var expect-failure~ = (shared:create-expect-failure $should-emit~ $should-emit:-
         100
       ]
   }
+
+  >> 'when failing' {
+    >> 'the output should describe the context' {
+      var output-tester = (
+        throws &swallow {
+          {
+            put Alpha
+            put Beta
+            put Gamma
+          } |
+            should-emit [
+              Ro
+              Sigma
+            ]
+        } |
+          create-output-tester &unstyled
+      )
+
+      $output-tester[should-contain-snippet] [
+        'Expected values:'
+        '['
+        ' Ro'
+        ' Sigma'
+        ']'
+        'Emitted values:'
+        '['
+        ' Alpha'
+        ' Beta'
+        ' Gamma'
+        ']'
+        '🔎 DIFF:'
+        '@@ -1,4 +1,5 @@'
+        ' ['
+        '- Ro'
+        '- Sigma'
+        '+ Alpha'
+        '+ Beta'
+        '+ Gamma'
+        ' ]'
+        '\ No newline at end of file'
+        🔎🔎🔎
+      ]
+    }
+  }
 }

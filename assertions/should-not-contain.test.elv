@@ -104,4 +104,82 @@ var expect-failure~ = (shared:create-expect-failure $should-not-contain~ $should
       }
     }
   }
+
+  >> 'when failing' {
+    >> 'the output should describe the context' {
+      >> 'for string' {
+        var output-tester = (
+          throws &swallow {
+            put Alpha |
+              should-not-contain ph
+          } |
+            create-output-tester &unstyled
+        )
+
+        $output-tester[should-contain-snippet] [
+          'Unexpected substring:'
+          ph
+          'Actual string:'
+          Alpha
+        ]
+      }
+
+      >> 'for list' {
+        var output-tester = (
+          throws &swallow {
+            put [Alpha] |
+              should-not-contain Alpha
+          } |
+            create-output-tester &unstyled
+        )
+
+        $output-tester[should-contain-snippet] [
+          'Unexpected item:'
+          Alpha
+          'Actual list:'
+          '['
+          ' Alpha'
+          ']'
+        ]
+      }
+
+      >> 'for map' {
+        var output-tester = (
+          throws &swallow {
+            put [&Alpha=90] |
+              should-not-contain Alpha
+          } |
+            create-output-tester &unstyled
+        )
+
+        $output-tester[should-contain-snippet] [
+          'Unexpected key:'
+          Alpha
+          'Actual map:'
+          '['
+          " &Alpha=\t90"
+          ']'
+        ]
+      }
+
+      >> 'for set' {
+        var output-tester = (
+          throws &swallow {
+            set:of Alpha |
+              should-not-contain Alpha
+          } |
+            create-output-tester &unstyled
+        )
+
+        $output-tester[should-contain-snippet] [
+          'Unexpected item:'
+          Alpha
+          'Actual ethereal-set:'
+          '['
+          ' Alpha'
+          ']'
+        ]
+      }
+    }
+  }
 }
