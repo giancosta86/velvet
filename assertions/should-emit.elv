@@ -23,10 +23,10 @@ fn should-emit { |&strict=$false &order-key=$nil expected|
 
   if (not-eq $actual $expected) {
     shared:contrast [
-      &red-description='Expected'
+      &red-description='Expected values'
       &red=$expected
-      &green-description='Actual'
-      &green=&actual
+      &green-description='Emitted values'
+      &green=$actual
       &show-diff=$true
     ]
 
