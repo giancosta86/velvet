@@ -73,4 +73,30 @@ var expect-failure~ = (shared:create-expect-failure $should-be~ $should-be:-erro
         should-be &strict $test-map
     }
   }
+
+  >> 'when failing' {
+    >> 'the output should describe the context' {
+      var output-tester = (
+        throws &swallow {
+          put Alpha |
+            should-be Beta
+        } |
+          create-output-tester &unstyled
+      )
+
+      $output-tester[should-contain-snippet] [
+        Expected:
+        Beta
+        Actual:
+        Alpha
+        '🔎 DIFF:'
+        '@@ -1 +1 @@'
+        -Beta
+        '\ No newline at end of file'
+        +Alpha
+        '\ No newline at end of file'
+        🔎🔎🔎
+      ]
+    }
+  }
 }

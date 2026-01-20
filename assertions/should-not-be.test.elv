@@ -68,4 +68,23 @@ var expect-failure~ = (shared:create-expect-failure $should-not-be~ $should-not-
 
     expect-failure $test-map $test-map
   }
+
+  >> 'when failing' {
+    >> 'the output should describe the context' {
+      var output-tester = (
+        throws &swallow {
+          put Alpha |
+            should-not-be Alpha
+        } |
+          create-output-tester &unstyled
+      )
+
+      $output-tester[should-contain-snippet] [
+        Unexpected:
+        Alpha
+        Actual:
+        Alpha
+      ]
+    }
+  }
 }
