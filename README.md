@@ -211,6 +211,8 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     ]
   ```
 
+  **Please, note**: in lieu of a `should-emit` with just one value, it's more expressive to use `should-be`.
+
   **Please, note**: for more _granular tests_ focused on the string output of a command, please refer to `create-output-tester`.
 
 - `should-not-emit`: ensures that the values passed via pipe (`|`) _do not include any_ of the values in the `unexpected-values` list; the `strict` option works according to the equality rules described within the context of `should-be`.
