@@ -63,8 +63,8 @@ fn run-test-sandbox { |basename|
 
     var exception-log = $section[sub-sections]['My test'][test-results]['should fail'][exception-log]
 
-    str:contains $exception-log DODO |
-      should-be $true
+    put $exception-log |
+      should-contain DODO
   }
 
   >> 'crashing script' {
@@ -82,7 +82,6 @@ fn run-test-sandbox { |basename|
 
     all $exception-lines |
       str:join "\n" |
-      str:contains (all) "test-script.elv" |
-      should-be $false
+      should-not-contain "test-script.elv"
   }
 }
