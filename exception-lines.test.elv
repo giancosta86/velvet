@@ -10,12 +10,12 @@ use ./exception-lines
       should-be []
   }
 
-  >> 'with hand-made exception stack from Ethereal' {
+  >> 'with stack referencing Ethereal''s command' {
     all [
       Alpha
       Beta
       Gamma
-      github.com/giancosta86/ethereal/v1/command.elv:56:103
+      github.com/giancosta86/ethereal/v1/command.elv:10:11-22
       CLOCKWORK 1
       CLOCKWORK 2
     ] |
@@ -28,12 +28,12 @@ use ./exception-lines
       ]
   }
 
-  >> 'with hand-made exception stack from the test script runner' {
+  >> 'with hand-made exception referencing test-script from a specific Velvet version' {
     all [
       '[eval 1]:8:9-12: var v = $asd'
-      Beta
-      Alpha
-      '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v3/test-script.elv:83:3-35:   eval &ns=$namespace $script-code |'
+      Ro
+      Sigma
+      'github.com/giancosta86/velvet/v3/test-script.elv:34'
       SomeOtherLine
       '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v3/sandbox.elv:7:3-25:   each $test-script:run~ |'
     ] |
@@ -41,8 +41,26 @@ use ./exception-lines
       put [(all)] |
       should-be [
         '[eval 1]:8:9-12: var v = $asd'
-        Beta
-        Alpha
+        Ro
+        Sigma
+      ]
+  }
+
+  >> 'with hand-made exception referencing Velvet''s working directory' {
+    all [
+      '[eval 1]:8:9-12: var v = $asd'
+      Ro
+      Sigma
+      ~'/fake-project-dir/velvet/test-script.elv:34'
+      SomeOtherLine
+      '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v3/sandbox.elv:7:3-25:   each $test-script:run~ |'
+    ] |
+      exception-lines:trim-clockwork-stack |
+      put [(all)] |
+      should-be [
+        '[eval 1]:8:9-12: var v = $asd'
+        Ro
+        Sigma
       ]
   }
 

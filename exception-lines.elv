@@ -1,6 +1,6 @@
 use re
 
-var -first-clockwork-line-pattern = 'github.com/giancosta86/|/velvet/test-script.elv:'
+var -first-clockwork-line-pattern = '/ethereal/v1/command\.elv|/velvet/(?:v\d+/)?test-script\.elv'
 
 fn trim-clockwork-stack {
   each { |line|
