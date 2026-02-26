@@ -350,6 +350,18 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
 
 - `fail-test` takes _no arguments_ and _always fails_ - with a predefined message: it's perfect for _quickly sketching out a new test_ in test iterations.
 
+- `run-dual` takes in input - as _an argument_ or _via pipe_ - the output of the `src` command invoked by the caller itself - and spawns an Elvish shell running the **dual script**, i.e., the script having just **.elv** extension. This is particularly useful to ensure that _barrel modules_, merely re-exporting symbols, do not contain errors.
+
+  ##### Example
+
+  ```elvish
+  >> 'The barrel module' {
+    >> 'should have no syntax error' {
+      run-dual (src)
+    }
+  }
+  ```
+
 #### Using assertions in shared .elv modules
 
 Assertions are already _injected_ by Velvet into the _default namespace_ when running **.test.elv** test script, but what if one needs to call them from within a **.elv** _utility module_ shared by multiple test scripts?
