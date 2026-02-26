@@ -23,13 +23,13 @@ fn -resolve-test-scripts { |requested-scripts|
   }
 
   all $requested-scripts | each { |script-path|
-    if (os:is-dir $script-path) {
-      put $script-path/**[nomatch-ok].test.elv
-    } elif (not (os:is-regular $script-path)) {
+    if (not (os:is-regular $script-path)) {
       var path-with-extension = $script-path'.test.elv'
 
       if (os:is-regular $path-with-extension) {
         put $path-with-extension
+      } elif (os:is-dir $script-path) {
+        put $script-path/**[nomatch-ok].test.elv
       } else {
         put $script-path
       }

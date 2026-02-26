@@ -71,6 +71,34 @@ fn get-test-script { |basename|
         (path:join readme maths.test.elv)
       ]
   }
+
+  >> 'when there is ambiguity between a test script and a directory' {
+    fs:with-temp-dir { |temp-dir|
+      cd $temp-dir
+
+      echo '
+      >> In script {
+        put 90 |
+          should-be 90
+      }
+      ' > ciop.test.elv
+
+      fs:mkcd ciop
+
+      echo '
+      >> Failing test {
+        fail KABOOM
+      }
+      ' > nested.test.elv
+
+      cd ..
+
+      velvet:-resolve-test-scripts [ciop] |
+      should-emit [
+        ciop.test.elv
+      ]
+    }
+  }
 }
 
 >> 'Boolean detection of test scripts' {
