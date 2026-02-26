@@ -2,6 +2,7 @@ use os
 use str
 use github.com/giancosta86/ethereal/v1/seq
 use ./aggregator
+use ./reporting/console/full
 use ./reporting/console/terse
 use ./summary
 
@@ -23,13 +24,13 @@ fn -resolve-test-scripts { |requested-scripts|
   }
 
   all $requested-scripts | each { |script-path|
-    if (os:is-dir $script-path) {
-      put $script-path/**[nomatch-ok].test.elv
-    } elif (not (os:is-regular $script-path)) {
+    if (not (os:is-regular $script-path)) {
       var path-with-extension = $script-path'.test.elv'
 
       if (os:is-regular $path-with-extension) {
         put $path-with-extension
+      } elif (os:is-dir $script-path) {
+        put $script-path/**[nomatch-ok].test.elv
       } else {
         put $script-path
       }
@@ -39,12 +40,16 @@ fn -resolve-test-scripts { |requested-scripts|
   }
 }
 
-fn velvet { |&must-pass=$false &put=$false &reporters=[$terse:report~] &num-workers=$aggregator:DEFAULT-NUM-WORKERS @script-paths|
+fn velvet { |&must-pass=$false &put=$false &verbose=$false &reporters=[$terse:report~] &num-workers=$aggregator:DEFAULT-NUM-WORKERS @script-paths|
   var actual-test-scripts = [(-resolve-test-scripts $script-paths)]
 
   var sandbox-result = (aggregator:run-test-scripts &num-workers=$num-workers $@actual-test-scripts)
 
   var summary = (summary:from-sandbox-result $sandbox-result)
+
+  if $verbose {
+    set reporters = [$full:report~]
+  }
 
   all $reporters | each { |reporter|
     $reporter $summary |

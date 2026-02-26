@@ -1,5 +1,6 @@
 use ./assertions/fail-test
 use ./assertions/fails
+use ./assertions/run-dual
 use ./assertions/should-be
 use ./assertions/should-contain
 use ./assertions/should-emit
@@ -25,3 +26,5 @@ var should-contain~ = $should-contain:should-contain~
 var should-not-contain~ = $should-not-contain:should-not-contain~
 
 var fail-test~ = $fail-test:fail-test~
+
+var run-dual~ = $run-dual:run-dual~

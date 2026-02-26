@@ -60,16 +60,38 @@ fn get-test-script { |basename|
 
   >> 'when requesting scripts without file extensions' {
     velvet:-resolve-test-scripts [readme/maths] |
-      should-emit [
-        (path:join readme maths.test.elv)
-      ]
+      should-be (path:join readme maths.test.elv)
   }
 
   >> 'when requesting directories' {
     velvet:-resolve-test-scripts [readme] |
-      should-emit [
-        (path:join readme maths.test.elv)
-      ]
+      should-be (path:join readme maths.test.elv)
+  }
+
+  >> 'when there is ambiguity between a test script and a directory' {
+    fs:with-temp-dir { |temp-dir|
+      cd $temp-dir
+
+      echo '
+      >> In script {
+        put 90 |
+          should-be 90
+      }
+      ' > ciop.test.elv
+
+      fs:mkcd ciop
+
+      echo '
+      >> Failing test {
+        fail KABOOM
+      }
+      ' > nested.test.elv
+
+      cd ..
+
+      velvet:-resolve-test-scripts [ciop] |
+        should-be ciop.test.elv
+    }
   }
 }
 
@@ -212,6 +234,44 @@ fn get-test-script { |basename|
 
       from-json < $json-report-path |
         should-be ($spy[get-summary])
+    }
+  }
+
+  >> 'when not using the `verbose` flag' {
+    var test-title = 'Just an empty test'
+
+    fs:with-temp-dir { |temp-dir|
+      cd $temp-dir
+
+      printf '>> ''%s'' { }' $test-title > basic.test.elv
+
+      var output-tester = (
+        velvet:velvet |
+          output-tester:create
+      )
+
+      $output-tester[should-contain-none] [
+        $test-title
+      ]
+    }
+  }
+
+  >> 'when using the `verbose` flag' {
+    var test-title = 'Just an empty test'
+
+    fs:with-temp-dir { |temp-dir|
+      cd $temp-dir
+
+      printf '>> ''%s'' { }' $test-title > basic.test.elv
+
+      var output-tester = (
+        velvet:velvet &verbose |
+          output-tester:create
+      )
+
+      $output-tester[should-contain-all] [
+        $test-title
+      ]
     }
   }
 }
