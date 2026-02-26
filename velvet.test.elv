@@ -236,4 +236,42 @@ fn get-test-script { |basename|
         should-be ($spy[get-summary])
     }
   }
+
+  >> 'when not using the `verbose` flag' {
+    var test-title = 'Just an empty test'
+
+    fs:with-temp-dir { |temp-dir|
+      cd $temp-dir
+
+      printf '>> ''%s'' { }' $test-title > basic.test.elv
+
+      var output-tester = (
+        velvet:velvet |
+          output-tester:create
+      )
+
+      $output-tester[should-contain-none] [
+        $test-title
+      ]
+    }
+  }
+
+  >> 'when using the `verbose` flag' {
+    var test-title = 'Just an empty test'
+
+    fs:with-temp-dir { |temp-dir|
+      cd $temp-dir
+
+      printf '>> ''%s'' { }' $test-title > basic.test.elv
+
+      var output-tester = (
+        velvet:velvet &verbose |
+          output-tester:create
+      )
+
+      $output-tester[should-contain-all] [
+        $test-title
+      ]
+    }
+  }
 }

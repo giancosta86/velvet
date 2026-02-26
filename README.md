@@ -499,6 +499,8 @@ The command can be customized via a few _optional parameters_:
 
   **Default**: the reporter writing just failed tests to the console with _colors_ and _emojis_.
 
+- `&verbose`: overrides the `&reporters` option, always using the **full console reporter** instead.
+
 - `&put`: outputs the summary to the _value channel_. In this case, you'll probably want to set `&reporters=[]` or to a list containing _reporters not writing to the console_ - or simply pipe to `only-values`.
 
   **Default**: disabled.
