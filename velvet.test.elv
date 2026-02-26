@@ -60,16 +60,12 @@ fn get-test-script { |basename|
 
   >> 'when requesting scripts without file extensions' {
     velvet:-resolve-test-scripts [readme/maths] |
-      should-emit [
-        (path:join readme maths.test.elv)
-      ]
+      should-be (path:join readme maths.test.elv)
   }
 
   >> 'when requesting directories' {
     velvet:-resolve-test-scripts [readme] |
-      should-emit [
-        (path:join readme maths.test.elv)
-      ]
+      should-be (path:join readme maths.test.elv)
   }
 
   >> 'when there is ambiguity between a test script and a directory' {
@@ -94,9 +90,7 @@ fn get-test-script { |basename|
       cd ..
 
       velvet:-resolve-test-scripts [ciop] |
-      should-emit [
-        ciop.test.elv
-      ]
+        should-be ciop.test.elv
     }
   }
 }
