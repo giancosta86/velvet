@@ -1,5 +1,11 @@
 use ./assertions/fail-test
 use ./assertions/fails
+use ./assertions/fs/should-be-dir
+use ./assertions/fs/should-be-regular
+use ./assertions/fs/should-exist
+use ./assertions/fs/should-not-be-dir
+use ./assertions/fs/should-not-be-regular
+use ./assertions/fs/should-not-exist
 use ./assertions/run-dual
 use ./assertions/should-be
 use ./assertions/should-contain
@@ -28,3 +34,15 @@ var should-not-contain~ = $should-not-contain:should-not-contain~
 var fail-test~ = $fail-test:fail-test~
 
 var run-dual~ = $run-dual:run-dual~
+
+var should-be-regular~ = $should-be-regular:should-be-regular~
+
+var should-not-be-regular~ = $should-not-be-regular:should-not-be-regular~
+
+var should-be-dir~ = $should-be-dir:should-be-dir~
+
+var should-not-be-dir~ = $should-not-be-dir:should-not-be-dir~
+
+var should-exist~ = $should-exist:should-exist~
+
+var should-not-exist~ = $should-not-exist:should-not-exist~
