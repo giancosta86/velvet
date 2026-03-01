@@ -362,6 +362,39 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
   }
   ```
 
+#### File-system assertions
+
+These assertions take _file-system-entries_ via pipe, _test each of them_ and finally fail if _at least_ one entry does not pass the test - also displaying _all the failing entries_.
+
+They are named according to the related functions in the standard `os` module:
+
+- `should-be-regular`
+
+- `should-not-be-regular`
+
+- `should-be-dir`
+
+- `should-not-be-dir`
+
+- `should-exist`
+
+- `should-not-exist`
+
+For example:
+
+```elvish
+# Just one file
+put alpha.txt |
+  should-be-regular
+
+# Multiple files
+all [
+  alpha.txt
+  beta.txt
+] |
+  should-be-regular
+```
+
 #### Using assertions in shared .elv modules
 
 Assertions are already _injected_ by Velvet into the _default namespace_ when running **.test.elv** test script, but what if one needs to call them from within a **.elv** _utility module_ shared by multiple test scripts?

@@ -1,5 +1,6 @@
 use github.com/giancosta86/ethereal/v1/diff
 use github.com/giancosta86/ethereal/v1/lang
+use github.com/giancosta86/ethereal/v1/seq
 use github.com/giancosta86/ethereal/v1/string
 
 fn with-strict-prefix { |&strict=$true @arguments|
@@ -56,6 +57,11 @@ fn contrast { |inputs|
   }
 }
 
+fn highlight-wrong-value { |description value|
+  echo (styled $description':' red bold)
+  echo (string:pretty $value)
+}
+
 fn get-minimals { |&strict=$true argument|
   var piped = (one)
 
@@ -81,4 +87,22 @@ fn create-expect-failure { |assertion-function error-message-base|
   }
 
   put $expect-failure
+}
+
+fn create-assertion-on-tested-entries { |test description fail-message|
+  put {
+    var failure-entries = [(
+      all | each { |entry|
+        if (not ($test $entry)) {
+          put $entry
+        }
+      }
+    )]
+
+    if (seq:is-non-empty $failure-entries) {
+      highlight-wrong-value $description $failure-entries
+
+      fail $fail-message
+    }
+  }
 }
