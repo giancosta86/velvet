@@ -177,7 +177,7 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
 
   The input mechanism and the equality logic are the same as those described for `should-be`.
 
-- `should-emit`: ensures that the values passed via pipe (`|`) are _exactly the values_ in the `expected` list; _emission order matters_, unless the `order-key` option is set; on the other hand, the `strict` option works according to the equality rules described within the context of `should-be`.
+- `should-emit`: ensures that the values passed via pipe (`|`) are _exactly the values_ in the `expected` list; _emission order matters_, unless the `order-key` option or its mutally-exclusive `any-order` counterpart flag is set; on the other hand, the `strict` option works according to the equality rules described within the context of `should-be`.
 
   The overall command is equivalent to:
 
@@ -208,6 +208,19 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     should-emit [
       Hello
       World
+    ]
+
+  all [
+    92
+    90
+    (num 98)
+    95
+  ] |
+    should-emit &any-order [
+      90
+      92
+      95
+      98
     ]
   ```
 

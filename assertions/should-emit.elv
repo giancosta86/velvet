@@ -2,24 +2,28 @@ use ./shared
 
 var -error-message-base = 'should-emit assertion failed'
 
-fn should-emit { |&strict=$false &order-key=$nil expected|
+fn should-emit { |&strict=$false &order-key=$nil &any-order=$false expected|
   if (not-eq (kind-of $expected) list) {
     fail 'The expected argument must be a list of values'
   }
 
-  var actual = (
+  if $any-order {
     if $order-key {
-      put [(
-        all |
-          order &key=$order-key
-      )]
+      fail 'The &any-order flag and the &order-key option are mutually exclusive!'
     } else {
-      put [(all)]
-    } |
-      shared:get-minimal &strict=$strict
-  )
+      set order-key = $to-string~
+    }
+  }
 
-  var expected = (shared:get-minimal &strict=$strict $expected)
+  var actual = [(
+    all |
+      shared:equalize &strict=$strict &order-key=$order-key
+  )]
+
+  var expected = [(
+    all $expected |
+      shared:equalize &strict=$strict &order-key=$order-key
+  )]
 
   if (not-eq $actual $expected) {
     shared:contrast [

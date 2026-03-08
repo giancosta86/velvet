@@ -124,6 +124,34 @@ var expect-failure~ = (shared:create-expect-failure $should-emit~ $should-emit:-
       ]
   }
 
+  >> 'when any order is admitted' {
+    >> 'when the actual items and the expected items are the same, but in different order' {
+      all [
+        92
+        90
+        (num 98)
+        95
+      ] |
+        should-emit &any-order [
+          90
+          92
+          95
+          98
+        ]
+    }
+
+    >> 'when passing an order-key, too' {
+      fails {
+        all [
+          90
+          92
+        ] |
+          should-emit &order-key=$num~ &any-order [ 92 90 ]
+      } |
+        should-be 'The &any-order flag and the &order-key option are mutually exclusive!'
+    }
+  }
+
   >> 'when failing' {
     >> 'the output should describe the context' {
       var output-tester = (

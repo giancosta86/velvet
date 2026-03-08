@@ -65,4 +65,61 @@ use ./shared
         ]
     }
   }
+
+  >> 'getting an equalized list' {
+    var source = [
+      (num 95)
+      90
+      98
+      (num 92)
+    ]
+
+    >> 'when the strict flag is disabled' {
+      >> 'when the order key is missing' {
+        all $source |
+          shared:equalize |
+          should-emit &strict [
+            95
+            90
+            98
+            92
+          ]
+      }
+
+      >> 'when the order key is passed' {
+        all $source |
+          shared:equalize &order-key=$to-string~ |
+          should-emit &strict [
+            90
+            92
+            95
+            98
+          ]
+      }
+    }
+
+    >> 'when the strict flag is enabled' {
+      >> 'when the order key is missing' {
+        all $source |
+          shared:equalize &strict |
+          should-emit &strict [
+            (num 95)
+            90
+            98
+            (num 92)
+          ]
+      }
+
+      >> 'when the order key is passed' {
+        all $source |
+          shared:equalize &strict &order-key=$to-string~ |
+          should-emit &strict [
+            90
+            (num 92)
+            (num 95)
+            98
+          ]
+      }
+    }
+  }
 }
