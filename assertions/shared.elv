@@ -106,3 +106,17 @@ fn create-assertion-on-tested-entries { |test description fail-message|
     }
   }
 }
+
+fn equalize { |&strict=$false &order-key=$nil|
+  all | each { |value|
+    get-minimal &strict=$strict $value
+  } |
+    {
+      if $order-key {
+        all |
+          order &key=$order-key
+      } else {
+        all
+      }
+    }
+}
