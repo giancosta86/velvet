@@ -183,8 +183,7 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
 
   ```elvish
   put [(
-    all |
-      order &key=$order-key | #Only if &order-key is set
+    order &key=$order-key | #Only if &order-key is set
   )] |
     should-be &strict=$strict $expected
   ```

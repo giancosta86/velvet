@@ -15,8 +15,7 @@ fn -assert-string { |value|
 fn create { |&unstyled=$false|
   var text = (
     var original-text = (
-      all |
-        to-lines |
+      to-lines |
         slurp
     )
 

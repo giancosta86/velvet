@@ -92,7 +92,7 @@ fn create-expect-failure { |assertion-function error-message-base|
 fn create-assertion-on-tested-entries { |test description fail-message|
   put {
     var failure-entries = [(
-      all | each { |entry|
+      each { |entry|
         if (not ($test $entry)) {
           put $entry
         }
@@ -108,13 +108,12 @@ fn create-assertion-on-tested-entries { |test description fail-message|
 }
 
 fn equalize { |&strict=$false &order-key=$nil|
-  all | each { |value|
+  each { |value|
     get-minimal &strict=$strict $value
   } |
     {
       if $order-key {
-        all |
-          order &key=$order-key
+        order &key=$order-key
       } else {
         all
       }

@@ -16,8 +16,7 @@ fn should-emit { |&strict=$false &order-key=$nil &any-order=$false expected|
   }
 
   var actual = [(
-    all |
-      shared:equalize &strict=$strict &order-key=$order-key
+    shared:equalize &strict=$strict &order-key=$order-key
   )]
 
   var expected = [(
