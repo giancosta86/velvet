@@ -22,8 +22,7 @@ fn get-test-script { |basename|
     tmp pwd = $dir-with-no-tests
 
     velvet:get-test-scripts |
-      put [(all)] |
-      should-be []
+      should-emit []
   }
 
   >> 'in directory with tests' {
@@ -36,8 +35,7 @@ fn get-test-script { |basename|
 
     velvet:get-test-scripts |
       order |
-      put [(all)] |
-      should-be $expected-scripts
+      should-emit $expected-scripts
   }
 
   >> 'in directory with nested tests' {
@@ -45,8 +43,7 @@ fn get-test-script { |basename|
 
     velvet:get-test-scripts |
       order |
-      put [(all)] |
-      should-be $script-gallery:all
+      should-emit $script-gallery:all
   }
 }
 

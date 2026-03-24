@@ -6,8 +6,7 @@ use ./exception-lines
   >> 'with no lines' {
     all [] |
       exception-lines:trim-clockwork-stack |
-      put [(all)] |
-      should-be []
+      should-emit []
   }
 
   >> 'with stack referencing Ethereal''s command' {
@@ -20,8 +19,7 @@ use ./exception-lines
       CLOCKWORK 2
     ] |
       exception-lines:trim-clockwork-stack |
-      put [(all)] |
-      should-be [
+      should-emit [
         Alpha
         Beta
         Gamma
@@ -38,8 +36,7 @@ use ./exception-lines
       '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v3/sandbox.elv:7:3-25:   each $test-script:run~ |'
     ] |
       exception-lines:trim-clockwork-stack |
-      put [(all)] |
-      should-be [
+      should-emit [
         '[eval 1]:8:9-12: var v = $asd'
         Ro
         Sigma
@@ -56,8 +53,7 @@ use ./exception-lines
       '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v3/sandbox.elv:7:3-25:   each $test-script:run~ |'
     ] |
       exception-lines:trim-clockwork-stack |
-      put [(all)] |
-      should-be [
+      should-emit [
         '[eval 1]:8:9-12: var v = $asd'
         Ro
         Sigma
@@ -83,8 +79,7 @@ use ./exception-lines
   >> 'with no lines' {
     all [] |
       exception-lines:replace-bottom-eval ciop.elv |
-      put [(all)] |
-      should-be []
+      should-emit []
   }
 
   >> 'with no eval' {
@@ -96,8 +91,7 @@ use ./exception-lines
 
     all $lines |
       exception-lines:replace-bottom-eval ciop.elv |
-      put [(all)] |
-      should-be $lines
+      should-emit $lines
   }
 
   >> 'with single bottom eval' {
@@ -107,8 +101,7 @@ use ./exception-lines
       '[eval 123]:45:8-11: Fake error'
     ] |
       exception-lines:replace-bottom-eval ciop.elv |
-      put [(all)] |
-      should-be [
+      should-emit [
         Alpha
         Beta
         'ciop.elv:45:8-11: Fake error'
@@ -124,8 +117,7 @@ use ./exception-lines
       '  [eval 123]:45:8-11: Gamma'
     ] |
       exception-lines:replace-bottom-eval ciop.elv |
-      put [(all)] |
-      should-be [
+      should-emit [
         Alpha
         Beta
         'ciop.elv:65:4-18: Alpha'
@@ -146,8 +138,7 @@ use ./exception-lines
       Delta
     ] |
       exception-lines:replace-bottom-eval ciop.elv |
-      put [(all)] |
-      should-be [
+      should-emit [
         Alpha
         Beta
         'ciop.elv:12:15:17-23: First eval here'
