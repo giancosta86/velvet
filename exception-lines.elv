@@ -1,6 +1,20 @@
+use path
 use re
+use str
 
-var -first-clockwork-line-pattern = '/ethereal/v1/command\.elv|/velvet/(?:v\d+/)?test-script\.elv'
+var -first-clockwork-line-pattern = (
+  all [
+    ['ethereal' 'v\d+' 'command\.elv']
+
+    ['velvet' 'v\d+' 'test-script\.elv']
+
+    ['velvet' 'test-script\.elv']
+  ] |
+    each { |path-component-list|
+      path:join $path:separator $@path-component-list
+    } |
+    str:join '|'
+)
 
 fn trim-clockwork-stack {
   each { |line|
@@ -19,7 +33,7 @@ fn replace-bottom-eval { |replacement|
 
   var last-eval = $nil
 
-  var generic-eval-pattern = '^\s*(\[eval\s+\d+\]):\d+?:\d+.*?:'
+  var generic-eval-pattern = '^\s*(\[eval\s+\d+\]):\d+?:\d+?.*?:'
 
   all $lines | each { |line|
     var find-result = [(re:find $generic-eval-pattern $line)]
