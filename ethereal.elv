@@ -4,6 +4,7 @@ use github.com/giancosta86/ethereal/v1/exception
 use github.com/giancosta86/ethereal/v1/fs
 use github.com/giancosta86/ethereal/v1/lang
 use github.com/giancosta86/ethereal/v1/map
+use github.com/giancosta86/ethereal/v1/parallel
 use github.com/giancosta86/ethereal/v1/resources
 use github.com/giancosta86/ethereal/v1/seq
 use github.com/giancosta86/ethereal/v1/set
@@ -16,6 +17,7 @@ var namespaces = [
   &fs:=$fs:
   &lang:=$lang:
   &map:=$map:
+  &parallel:=$parallel:
   &resources:=$resources:
   &seq:=$seq:
   &set:=$set:
