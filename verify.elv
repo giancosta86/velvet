@@ -13,7 +13,7 @@ var excluded-tests = (
 
 var actual-tests = (
   set:difference $all-tests $excluded-tests |
-  set:to-list
+    set:to-list
 )
 
 velvet:velvet &must-pass $@actual-tests
