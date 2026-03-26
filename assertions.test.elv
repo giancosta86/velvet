@@ -1,5 +1,5 @@
 >> 'Assertions' {
-  >> 'should be imported correctly' {
+  >> 'should be importable' {
     run-dual (src)
   }
 }
