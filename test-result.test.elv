@@ -2,27 +2,41 @@ use ./outcomes
 use ./test-result
 
 >> 'Test result'  {
-  >> 'simplification' {
-    >> 'for passing test' {
-      test-result:simplify [
-        &output="Lorem ipsum\n"
+  var output-lines = [Alpha Beta]
+  var exception = ?(fail DODO)
+
+  >> 'success creation' {
+    test-result:success $output-lines |
+      should-be [
+        &output-lines=$output-lines
         &outcome=$outcomes:passed
-        &exception-log=$nil
-      ] |
+        &exception=$nil
+      ]
+  }
+
+  >> 'failure creation' {
+    test-result:failure $output-lines $exception |
+      should-be [
+        &output-lines=$output-lines
+        &outcome=$outcomes:failed
+        &exception=$exception
+      ]
+  }
+
+  >> 'simplification' {
+    >> 'for passed test' {
+      test-result:simplify (test-result:success $output-lines) |
         should-be [
-          &output="Lorem ipsum\n"
+          &output-lines=$output-lines
           &outcome=$outcomes:passed
         ]
     }
 
-    >> 'for failing test' {
-      test-result:simplify [
-        &output="Lorem ipsum\n"
-        &outcome=$outcomes:failed
-        &exception-log=(show ?(fail DODO) | slurp)
-      ] |
+    >> 'for failed test' {
+      test-result:failure $output-lines $exception |
+        test-result:simplify |
         should-be [
-          &output="Lorem ipsum\n"
+          &output-lines=$output-lines
           &outcome=$outcomes:failed
         ]
     }
