@@ -1,34 +1,20 @@
-use ./outcomes
 use ./section
 use ./stats
+use ./test-result
 
 >> 'Stats' {
-  var passed-test = [
-    &output="Wiii!"
-    &outcome=$outcomes:passed
-  ]
+  var passed-test = (test-result:success [Wiii])
 
-  var failed-test = [
-    &output="Wooo!"
-    &outcome=$outcomes:failed
-  ]
+  var failed-test = (test-result:failure [Wooo] ?(fail DODO))
 
   >> 'from empty section' {
     stats:from-section $section:empty |
-      should-be [
-        &total=0
-        &passed=0
-        &failed=0
-      ]
+      should-be $stats:empty
   }
 
   >> 'from single passed test' {
-    stats:from-section [
-      &test-results=[
-        &Cip=$passed-test
-      ]
-      &sub-sections=[&]
-    ] |
+    section:create [&alpha=$passed-test] |
+      stats:from-section |
       should-be [
         &total=1
         &passed=1
@@ -37,12 +23,8 @@ use ./stats
   }
 
   >> 'from single failed test' {
-    stats:from-section [
-      &test-results=[
-        &Ciop=$failed-test
-      ]
-      &sub-sections=[&]
-    ] |
+    section:create [&beta=$failed-test] |
+      stats:from-section |
       should-be [
         &total=1
         &passed=0
@@ -51,13 +33,8 @@ use ./stats
   }
 
   >> 'from both passed and failed test' {
-    stats:from-section [
-      &test-results=[
-        &Cip=$passed-test
-        &Ciop=$failed-test
-      ]
-      &sub-sections=[&]
-    ] |
+    section:create [&alpha=$passed-test &beta=$failed-test] |
+      stats:from-section |
       should-be [
         &total=2
         &passed=1
@@ -66,37 +43,12 @@ use ./stats
   }
 
   >> 'from multi-level tests' {
-    stats:from-section [
-      &test-results=[
-        &Cip=$passed-test
-        &Ciop=$failed-test
-      ]
-      &sub-sections=[
-        &Alpha=[
-          &test-results=[
-            &Yogi=$passed-test
-          ]
-          &sub-sections=[
-            &Gamma=[
-              &test-results=[
-                &Ranger=$passed-test
-              ]
-              &sub-sections=[&]
-            ]
-          ]
-        ]
-        &Beta=[
-          &test-results=[
-            &Bubu=$failed-test
-          ]
-          &sub-sections=[&]
-        ]
-      ]
-    ] |
+    section:create [&alpha=$passed-test &beta=$failed-test] [&sigma=(section:create [&gamma=$passed-test])] |
+      stats:from-section |
       should-be [
-        &total=5
-        &passed=3
-        &failed=2
+        &total=3
+        &passed=2
+        &failed=1
       ]
   }
 }
