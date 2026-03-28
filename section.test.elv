@@ -1,758 +1,341 @@
-use ./outcomes
 use ./section
 use ./test-result
 
-var passed-test = [
-  &output='This is a passed test!'
-  &outcome=$outcomes:passed
-]
+var passed-test = (test-result:success ['This is a passed test!'])
 
-var failed-test = [
-  &output='This is a failed test!'
-  &outcome=$outcomes:failed
-]
+var failed-test = (test-result:failure ['This is a failed test!'] ?(fail DODO))
 
->> 'Section detection' {
-  >> 'applied to test result' {
-    section:is-section [
-      &output=""
-      &exception-log=$nil
-    ] |
-      should-be $false
-  }
-
-  >> 'applied to section' {
-    section:is-section $section:empty |
-      should-be $true
-  }
-}
-
->> 'Section - Mapping test results within an entire tree' {
-  fn add-asterisk-to-output { |test-result|
-    assoc $test-result output $test-result[output]'*'
-  }
-
-  >> 'with empty section' {
-    section:map-test-results-in-tree $section:empty $add-asterisk-to-output~ |
-      should-be $section:empty
-  }
-
-  >> 'with single root test' {
-    var source = [
-      &test-results=[
-        &alpha=[
-          &output='Cip'
-          &exception-log=$nil
-        ]
-      ]
-      &sub-sections=[&]
-    ]
-
-    section:map-test-results-in-tree $source $add-asterisk-to-output~ |
-      should-be [
-        &test-results=[
-          &alpha=[
-            &output='Cip*'
-            &exception-log=$nil
-          ]
-        ]
-        &sub-sections=[&]
-      ]
-  }
-
-  >> 'with two root tests' {
-    var source = [
-      &test-results=[
-        &alpha=[
-          &output='Cip'
-          &exception-log=$nil
-        ]
-        &beta=[
-          &output='Ciop'
-          &exception-log=$nil
-        ]
-      ]
-
-      &sub-sections=[&]
-    ]
-
-    section:map-test-results-in-tree $source $add-asterisk-to-output~ |
-      should-be [
-        &test-results=[
-          &alpha=[
-            &output='Cip*'
-            &exception-log=$nil
-          ]
-          &beta=[
-            &output='Ciop*'
-            &exception-log=$nil
-          ]
-        ]
-
-        &sub-sections=[&]
-      ]
-  }
-
-  >> 'with single test in sub-section' {
-    var source = [
-      &test-results=[&]
-      &sub-sections=[
-        &alpha=[
-          &test-results=[
-            &beta=[
-              &output='Yogi'
-              &exception-log=$nil
-            ]
-          ]
-          &sub-sections=[&]
-        ]
-      ]
-    ]
-
-    section:map-test-results-in-tree $source $add-asterisk-to-output~ |
-      should-be [
-        &test-results=[&]
-        &sub-sections=[
-          &alpha=[
-            &test-results=[
-              &beta=[
-                &output='Yogi*'
-                &exception-log=$nil
-              ]
-            ]
-            &sub-sections=[&]
-          ]
-        ]
-      ]
-  }
-
-  >> 'with tests at different levels' {
-    var source = [
-      &test-results=[
-        &alpha=[
-          &output='Alpha'
-          &exception-log=$nil
-        ]
-        &beta=[
-          &output='Beta'
-          &exception-log=$nil
-        ]
-      ]
-      &sub-sections=[
-        &gamma=[
-          &test-results=[
-            &delta=[
-              &output='Delta'
-              &exception-log=$nil
-            ]
-          ]
-          &sub-sections=[
-            &epsilon=[
-              &test-results=[
-                &zeta=[
-                  &output='Zeta'
-                  &exception-log=$nil
-                ]
-              ]
-              &sub-sections=[&]
-            ]
-          ]
-        ]
-      ]
-    ]
-
-    section:map-test-results-in-tree $source $add-asterisk-to-output~ |
-      should-be [
-        &test-results=[
-          &alpha=[
-            &output='Alpha*'
-            &exception-log=$nil
-          ]
-          &beta=[
-            &output='Beta*'
-            &exception-log=$nil
-          ]
-        ]
-        &sub-sections=[
-          &gamma=[
-            &test-results=[
-              &delta=[
-                &output='Delta*'
-                &exception-log=$nil
-              ]
-            ]
-            &sub-sections=[
-              &epsilon=[
-                &test-results=[
-                  &zeta=[
-                    &output='Zeta*'
-                    &exception-log=$nil
-                  ]
-                ]
-                &sub-sections=[&]
-              ]
-            ]
-          ]
-        ]
-      ]
-  }
-}
-
->> 'Section simplification' {
-  >> 'on empty section' {
-    section:simplify $section:empty |
-      should-be $section:empty
-  }
-
-  >> 'with just one test' {
-    var source = [
-      &test-results=[
-        &Yogi=[
-          &output=Wiii!
-          &outcome=$outcomes:passed
-          &exception-log=$nil
-        ]
-      ]
-      &sub-sections=[&]
-    ]
-
-    section:simplify $source |
-      should-be [
-        &test-results=[
-          &Yogi=[
-            &output=Wiii!
-            &outcome=$outcomes:passed
-          ]
-        ]
-        &sub-sections=[&]
-      ]
-  }
-
-  >> 'with test in sub-section' {
-    var source = [
-      &test-results=[
-        &Yogi=[
-          &output="Wiii!"
-          &outcome=$outcomes:passed
-          &exception-log=$nil
-        ]
-      ]
-      &sub-sections=[
-        &Cip=[
-          &test-results=[
-            &Bubu=[
-              &output="Wooo!"
-              &outcome=$outcomes:failed
-              &exception-log=(show ?(fail DODO) | slurp)
-            ]
-          ]
-          &sub-sections=[&]
-        ]
-      ]
-    ]
-
-    section:simplify $source |
-      should-be [
-        &test-results=[
-          &Yogi=[
-            &output="Wiii!"
-            &outcome=$outcomes:passed
-          ]
-        ]
-
-        &sub-sections=[
-          &Cip=[
-            &test-results=[
-              &Bubu=[
-                &output="Wooo!"
-                &outcome=$outcomes:failed
-              ]
-            ]
-            &sub-sections=[&]
-          ]
-        ]
-      ]
-  }
-}
-
->> 'Section merging' {
-  var alpha-test-result = [
-    &output="Alpha!"
-    &outcome=$outcomes:passed
-  ]
-
-  var section-with-alpha = [
-    &test-results=[
-      &alpha=$alpha-test-result
-    ]
-    &sub-sections=[&]
-  ]
-
-  var beta-test-result = [
-    &output="Beta!"
-    &outcome=$outcomes:failed
-  ]
-
-  var section-with-beta = [
-    &test-results=[
-      &beta=$beta-test-result
-    ]
-    &sub-sections=[&]
-  ]
-
-  var gamma-test-result = [
-    &output="Gamma!"
-    &outcome=$outcomes:passed
-  ]
-
-  var section-with-gamma = [
-    &test-results=[
-      &gamma=$gamma-test-result
-    ]
-    &sub-sections=[&]
-  ]
-
-  >> 'with 0 operands' {
-    all [] |
-      section:merge |
-      should-be $section:empty
-  }
-
-  >> 'with 1 operand' {
-    put $section-with-alpha |
-      section:merge |
-      should-be $section-with-alpha
-  }
-
-  >> 'with 2 operands' {
-    put $section-with-alpha $section-with-beta |
-      section:merge |
-      should-be [
-        &test-results=[
-          &alpha=$alpha-test-result
-          &beta=$beta-test-result
-        ]
-        &sub-sections=[&]
-      ]
-  }
-
-  >> 'with 3 operands' {
-    put $section-with-alpha $section-with-beta $section-with-gamma |
-      section:merge |
-      should-be [
-        &test-results=[
-          &alpha=$alpha-test-result
-          &beta=$beta-test-result
-          &gamma=$gamma-test-result
-        ]
-        &sub-sections=[&]
-      ]
-  }
-}
-
->> 'Section merging with two operands' {
-  var passed-test = [
-    &output="Wiii!"
-    &outcome=$outcomes:passed
-  ]
-
-  var failed-test = [
-    &output="Wooo!"
-    &outcome=$outcomes:failed
-  ]
-
-  >> 'when both sides are empty' {
-    var left = $section:empty
-
-    var right = $section:empty
-
-    put $left $right |
-      section:merge |
-      should-be $section:empty
-  }
-
-  >> 'when only left is non-empty' {
-    var left = [
-      &test-results=[
-        &Alpha=$passed-test
-      ]
-      &sub-sections=[&]
-    ]
-
-    var right = $section:empty
-
-    put $left $right |
-      section:merge |
-      should-be $left
-  }
-
-  >> 'when only right is non-empty' {
-    var left = $section:empty
-
-    var right = [
-      &test-results=[
-        &Beta=$failed-test
-      ]
-      &sub-sections=[&]
-    ]
-
-    put $left $right |
-      section:merge |
-      should-be $right
-  }
-
-  >> 'when both left and right have just a test each' {
-    var left = [
-      &test-results=[
-        &Alpha=$passed-test
-      ]
-      &sub-sections=[&]
-    ]
-
-    var right = [
-      &test-results=[
-        &Beta=$failed-test
-      ]
-      &sub-sections=[&]
-    ]
-
-    put $left $right |
-      section:merge |
-      should-be [
-        &test-results=[
-          &Alpha=$passed-test
-          &Beta=$failed-test
-        ]
-        &sub-sections=[&]
-      ]
-  }
-
-  >> 'when two passing tests at the same level have the same name' {
-    var left = [
-      &test-results=[
-        &Alpha=$passed-test
-      ]
-      &sub-sections=[&]
-    ]
-
-    var right = [
-      &test-results=[
-        &Alpha=$passed-test
-      ]
-      &sub-sections=[&]
-    ]
-
-    put $left $right |
-      section:merge |
-      should-be [
-        &test-results=[
-          &Alpha=$test-result:duplicate
-        ]
-        &sub-sections=[&]
-      ]
-  }
-
-  >> 'when two passing tests at the same level have the same name and different outcomes' {
-    var left = [
-      &test-results=[
-        &Alpha=$passed-test
-      ]
-      &sub-sections=[&]
-    ]
-
-    var right = [
-      &test-results=[
-        &Alpha=$failed-test
-      ]
-      &sub-sections=[&]
-    ]
-
-    put $left $right |
-      section:merge |
-      should-be [
-        &test-results=[
-          &Alpha=$test-result:duplicate
-        ]
-        &sub-sections=[&]
-      ]
-  }
-
-  >> 'when there are multiple levels of tests' {
-    var left = [
-      &test-results=[
-        &Alpha=$passed-test
-      ]
-      &sub-sections=[
-        &'First level'=[
-          &test-results=[
-            &Gamma=$passed-test
-          ]
-          &sub-sections=[
-            &'Second level'=[
-              &test-results=[
-                &Delta=$passed-test
-                &Epsilon=$passed-test
-              ]
-              &sub-sections=[&]
-            ]
-          ]
-        ]
-      ]
-    ]
-
-    var right = [
-      &test-results=[
-        &Sigma=$passed-test
-      ]
-      &sub-sections=[
-        &'First level'=[
+>> 'Section' {
+  >> 'creation' {
+    >> 'when passing no values' {
+      all [] |
+        section:create |
+        should-be [
           &test-results=[&]
-          &sub-sections=[
-            &'Second level'=[
-              &test-results=[
-                &Delta=$passed-test
-                &Sigma=$passed-test
-                &Tau=$failed-test
-              ]
-              &sub-sections=[&]
-            ]
-          ]
-        ]
-      ]
-    ]
-
-    put $left $right |
-      section:merge |
-      should-be [
-        &test-results=[
-          &Alpha=$passed-test
-          &Sigma=$passed-test
-        ]
-        &sub-sections=[
-          &'First level'=[
-            &test-results=[
-              &Gamma=$passed-test
-            ]
-            &sub-sections=[
-              &'Second level'=[
-                &test-results=[
-                  &Delta=$test-result:duplicate
-                  &Epsilon=$passed-test
-                  &Sigma=$passed-test
-                  &Tau=$failed-test
-                ]
-                &sub-sections=[&]
-              ]
-            ]
-          ]
-        ]
-      ]
-  }
-}
-
->> 'Section - Trimming empty' {
-  >> 'when the section is empty' {
-    section:trim-empty $section:empty |
-      should-be $section:empty
-  }
-
-  >> 'when the section contains just a test' {
-    var section = [
-      &test-results=[
-        &alpha=$passed-test
-      ]
-      &sub-sections=[&]
-    ]
-
-    section:trim-empty $section |
-      should-be $section
-  }
-
-  >> 'when the section contains just a non-empty sub-section' {
-    var section = [
-      &test-results=[&]
-      &sub-sections=[
-        &omega=[
-          &test-results=[
-            &alpha=$passed-test
-          ]
           &sub-sections=[&]
         ]
-      ]
-    ]
+    }
 
-    section:trim-empty $section |
-      should-be $section
-  }
+    >> 'when passing just the test results' {
+      var test-results = [&alpha=$passed-test]
 
-  >> 'when the section contains just an empty sub-section' {
-    var section = [
-      &test-results=[&]
-      &sub-sections=[
-        &omega=$section:empty
-      ]
-    ]
-
-    section:trim-empty $section |
-      should-be $section:empty
-  }
-
-  >> 'in a more complex structure' {
-    var section = [
-      &test-results=[&]
-      &sub-sections=[
-        &ro=[
-          &test-results=[&]
-          &sub-sections=[
-            &sigma=$section:empty
-            &tau=[
-              &test-results=[
-                &ciop=$passed-test
-              ]
-              &sub-sections=[&]
-            ]
-          ]
-        ]
-        &level-1=[
-          &test-results=[&]
-          &sub-sections=[
-            &level-2=[
-              &test-results=[&]
-              &sub-sections=[
-                &level-3=$section:empty
-              ]
-            ]
-          ]
-        ]
-        &omega=[
-          &test-results=[
-            &alpha=$failed-test
-          ]
+      section:create $test-results |
+        should-be [
+          &test-results=$test-results
           &sub-sections=[&]
         ]
-      ]
-    ]
+    }
 
-    section:trim-empty $section |
-      should-be [
-        &test-results=[&]
-        &sub-sections=[
-          &ro=[
-            &test-results=[&]
-            &sub-sections=[
-              &tau=[
-                &test-results=[
-                  &ciop=$passed-test
-                ]
-                &sub-sections=[&]
-              ]
-            ]
-          ]
-          &omega=[
-            &test-results=[
-              &alpha=$failed-test
-            ]
-            &sub-sections=[&]
-          ]
+    >> 'when passing both the test results and the sub-sections' {
+      var test-results = [&alpha=$passed-test]
+      var sub-test-results = [&beta=$failed-test]
+
+      var sub-sections = [&sigma=(section:create $sub-test-results)]
+
+      section:create $test-results $sub-sections |
+        should-be [
+          &test-results=$test-results
+          &sub-sections=$sub-sections
         ]
-      ]
-  }
-}
-
->> 'Section - Keeping failed test results' {
-  >> 'when the section is empty' {
-    section:keep-failed-test-results $section:empty |
-      should-be $section:empty
+    }
   }
 
-  >> 'when the section contains a passed test' {
-    section:keep-failed-test-results [
-      &test-results=[
-        &alpha=$passed-test
-      ]
-      &sub-sections=[&]
-    ] |
-      should-be $section:empty
+  >> 'detection' {
+    >> 'applied to test result' {
+      put $passed-test |
+        section:is-section |
+        should-be $false
+    }
+
+    >> 'applied to section' {
+      section:is-section $section:empty |
+        should-be $true
+    }
   }
 
-  >> 'when the section contains a passing and a failing test' {
-    section:keep-failed-test-results [
-      &test-results=[
+  >> 'adding a test result' {
+    put $section:empty |
+      section:add-test-result alpha $passed-test |
+      should-be (
+        section:create [&alpha=$passed-test]
+      )
+  }
+
+  >> 'adding a sub-section' {
+    var sub-section = (section:create [&] [&alpha=$failed-test])
+
+    put $section:empty |
+      section:add-sub-section omega $sub-section |
+      should-be (
+        section:create [&] [&omega=$sub-section]
+      )
+  }
+
+  >> 'mapping test results within an entire tree' {
+    fn append-hello { |test-result|
+      conj $test-result[output-lines] Hello |
+        assoc $test-result output-lines (all)
+    }
+
+    >> 'with empty section' {
+      section:map-test-results-in-tree $section:empty $append-hello~ |
+        should-be $section:empty
+    }
+
+    >> 'with single root test result' {
+      section:create [&alpha=$passed-test] |
+        section:map-test-results-in-tree $append-hello~ |
+        should-be (
+          section:create [
+            &alpha=(append-hello $passed-test)
+          ]
+        )
+    }
+
+    >> 'with two root tests' {
+      section:create [
         &alpha=$passed-test
         &beta=$failed-test
-      ]
-      &sub-sections=[&]
-    ] |
-      should-be [
-        &test-results=[
-          &beta=$failed-test
-        ]
-        &sub-sections=[&]
-      ]
+      ] |
+        section:map-test-results-in-tree $append-hello~ |
+        should-be (
+          section:create [
+            &alpha=(append-hello $passed-test)
+            &beta=(append-hello $failed-test)
+          ]
+        )
+    }
+
+    >> 'with single test in sub-section' {
+      section:create [&] [&sigma=(section:create [&alpha=$passed-test])] |
+        section:map-test-results-in-tree $append-hello~ |
+        should-be (
+          section:create [&] [
+            &sigma=(section:create [&alpha=(append-hello $passed-test)])
+          ]
+        )
+    }
+
+    >> 'with tests at different levels' {
+      section:create [&alpha=$passed-test] [&sigma=(section:create [&beta=$failed-test])] |
+        section:map-test-results-in-tree $append-hello~ |
+        should-be (
+          section:create [&alpha=(append-hello $passed-test)] [&sigma=(section:create [&beta=(append-hello $failed-test)])]
+        )
+    }
   }
 
-  >> 'when the section contains a sub-section with mixed tests' {
-    section:keep-failed-test-results [
-      &test-results=[&]
-      &sub-sections=[
-        &my-nested-section=[
-          &test-results=[
-            &alpha=$passed-test
-            &beta=$failed-test
-          ]
-          &sub-sections=[&]
-        ]
-      ]
-    ] |
-      should-be [
-        &test-results=[&]
-        &sub-sections=[
-          &my-nested-section=[
-            &test-results=[
-              &beta=$failed-test
-            ]
-            &sub-sections=[&]
-          ]
-        ]
-      ]
+  >> 'simplification' {
+    >> 'on empty section' {
+      section:simplify $section:empty |
+        should-be $section:empty
+    }
+
+    >> 'with just one root test' {
+      section:create [&alpha=$passed-test] |
+        section:simplify |
+        should-be (
+          section:create [&alpha=(test-result:simplify $passed-test)]
+        )
+    }
+
+    >> 'with test in sub-section' {
+      section:create [&] [&sigma=(section:create [&beta=$failed-test])] |
+        section:simplify |
+        should-be (
+          section:create [&] [&sigma=(section:create [&beta=(test-result:simplify $failed-test)])]
+        )
+    }
   }
 
-  >> 'with more complex source' {
-    section:keep-failed-test-results [
-      &test-results=[
-        &some-passed=$passed-test
-        &some-failed=$failed-test
-      ]
-      &sub-sections=[
-        &with-only-passed=[
-          &test-results=[
-            &omicron=$passed-test
-            &ro=$passed-test
-            &sigma=$passed-test
-          ]
-          &sub-sections=[&]
-        ]
-        &my-nested-section=[
-          &test-results=[
-            &alpha=$passed-test
-            &beta=$failed-test
-          ]
-          &sub-sections=[&]
-        ]
-      ]
-    ] |
-      should-be [
-        &test-results=[
-          &some-failed=$failed-test
-        ]
-        &sub-sections=[
-          &my-nested-section=[
-            &test-results=[
-              &beta=$failed-test
+  >> 'trimming empty sections' {
+    >> 'on empty section' {
+      section:trim-empty $section:empty |
+        should-be $section:empty
+    }
+
+    >> 'on a section containing just a test' {
+      var section = (section:create [&alpha=$passed-test])
+
+      put $section |
+        section:trim-empty |
+        should-be $section
+    }
+
+    >> 'on a section containing a non-empty sub-section' {
+      var section = (
+        section:create [&alpha=$passed-test] [&sigma=(section:create [&beta=$failed-test])]
+      )
+
+      put $section |
+        section:trim-empty |
+        should-be $section
+    }
+
+    >> 'on a section containing a chain of sub-sections having no test results' {
+      section:create [&alpha=$passed-test] [
+        &ro=(section:create [&] [
+          &sigma=(section:create [&] [
+            &tau=(section:create)
+          ])
+        ])
+      ] |
+        section:trim-empty |
+        should-be (
+          section:create [&alpha=$passed-test]
+        )
+    }
+  }
+
+  >> 'keeping only failed test results' {
+    >> 'when the section is empty' {
+      put $section:empty |
+        section:keep-failed-test-results |
+        should-be $section:empty
+    }
+
+    >> 'when the section contains a passed and a failed test' {
+      section:create [&alpha=$passed-test &beta=$failed-test] |
+        section:keep-failed-test-results |
+        should-be (
+          section:create [&beta=$failed-test]
+        )
+    }
+
+    >> 'when the section contains a subsection with a passed and a failed test' {
+      section:create [&] [&sigma=(section:create [&alpha=$passed-test &beta=$failed-test])] |
+        section:keep-failed-test-results |
+        should-be (
+          section:create [&] [&sigma=(section:create [&beta=$failed-test])]
+        )
+    }
+
+    >> 'when the section contains a passed test and a subsection with a failed test' {
+      section:create [&alpha=$passed-test] [&sigma=(section:create [&beta=$failed-test])] |
+        section:keep-failed-test-results |
+        should-be (
+          section:create [&] [&sigma=(section:create [&beta=$failed-test])]
+        )
+    }
+
+    >> 'when the section contains a failed test and a subsection with a passed test' {
+      section:create [&alpha=$failed-test] [&sigma=(section:create [&beta=$passed-test])] |
+        section:keep-failed-test-results |
+        should-be (
+          section:create [&alpha=$failed-test]
+        )
+    }
+  }
+
+  >> 'merging' {
+    var alpha-test = (test-result:success [Alpha])
+
+    var section-with-alpha = (section:create [&alpha=$alpha-test])
+
+    var beta-test = (test-result:failure [Beta] ?(fail DODO))
+
+    var section-with-beta = (section:create [&beta=$beta-test])
+
+    var gamma-test = (test-result:success [Gamma])
+
+    var section-with-gamma = (section:create [&gamma=$gamma-test])
+
+    >> 'with 0 operands' {
+      all [] |
+        section:merge |
+        should-be $section:empty
+    }
+
+    >> 'with 1 operand' {
+      all [
+        $section-with-alpha
+      ] |
+        section:merge |
+        should-be $section-with-alpha
+    }
+
+    >> 'with 2 operands' {
+      >> 'when both operands are empty' {
+        repeat 2 $section:empty |
+          section:merge |
+          should-be $section:empty
+      }
+
+      >> 'when only the left operand is empty' {
+        section:merge $section:empty $section-with-alpha |
+          should-be $section-with-alpha
+      }
+
+      >> 'when only the right operand is empty' {
+        section:merge $section-with-alpha $section:empty |
+          should-be $section-with-alpha
+      }
+
+      >> 'when both left and right have just a non-duplicate test each' {
+        all [
+          $section-with-alpha
+          $section-with-beta
+        ] |
+          section:merge |
+          should-be (
+            section:create [
+              &alpha=$alpha-test
+              &beta=$beta-test
             ]
-            &sub-sections=[&]
+          )
+      }
+
+      >> 'when two passing tests at the same level have the same name' {
+        all [
+          (section:create [&omicron=$passed-test])
+          (section:create [&omicron=$passed-test])
+        ] |
+          section:merge |
+          should-be (
+            section:create [&omicron=$test-result:duplicate-test]
+          )
+      }
+
+      >> 'when two tests at the same level have the same name and different outcomes' {
+        all [
+          (section:create [&omicron=$passed-test])
+          (section:create [&omicron=$failed-test])
+        ] |
+          section:merge |
+          should-be (
+            section:create [&omicron=$test-result:duplicate-test]
+          )
+      }
+
+      >> 'when there are multiple levels of tests' {
+        all [
+          $section-with-alpha
+          (
+            put $section-with-beta |
+              section:add-sub-section sigma $section-with-gamma
+          )
+        ] |
+          section:merge |
+          should-be (
+            section:create [&alpha=$alpha-test &beta=$beta-test] [&sigma=(section:create [&gamma=$gamma-test])]
+          )
+      }
+    }
+
+    >> 'with 3 operands' {
+      all [
+        $section-with-alpha
+        $section-with-beta
+        $section-with-gamma
+      ] |
+        section:merge |
+        should-be (
+          section:create [
+            &alpha=$alpha-test
+            &beta=$beta-test
+            &gamma=$gamma-test
           ]
-        ]
-      ]
+        )
+    }
   }
 }
