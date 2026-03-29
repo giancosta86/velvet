@@ -3,7 +3,7 @@ use ./test-result
 
 var passed-test = (test-result:success ['This is a passed test!'])
 
-var failed-test = (test-result:failure ['This is a failed test!'] [])
+var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine1 ExceptionLine2])
 
 >> 'Section' {
   >> 'creation' {
@@ -182,6 +182,35 @@ var failed-test = (test-result:failure ['This is a failed test!'] [])
         section:keep-failed-test-results |
         should-be (
           section:create [&alpha=$failed-test]
+        )
+    }
+  }
+
+  >> 'simplification' {
+    >> 'on empty section' {
+      section:simplify $section:empty |
+        should-be $section:empty
+    }
+
+    >> 'with just one passed root test' {
+      section:create [&alpha=$passed-test] |
+        section:simplify |
+        should-be (
+          section:create [&alpha=$passed-test]
+        )
+    }
+
+    >> 'with failed test in sub-section' {
+      section:create [&] [&sigma=(section:create [&beta=$failed-test])] |
+        section:simplify |
+        should-be (
+          section:create [&] [
+            &sigma=(
+              section:create [
+                &beta=(test-result:failure $failed-test[output-lines] [])
+              ]
+            )
+          ]
         )
     }
   }

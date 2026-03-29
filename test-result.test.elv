@@ -22,4 +22,21 @@ use ./test-result
         &exception-lines=$exception-lines
       ]
   }
+
+  >> 'simplification' {
+    >> 'for passed test' {
+      var source-test = (test-result:success $output-lines)
+
+      test-result:simplify $source-test |
+        should-be $source-test
+    }
+
+    >> 'for failed test' {
+      test-result:failure $output-lines $exception-lines |
+        test-result:simplify |
+        should-be (
+          test-result:failure $output-lines []
+        )
+    }
+  }
 }

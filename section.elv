@@ -84,6 +84,11 @@ fn keep-failed-test-results { |@arguments|
     trim-empty (all)
 }
 
+fn simplify { |@arguments|
+  lang:get-single-input $arguments |
+    map-test-results-in-tree $test-result:simplify~
+}
+
 var merge~ = (
   var merge-test-results~
   var merge-sub-sections~

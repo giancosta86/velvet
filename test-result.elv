@@ -18,3 +18,9 @@ fn failure { |output-lines exception-lines|
 }
 
 var duplicate-test = (failure [] ?(fail 'DUPLICATE TEST'))
+
+fn simplify { |@arguments|
+  var test-result = (lang:get-single-input $arguments)
+
+  assoc $test-result exception-lines (lang:ternary $test-result[exception-lines] [] $nil)
+}
