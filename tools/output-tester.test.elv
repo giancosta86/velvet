@@ -135,21 +135,23 @@ use ./output-tester
         should-contain 'should-contain assertion failed'
     }
 
-    >> 'when unstyling the code' {
-      var unstyling-tester = (
-        {
-          echo (styled Alpha red bold)
-          echo (styled Beta green italic)
-          echo (styled Gamma blue)
-        } |
-          output-tester:create &unstyled
-      )
+    >> 'when the output is styled' {
+      >> 'by default' {
+        var unstyling-tester = (
+          {
+            echo (styled Alpha red bold)
+            echo (styled Beta green italic)
+            echo (styled Gamma blue)
+          } |
+            output-tester:create
+        )
 
-      $unstyling-tester[should-contain-snippet] [
-        Alpha
-        Beta
-        Gamma
-      ]
+        $unstyling-tester[should-contain-snippet] [
+          Alpha
+          Beta
+          Gamma
+        ]
+      }
     }
   }
 
@@ -179,7 +181,7 @@ use ./output-tester
           echo (styled Beta green italic)
           echo (styled Gamma blue)
         } |
-          output-tester:create
+          output-tester:create &keep-styles=$true
       )
 
       $preserving-tester[should-not-contain-snippet] [

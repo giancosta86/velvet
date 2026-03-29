@@ -443,7 +443,7 @@ In particular, the `create-output-tester` function creates an object with the fo
 
 As a plus, the `text` field contains the _buffered output_ as a string.
 
-**Please, note**: `create-output-tester` takes an optional `unstyled` flag, which removes any _style-related control sequence_ from the command output text - via the `string:unstyled` function provided by [Ethereal](https://github.com/giancosta86/ethereal).
+**Please, note**: `create-output-tester` **prunes** any _style-related control sequence_ from the command output text by default - via the `string:unstyled` function provided by [Ethereal](https://github.com/giancosta86/ethereal); to keep style information, please use the `&keep-styles` flag.
 
 ##### Example
 

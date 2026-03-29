@@ -12,17 +12,17 @@ fn -assert-string { |value|
   }
 }
 
-fn create { |&unstyled=$false|
+fn create { |&keep-styles=$false|
   var text = (
     var original-text = (
-      to-lines |
-        slurp
+      all |
+        str:join "\n"
     )
 
-    if $unstyled {
-      string:unstyled $original-text
-    } else {
+    if $keep-styles {
       put $original-text
+    } else {
+      string:unstyled $original-text
     }
   )
 
