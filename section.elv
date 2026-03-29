@@ -24,24 +24,6 @@ fn is-section { |@arguments|
   and (has-key $artifact test-results) (has-key $artifact sub-sections)
 }
 
-fn add-test-result { |@arguments|
-  var section test-title test-result = (
-    lang:get-mixed-inputs &min-values=3 &max-values=3 &min-args=2 $arguments
-  )
-
-  assoc $section[test-results] $test-title $test-result |
-    assoc $section test-results (all)
-}
-
-fn add-sub-section { |@arguments|
-  var section sub-title sub-section = (
-    lang:get-mixed-inputs &min-values=3 &max-values=3 &min-args=2 $arguments
-  )
-
-  assoc $section[sub-sections] $sub-title $sub-section |
-    assoc $section sub-sections (all)
-}
-
 fn map-test-results-in-tree { |@arguments|
   var root-section test-result-mapper = (
     lang:get-mixed-inputs &min-values=2 &max-values=2 &min-args=1 $arguments
@@ -152,3 +134,39 @@ var merge~ = (
 
   operator:multi-value $empty $merge-two-sections~
 )
+
+fn add-test-result { |@arguments|
+  var section test-title test-result = (
+    lang:get-mixed-inputs &min-values=3 &max-values=3 &min-args=2 $arguments
+  )
+
+  var actual-test-result = (
+    if (has-key $section[test-results] $test-title) {
+      put $test-result:duplicate-test
+    } else {
+      put $test-result
+    }
+  )
+
+  assoc $section[test-results] $test-title $actual-test-result |
+    assoc $section test-results (all)
+}
+
+fn add-sub-section { |@arguments|
+  var section sub-title sub-section = (
+    lang:get-mixed-inputs &min-values=3 &max-values=3 &min-args=2 $arguments
+  )
+
+  var sub-sections = $section[sub-sections]
+
+  var actual-sub-section = (
+    if (has-key $sub-sections $sub-title) {
+      merge $sub-sections[$sub-title] $sub-section
+    } else {
+      put $sub-section
+    }
+  )
+
+  assoc $sub-sections $sub-title $actual-sub-section |
+    assoc $section sub-sections (all)
+}

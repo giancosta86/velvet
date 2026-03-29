@@ -53,24 +53,6 @@ var failed-test = (test-result:failure ['This is a failed test!'] [])
     }
   }
 
-  >> 'adding a test result' {
-    put $section:empty |
-      section:add-test-result alpha $passed-test |
-      should-be (
-        section:create [&alpha=$passed-test]
-      )
-  }
-
-  >> 'adding a sub-section' {
-    var sub-section = (section:create [&] [&alpha=$failed-test])
-
-    put $section:empty |
-      section:add-sub-section omega $sub-section |
-      should-be (
-        section:create [&] [&omega=$sub-section]
-      )
-  }
-
   >> 'mapping test results within an entire tree' {
     fn append-hello { |test-result|
       conj $test-result[output-lines] Hello |
@@ -312,6 +294,59 @@ var failed-test = (test-result:failure ['This is a failed test!'] [])
             &beta=$beta-test
             &gamma=$gamma-test
           ]
+        )
+    }
+  }
+
+  >> 'adding a test result' {
+    >> 'when the test title does not belong to the section' {
+      put $section:empty |
+        section:add-test-result alpha $passed-test |
+        should-be (
+          section:create [&alpha=$passed-test]
+        )
+    }
+
+    >> 'when the test title already belongs to the section' {
+      put $section:empty |
+        section:add-test-result alpha $passed-test |
+        section:add-test-result alpha $failed-test |
+        should-be (
+          section:create [&alpha=$test-result:duplicate-test]
+        )
+    }
+  }
+
+  >> 'adding a sub-section' {
+    >> 'when the sub-section does not belong to the section' {
+      var sub-section = (section:create [&] [&alpha=$failed-test])
+
+      put $section:empty |
+        section:add-sub-section omega $sub-section |
+        should-be (
+          section:create [&] [&omega=$sub-section]
+        )
+    }
+
+    >> 'when the sub-section already belongs to the section, with different tests' {
+      var first = (section:create [&alpha=$passed-test])
+      var second = (section:create [&beta=$failed-test])
+
+      section:create [&] [&sigma=$first] |
+        section:add-sub-section sigma $second |
+        should-be (
+          section:create [&] [&sigma=(section:create [&alpha=$passed-test &beta=$failed-test])]
+        )
+    }
+
+    >> 'when the sub-section already belongs to the section, with the same test' {
+      var first = (section:create [&alpha=$passed-test])
+      var second = (section:create [&alpha=$failed-test])
+
+      section:create [&] [&sigma=$first] |
+        section:add-sub-section sigma $second |
+        should-be (
+          section:create [&] [&sigma=(section:create [&alpha=$test-result:duplicate-test])]
         )
     }
   }
