@@ -1,6 +1,7 @@
 use str
 use github.com/giancosta86/ethereal/v1/command
 use github.com/giancosta86/ethereal/v1/exception
+use github.com/giancosta86/ethereal/v1/seq
 use ./exception-lines
 use ./outcomes
 use ./section
@@ -29,77 +30,31 @@ fn create { |script-path title|
       or (eq $exception $nil) (exception:is-return $exception)
     )
 
-    var exception-log = (
-      if (not $test-passed) {
+    if $test-passed {
+      test-result:success $block-result[data]
+    } else {
+      var exception-lines = [(
         show $exception |
           exception-lines:trim-clockwork-stack |
-          exception-lines:replace-bottom-eval $script-path |
-          str:join "\n"
-      } else {
-        put $nil
-      }
-    )
+          exception-lines:replace-bottom-eval $script-path
+      )]
 
-    var outcome = (
-      if $test-passed {
-        put $outcomes:passed
-      } else {
-        put $outcomes:failed
-      }
-    )
-
-    var output = (
-      all $block-result[data] |
-        to-lines |
-        slurp
-    )
-
-    put [
-      &output=$output
-      &exception-log=$exception-log
-      &outcome=$outcome
-    ]
+      test-result:failure $block-result[data] $exception-lines
+    }
   }
 
   fn to-section {
-    var test-results = [&]
-    var sub-sections = [&]
-
-    all $sub-frames | each { |sub-frame|
+    all $sub-frames | seq:reduce $section:empty { |cumulated-section sub-frame|
       var sub-title = $sub-frame[title]
 
       var sub-artifact = ($sub-frame[to-artifact])
 
       if (section:is-section $sub-artifact) {
-        var up-to-date-section = (
-          if (has-key $sub-sections $sub-title) {
-            var existing-section = $sub-sections[$sub-title]
-
-            put $existing-section $sub-artifact |
-              section:merge
-          } else {
-            put $sub-artifact
-          }
-        )
-
-        set sub-sections = (assoc $sub-sections $sub-title $up-to-date-section)
+        section:add-sub-section $cumulated-section $sub-title $sub-artifact
       } else {
-        var updated-test-result = (
-          if (has-key $test-results $sub-title) {
-            put $test-result:duplicate
-          } else {
-            put $sub-artifact
-          }
-        )
-
-        set test-results = (assoc $test-results $sub-title $updated-test-result)
+        section:add-test-result $cumulated-section $sub-title $sub-artifact
       }
     }
-
-    put [
-      &test-results=$test-results
-      &sub-sections=$sub-sections
-    ]
   }
 
   fn to-artifact {
@@ -107,7 +62,7 @@ fn create { |script-path title|
       fail 'Cannot obtain artifact when block result is not set, in frame: '$title
     }
 
-    var is-section-frame = (> (count $sub-frames) 0)
+    var is-section-frame = (seq:is-non-empty $sub-frames)
 
     if $is-section-frame {
       var exception = $block-result[exception]
