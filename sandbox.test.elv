@@ -2,12 +2,15 @@ use path
 use str
 use ./outcomes
 use ./section
+use ./test-result
 use ./tests/script-gallery
 
-var this-script-dir = (path:dir (src)[name])
-var sandbox-path = (path:join $this-script-dir sandbox.elv)
+var sandbox-path = (
+  path:dir (src)[name] |
+    path:join (all) sandbox.elv
+)
 
-fn run-test-sandbox { |basename|
+fn run-single-sandbox { |basename|
   var test-script-path = (script-gallery:get-script-path single-scripts $basename)
 
   elvish -norc $sandbox-path $test-script-path |
@@ -16,55 +19,36 @@ fn run-test-sandbox { |basename|
 
 >> 'Running in sandbox' {
   >> 'passing test' {
-    run-test-sandbox in-section-ok |
+    run-single-sandbox in-section-ok |
       should-be [
-        &section=[
-          &test-results=[&]
-          &sub-sections=[
-            &'My test'=[
-              &test-results=[
-                &'should work'=[
-                  &outcome=$outcomes:passed
-                  &output="Wiii!\nWiii2!\n"
-                  &exception-log=$nil
-                ]
-              ]
-              &sub-sections=[&]
-            ]
-          ]
-        ]
+        &section=(section:create [&] [
+          &'My test'=(
+            section:create [&'should work'=(test-result:success [Wiii! Wiii2!])]
+          )
+        ])
         &crashed-scripts=[&]
       ]
   }
 
   >> 'failing test' {
-    var sandbox-result = (run-test-sandbox in-section-failing)
+    var sandbox-result = (run-single-sandbox in-section-failing)
+
+    put $sandbox-result[section] |
+      section:simplify |
+      should-be (
+        section:create [&] [
+          &'My test'=(
+            section:create [&'should fail'=(test-result:failure [Wooo! Wooo2!] [])]
+          )
+        ]
+      )
+
+    all $sandbox-result[section][sub-sections]['My test'][test-results]['should fail'][exception-lines] |
+      str:join "\n" |
+      should-contain DODO
 
     put $sandbox-result[crashed-scripts] |
       should-be [&]
-
-    var section = $sandbox-result[section]
-
-    section:simplify $section |
-      should-be [
-        &test-results=[&]
-        &sub-sections=[
-          &'My test'=[
-            &test-results=[
-              &'should fail'=[
-                &outcome=$outcomes:failed
-                &output="Wooo!\nWooo2!\n"
-              ]
-            ]
-            &sub-sections=[&]
-          ]
-        ]
-      ]
-
-    var exception-log = $section[sub-sections]['My test'][test-results]['should fail'][exception-log]
-
-    put $exception-log |
-      should-contain DODO
   }
 
   >> 'crashing script' {
@@ -78,10 +62,15 @@ fn run-test-sandbox { |basename|
     put $sandbox-result[section] |
       should-be $section:empty
 
-    var exception-lines = $sandbox-result[crashed-scripts][$crashing-script-path]
+    var exception-log = (
+      all $sandbox-result[crashed-scripts][$crashing-script-path] |
+        str:join "\n"
+    )
 
-    all $exception-lines |
-      str:join "\n" |
+    put $exception-log |
+      should-contain 'The title must be a string!'
+
+    put $exception-log |
       should-not-contain "test-script.elv"
   }
 }

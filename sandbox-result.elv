@@ -1,7 +1,5 @@
-use github.com/giancosta86/ethereal/v1/lang
 use github.com/giancosta86/ethereal/v1/map
 use github.com/giancosta86/ethereal/v1/operator
-use github.com/giancosta86/ethereal/v1/seq
 use ./section
 
 var empty = [
@@ -9,17 +7,17 @@ var empty = [
   &crashed-scripts=[&]
 ]
 
-fn -merge-two { |left right|
-  put [
-    &section=(
-      put $left[section] $right[section] |
-        section:merge
-    )
-    &crashed-scripts=(
-      put $left[crashed-scripts] $right[crashed-scripts] |
-        map:merge
-    )
-  ]
-}
+var merge~ = (
+  fn merge-two { |left right|
+    put [
+      &section=(
+        section:merge $left[section] $right[section]
+      )
+      &crashed-scripts=(
+        map:merge $left[crashed-scripts] $right[crashed-scripts]
+      )
+    ]
+  }
 
-var merge~ = (operator:multi-value $empty $-merge-two~)
+  operator:multi-value $empty $merge-two~
+)

@@ -1,17 +1,12 @@
 use ./outcomes
 use ./sandbox-result
+use ./section
+use ./test-result
 
 var left-result = [
-  &section=[
-    &test-results=[
-      &test-from-left=[
-        &output="Left test"
-        &outcome=$outcomes:passed
-        &exception-log=$nil
-      ]
-    ]
-    &sub-sections=[&]
-  ]
+  &section=(
+    section:create [&test-from-left=(test-result:success ['Left test'])]
+  )
   &crashed-scripts=[
     &cip/ciop.test.elv=[
       alpha
@@ -22,16 +17,9 @@ var left-result = [
 ]
 
 var right-result = [
-  &section=[
-    &test-results=[
-      &test-from-right=[
-        &output="Right test"
-        &outcome=$outcomes:failed
-        &exception-log=$nil
-      ]
-    ]
-    &sub-sections=[&]
-  ]
+  &section=(
+    section:create [&test-from-right=(test-result:failure ['Right test'] [Ex1 Ex2 Ex3])]
+  )
   &crashed-scripts=[
     &yogi/bubu.test.elv=[
       ro
@@ -78,21 +66,12 @@ var right-result = [
       >> 'when both operands are non-empty' {
         sandbox-result:merge $left-result $right-result |
           should-be [
-            &section=[
-              &test-results=[
-                &test-from-left=[
-                  &output="Left test"
-                  &outcome=$outcomes:passed
-                  &exception-log=$nil
-                ]
-                &test-from-right=[
-                  &output="Right test"
-                  &outcome=$outcomes:failed
-                  &exception-log=$nil
-                ]
+            &section=(
+              section:create [
+                &test-from-left=(test-result:success ['Left test'])
+                &test-from-right=(test-result:failure ['Right test'] [Ex1 Ex2 Ex3])
               ]
-              &sub-sections=[&]
-            ]
+            )
             &crashed-scripts=[
               &cip/ciop.test.elv=[
                 alpha
