@@ -10,7 +10,7 @@ fn run { |script-path|
   var abs-script-path = (path:abs $script-path)
   var script-code = (slurp < $script-path)
 
-  var root-frames = ($root-frames:create)
+  var root-frames = (root-frames:create)
   var current-frame = $nil
 
   fn custom-src {
@@ -27,11 +27,11 @@ fn run { |script-path|
     }
 
     var block = (
-      var rest-length = (count $rest)
+      var rest-count = (count $rest)
 
-      if (== $rest-length 1) {
+      if (== $rest-count 1) {
         put $rest[0]
-      } elif (== $rest-length 0) {
+      } elif (== $rest-count 0) {
         put $assertions:fail-test~
       } else {
         fail 'Only 1 or 2 arguments are allowed!'
@@ -47,7 +47,7 @@ fn run { |script-path|
     if $parent-frame {
       $parent-frame[add-sub-frame] $this-frame
     } else {
-      root-frames[append] $this-frame
+      $root-frames[append] $this-frame
     }
 
     tmp current-frame = $this-frame
@@ -55,14 +55,14 @@ fn run { |script-path|
     $current-frame[run-block] $block
   }
 
-  var core-functions = [
+  var script-functions = [
     &src~=$custom-src~
     &'>>'~=$'>>~'
   ]
 
   var namespace = (
     all [
-      $core-functions
+      $script-functions
       $ethereal:namespaces
       $assertions:
       $tools:
@@ -72,6 +72,7 @@ fn run { |script-path|
   )
 
   tmp pwd = (path:dir $abs-script-path)
+
   eval &ns=$namespace $script-code |
     only-bytes
 
