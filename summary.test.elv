@@ -1,4 +1,5 @@
 use ./outcomes
+use ./section
 use ./summary
 use ./test-result
 
@@ -10,42 +11,25 @@ var crashed-scripts = [
   ]
 ]
 
->> 'Summary creation' {
-  >> 'from sandbox result' {
-    var section = [
-      &test-results=[
-        &alpha=[
-          &output=''
-          &outcome=$outcomes:passed
-        ]
-      ]
-      &sub-sections=[
-        &beta=[
-          &test-results=[
-            &gamma=[
-              &output=''
-              &outcome=$outcomes:passed
-            ]
-            &delta=[
-              &output=''
-              &outcome=$outcomes:failed
-            ]
-          ]
-          &sub-sections=[
-            &epsilon=[
-              &test-results=[
-                &zeta=$test-result:duplicate
-                &eta=[
-                  &output=''
-                  &outcome=$outcomes:passed
-                ]
+>> 'Summary' {
+  >> 'creation from sandbox result' {
+    var section = (
+      section:create [&alpha=(test-result:success [])] [
+        &beta=(
+          section:create [
+            &gamma=(test-result:success [])
+            &delta=(test-result:failure [] [])
+          ] [
+            &epsilon=(
+              section:create [
+                &zeta=$test-result:duplicate-test
+                &eta=(test-result:success [])
               ]
-              &sub-sections=[&]
-            ]
+            )
           ]
-        ]
+        )
       ]
-    ]
+    )
 
     var sandbox-result = [
       &section=$section
@@ -63,76 +47,34 @@ var crashed-scripts = [
         &crashed-scripts=$crashed-scripts
       ]
   }
-}
 
->> 'Summary simplification' {
-  >> 'with section tree' {
-    var section = [
-      &test-results=[
-        &Yogi=[
-          &output="Wiii!"
-          &outcome=$outcomes:passed
-          &exception-log=$nil
-        ]
-      ]
-      &sub-sections=[
-        &Cip=[
-          &test-results=[
-            &Bubu=[
-              &output="Wooo!"
-              &outcome=$outcomes:failed
-              &exception-log=(show ?(fail DODO) | slurp)
-            ]
+  >> 'simplification' {
+    var section = (
+      section:create [
+        &Yogi=(test-result:success [Wiii!])
+      ] [
+        &Cip=(
+          section:create [
+            &Bubu=(test-result:failure [Wooo!] (show ?(fail DODO) | slurp))
+          ] [
+            &Ciop=(
+              section:create [&Ranger=$test-result:duplicate-test]
+            )
           ]
-          &sub-sections=[
-            &Ciop=[
-              &test-results=[
-                &ranger=$test-result:duplicate
-              ]
-              &sub-sections=[&]
-            ]
-          ]
-        ]
+        )
       ]
-    ]
+    )
 
     var sandbox-result = [
       &section=$section
       &crashed-scripts=$crashed-scripts
     ]
 
-    summary:from-sandbox-result $sandbox-result |
-      summary:simplify (all) |
+    put $sandbox-result |
+      summary:from-sandbox-result |
+      summary:simplify |
       should-be [
-        &section=[
-          &test-results=[
-            &Yogi=[
-              &output="Wiii!"
-              &outcome=$outcomes:passed
-            ]
-          ]
-          &sub-sections=[
-            &Cip=[
-              &test-results=[
-                &Bubu=[
-                  &output="Wooo!"
-                  &outcome=$outcomes:failed
-                ]
-              ]
-              &sub-sections=[
-                &Ciop=[
-                  &test-results=[
-                    &ranger=[
-                      &output=''
-                      &outcome=$outcomes:failed
-                    ]
-                  ]
-                  &sub-sections=[&]
-                ]
-              ]
-            ]
-          ]
-        ]
+        &section=(section:simplify $section)
         &stats=[
           &total=3
           &passed=1
