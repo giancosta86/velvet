@@ -1,8 +1,8 @@
 use str
-use ./outcomes
-use ./section
-use ./test-result
-use ./test-script-frame
+use ../outcomes
+use ../section
+use ../test-result
+use ./frame
 
 var passing-block = {
   echo Wiii
@@ -20,7 +20,7 @@ var failing-block = {
 }
 
 fn create-test-frame { |title|
-  test-script-frame:create 'fake-script.elv' $title
+  frame:create 'fake-script.elv' $title
 }
 
 >> 'Test script frame' {

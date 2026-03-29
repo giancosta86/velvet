@@ -34,7 +34,7 @@ use ./tests/script-gallery
           &'My passing test'=[
             &outcome=$outcomes:passed
             &output="Wiii!\nWiii2!\n"
-            &exception-log=$nil
+            &exception-lines=$nil
           ]
         ]
         &sub-sections= [&]
@@ -58,7 +58,7 @@ use ./tests/script-gallery
   >> 'exception log for root failing test' {
     var section = (run-test-script root-failing)
 
-    var exception-log = $section[test-results]['My failing test'][exception-log]
+    var exception-log = (all $section[test-results]['My failing test'][exception-lines] | slurp)
 
     str:contains $exception-log '[eval' |
       should-be $false
@@ -99,7 +99,7 @@ use ./tests/script-gallery
               &'should work'=[
                 &outcome=$outcomes:passed
                 &output="Wiii!\nWiii2!\n"
-                &exception-log=$nil
+                &exception-lines=$nil
               ]
             ]
             &sub-sections=[&]

@@ -2,10 +2,9 @@ use str
 use github.com/giancosta86/ethereal/v1/command
 use github.com/giancosta86/ethereal/v1/exception
 use github.com/giancosta86/ethereal/v1/seq
-use ./exception-lines
-use ./outcomes
-use ./section
-use ./test-result
+use ../exception-lines
+use ../section
+use ../test-result
 
 fn create { |script-path title|
   var block-result = $nil
