@@ -3,42 +3,23 @@ use ./test-result
 
 >> 'Test result'  {
   var output-lines = [Alpha Beta]
-  var exception = ?(fail DODO)
+  var exception-lines = [(show ?(fail DODO))]
 
   >> 'success creation' {
     test-result:success $output-lines |
       should-be [
         &output-lines=$output-lines
         &outcome=$outcomes:passed
-        &exception=$nil
+        &exception-lines=$nil
       ]
   }
 
   >> 'failure creation' {
-    test-result:failure $output-lines $exception |
+    test-result:failure $output-lines $exception-lines |
       should-be [
         &output-lines=$output-lines
         &outcome=$outcomes:failed
-        &exception=$exception
+        &exception-lines=$exception-lines
       ]
-  }
-
-  >> 'simplification' {
-    >> 'for passed test' {
-      test-result:simplify (test-result:success $output-lines) |
-        should-be [
-          &output-lines=$output-lines
-          &outcome=$outcomes:passed
-        ]
-    }
-
-    >> 'for failed test' {
-      test-result:failure $output-lines $exception |
-        test-result:simplify |
-        should-be [
-          &output-lines=$output-lines
-          &outcome=$outcomes:failed
-        ]
-    }
   }
 }

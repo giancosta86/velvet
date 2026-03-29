@@ -5,22 +5,16 @@ fn success { |output-lines|
   put [
     &outcome=$outcomes:passed
     &output-lines=$output-lines
-    &exception=$nil
+    &exception-lines=$nil
   ]
 }
 
-fn failure { |output-lines exception|
+fn failure { |output-lines exception-lines|
   put [
     &outcome=$outcomes:failed
     &output-lines=$output-lines
-    &exception=$exception
+    &exception-lines=$exception-lines
   ]
 }
 
 var duplicate-test = (failure [] ?(fail 'DUPLICATE TEST'))
-
-fn simplify { |@arguments|
-  var test-result = (lang:get-single-input $arguments)
-
-  dissoc $test-result exception
-}

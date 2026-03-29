@@ -62,11 +62,6 @@ fn map-test-results-in-tree { |@arguments|
   create $updated-test-results $updated-sub-sections
 }
 
-fn simplify { |@arguments|
-  lang:get-single-input $arguments |
-    map-test-results-in-tree $test-result:simplify~
-}
-
 fn trim-empty { |@arguments|
   var section = (lang:get-single-input $arguments)
 

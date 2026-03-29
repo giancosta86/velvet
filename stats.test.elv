@@ -5,7 +5,7 @@ use ./test-result
 >> 'Stats' {
   var passed-test = (test-result:success [Wiii])
 
-  var failed-test = (test-result:failure [Wooo] ?(fail DODO))
+  var failed-test = (test-result:failure [Wooo] [])
 
   >> 'from empty section' {
     stats:from-section $section:empty |

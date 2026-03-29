@@ -3,7 +3,7 @@ use ./test-result
 
 var passed-test = (test-result:success ['This is a passed test!'])
 
-var failed-test = (test-result:failure ['This is a failed test!'] ?(fail DODO))
+var failed-test = (test-result:failure ['This is a failed test!'] [])
 
 >> 'Section' {
   >> 'creation' {
@@ -125,29 +125,6 @@ var failed-test = (test-result:failure ['This is a failed test!'] ?(fail DODO))
     }
   }
 
-  >> 'simplification' {
-    >> 'on empty section' {
-      section:simplify $section:empty |
-        should-be $section:empty
-    }
-
-    >> 'with just one root test' {
-      section:create [&alpha=$passed-test] |
-        section:simplify |
-        should-be (
-          section:create [&alpha=(test-result:simplify $passed-test)]
-        )
-    }
-
-    >> 'with test in sub-section' {
-      section:create [&] [&sigma=(section:create [&beta=$failed-test])] |
-        section:simplify |
-        should-be (
-          section:create [&] [&sigma=(section:create [&beta=(test-result:simplify $failed-test)])]
-        )
-    }
-  }
-
   >> 'trimming empty sections' {
     >> 'on empty section' {
       section:trim-empty $section:empty |
@@ -232,7 +209,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] ?(fail DODO))
 
     var section-with-alpha = (section:create [&alpha=$alpha-test])
 
-    var beta-test = (test-result:failure [Beta] ?(fail DODO))
+    var beta-test = (test-result:failure [Beta] [])
 
     var section-with-beta = (section:create [&beta=$beta-test])
 
