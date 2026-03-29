@@ -1,7 +1,5 @@
 use path
 
-var -this-script-dir = (path:dir (src)[name])
-
 var single-scripts = [
   single-scripts/empty.test.elv
   single-scripts/exceptions.test.elv
@@ -37,6 +35,10 @@ var all = [(
     order
 )]
 
-fn get-script-path { |subdirectory basename|
-  path:join $-this-script-dir $subdirectory $basename'.test.elv'
-}
+var get-script-path~ = (
+  var this-script-dir = (path:dir (src)[name])
+
+  put { |subdirectory basename|
+    path:join $this-script-dir $subdirectory $basename'.test.elv'
+  }
+)

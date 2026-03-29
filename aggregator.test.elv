@@ -5,18 +5,20 @@ use ./section
 use ./tests/aggregator/summaries
 use ./tests/script-gallery
 
-fn get-test-script { |basename|
+fn get-aggregator-script { |basename|
   script-gallery:get-script-path aggregator $basename
 }
 
 >> 'Aggregator' {
   >> 'when running no scripts' {
-    aggregator:run-test-scripts |
+    all [] |
+      aggregator:run-test-scripts |
       should-be $sandbox-result:empty
   }
 
   >> 'when running 1 script' {
-    aggregator:run-test-scripts (get-test-script alpha) |
+    get-aggregator-script alpha |
+      aggregator:run-test-scripts |
       should-be [
         &section=$summaries:alpha[section]
         &crashed-scripts=[&]
@@ -24,7 +26,11 @@ fn get-test-script { |basename|
   }
 
   >> 'when running 2 scripts' {
-    aggregator:run-test-scripts (get-test-script alpha) (get-test-script beta) |
+    all [
+      (get-aggregator-script alpha)
+      (get-aggregator-script beta)
+    ] |
+      aggregator:run-test-scripts |
       should-be [
         &section=$summaries:alpha-beta[section]
         &crashed-scripts=[&]
@@ -32,13 +38,18 @@ fn get-test-script { |basename|
   }
 
   >> 'when running the same 3 scripts with different numbers of workers' {
-    var script-paths = [(get-test-script alpha) (get-test-script beta) (get-test-script gamma)]
-
     range 1 5 | each { |num-workers|
-      var sandbox-result = (aggregator:run-test-scripts &num-workers=$num-workers $@script-paths)
+      var sandbox-result = (
+        all [
+          (get-aggregator-script alpha)
+          (get-aggregator-script beta)
+          (get-aggregator-script gamma)
+        ] |
+          aggregator:run-test-scripts &num-workers=$num-workers
+      )
 
       put $sandbox-result[section] |
-        section:simplify (all) |
+        section:simplify |
         should-be $summaries:alpha-beta-gamma-simplified[section]
 
       put $sandbox-result[crashed-scripts] |
@@ -49,16 +60,16 @@ fn get-test-script { |basename|
   >> 'when running a crashing script' {
     var crashing-script-path = (script-gallery:get-script-path single-scripts root-test-without-title)
 
-    var sandbox-result = (aggregator:run-test-scripts $crashing-script-path)
+    var sandbox-result = (
+      put $crashing-script-path |
+        aggregator:run-test-scripts
+      )
 
     put $sandbox-result[section] |
       should-be $section:empty
 
-    var exception-lines = $sandbox-result[crashed-scripts][$crashing-script-path]
-
-    all $exception-lines |
+    all $sandbox-result[crashed-scripts][$crashing-script-path] |
       str:join "\n" |
-      str:contains (all) "test-script.elv" |
-      should-be $false
+      should-not-contain "test-script.elv"
   }
 }

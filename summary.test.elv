@@ -55,7 +55,7 @@ var crashed-scripts = [
       ] [
         &Cip=(
           section:create [
-            &Bubu=(test-result:failure [Wooo!] (show ?(fail DODO) | slurp))
+            &Bubu=(test-result:failure [Wooo!] [DODO])
           ] [
             &Ciop=(
               section:create [&Ranger=$test-result:duplicate-test]
