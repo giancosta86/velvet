@@ -92,29 +92,6 @@ fn get-test-script { |basename|
   }
 }
 
->> 'Boolean detection of test scripts' {
-  >> 'in directory with no tests' {
-    tmp pwd = $dir-with-no-tests
-
-    velvet:has-test-scripts |
-      should-be $false
-  }
-
-  >> 'in directory with tests' {
-    tmp pwd = (path:join $this-script-dir tests aggregator)
-
-    velvet:has-test-scripts |
-      should-be $true
-  }
-
-  >> 'in directory having nested tests' {
-    tmp pwd = (path:join $this-script-dir tests)
-
-    velvet:has-test-scripts |
-      should-be $true
-  }
-}
-
 >> 'Top-level command' {
   >> 'running one aggregator script' {
     >> 'with a single reporter' {

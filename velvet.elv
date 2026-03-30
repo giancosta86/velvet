@@ -10,13 +10,6 @@ fn get-test-scripts {
   put **[nomatch-ok].test.elv
 }
 
-fn has-test-scripts {
-  get-test-scripts |
-    take 1 |
-    count |
-    != (all) 0
-}
-
 fn -resolve-test-scripts { |requested-scripts|
   if (== (count $requested-scripts) 0) {
     get-test-scripts
