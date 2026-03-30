@@ -17,11 +17,11 @@ fn get-test-script { |basename|
   script-gallery:get-script-path aggregator $basename
 }
 
->> 'Listing all test scripts' {
+>> 'Listing all the test scripts' {
   >> 'in directory with no tests' {
     tmp pwd = $dir-with-no-tests
 
-    velvet:get-all-test-scripts |
+    velvet:get-test-scripts |
       should-emit []
   }
 
@@ -33,7 +33,7 @@ fn get-test-script { |basename|
         each $path:base~
     )]
 
-    velvet:get-all-test-scripts |
+    velvet:get-test-scripts |
       order |
       should-emit $expected-scripts
   }
@@ -41,7 +41,7 @@ fn get-test-script { |basename|
   >> 'in directory with nested tests' {
     tmp pwd = (path:join $this-script-dir tests)
 
-    velvet:get-all-test-scripts |
+    velvet:get-test-scripts |
       order |
       should-emit $script-gallery:all
   }

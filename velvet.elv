@@ -6,7 +6,7 @@ use ./reporting/console/full
 use ./reporting/console/terse
 use ./summary
 
-fn get-all-test-scripts {
+fn get-test-scripts {
   put **[nomatch-ok].test.elv
 }
 
