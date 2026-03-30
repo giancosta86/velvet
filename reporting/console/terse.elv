@@ -2,10 +2,8 @@ use ../../section
 use ./shared
 
 fn report { |summary|
-  put [
-    &section=(section:keep-failed-test-results $summary[section])
-    &stats=$summary[stats]
-    &crashed-scripts=$summary[crashed-scripts]
-  ] |
+  put $summary[section] |
+    section:keep-failed-test-results |
+    assoc $summary section (all) |
     shared:report (all)
 }
