@@ -1,4 +1,3 @@
-use str
 use github.com/giancosta86/ethereal/v1/command
 use github.com/giancosta86/ethereal/v1/exception
 use github.com/giancosta86/ethereal/v1/seq
