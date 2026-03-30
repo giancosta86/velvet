@@ -136,22 +136,20 @@ use ./output-tester
     }
 
     >> 'when the output is styled' {
-      >> 'by default' {
-        var unstyling-tester = (
-          {
-            echo (styled Alpha red bold)
-            echo (styled Beta green italic)
-            echo (styled Gamma blue)
-          } |
-            output-tester:create
-        )
+      var unstyling-tester = (
+        {
+          echo (styled Alpha red bold)
+          echo (styled Beta green italic)
+          echo (styled Gamma blue)
+        } |
+          output-tester:create
+      )
 
-        $unstyling-tester[should-contain-snippet] [
-          Alpha
-          Beta
-          Gamma
-        ]
-      }
+      $unstyling-tester[should-contain-snippet] [
+        Alpha
+        Beta
+        Gamma
+      ]
     }
   }
 
@@ -181,7 +179,7 @@ use ./output-tester
           echo (styled Beta green italic)
           echo (styled Gamma blue)
         } |
-          output-tester:create &keep-styles=$true
+          output-tester:create &keep-styles
       )
 
       $preserving-tester[should-not-contain-snippet] [
