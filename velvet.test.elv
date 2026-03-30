@@ -11,7 +11,6 @@ use ./tests/script-gallery
 use ./velvet
 
 var this-script-dir = (path:dir (src)[name])
-var dir-with-no-tests = (path:join $this-script-dir docs)
 
 fn get-test-script { |basename|
   script-gallery:get-script-path aggregator $basename
@@ -19,7 +18,7 @@ fn get-test-script { |basename|
 
 >> 'Listing all the test scripts' {
   >> 'in directory with no tests' {
-    tmp pwd = $dir-with-no-tests
+    tmp pwd = (path:join $this-script-dir docs)
 
     velvet:get-test-scripts |
       should-emit []
@@ -51,17 +50,22 @@ fn get-test-script { |basename|
   tmp pwd = (path:join $this-script-dir tests)
 
   >> 'when requesting no scripts' {
-    velvet:-resolve-test-scripts [] |
+    all [] |
+      velvet:-resolve-test-scripts |
       should-emit $script-gallery:all
   }
 
   >> 'when requesting scripts without file extensions' {
-    velvet:-resolve-test-scripts [readme/maths] |
+    all [
+      (path:join readme maths)
+    ] |
+      velvet:-resolve-test-scripts |
       should-be (path:join readme maths.test.elv)
   }
 
   >> 'when requesting directories' {
-    velvet:-resolve-test-scripts [readme] |
+    all [readme] |
+      velvet:-resolve-test-scripts |
       should-be (path:join readme maths.test.elv)
   }
 
@@ -86,7 +90,8 @@ fn get-test-script { |basename|
 
       cd ..
 
-      velvet:-resolve-test-scripts [ciop] |
+      all [ciop] |
+        velvet:-resolve-test-scripts |
         should-be ciop.test.elv
     }
   }

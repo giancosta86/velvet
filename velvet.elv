@@ -1,22 +1,24 @@
 use os
-use str
+use github.com/giancosta86/ethereal/v1/parallel
 use github.com/giancosta86/ethereal/v1/seq
 use ./aggregator
 use ./reporting/console/full
 use ./reporting/console/terse
 use ./summary
 
+#
+# Emits all the **.test.elv** test scripts in the current directory tree.
+#
 fn get-test-scripts {
   put **[nomatch-ok].test.elv
 }
 
-fn -resolve-test-scripts { |requested-scripts|
-  if (== (count $requested-scripts) 0) {
-    get-test-scripts
-    return
-  }
+fn -resolve-test-scripts {
+  var items-from-pipe = $false
 
-  all $requested-scripts | each { |script-path|
+  each { |script-path|
+    set items-from-pipe = $true
+
     if (not (os:is-regular $script-path)) {
       var path-with-extension = $script-path'.test.elv'
 
@@ -31,12 +33,15 @@ fn -resolve-test-scripts { |requested-scripts|
       put $script-path
     }
   }
+
+  if (not $items-from-pipe) {
+    get-test-scripts
+  }
 }
 
-fn velvet { |&must-pass=$false &put=$false &verbose=$false &reporters=[$terse:report~] &num-workers=$aggregator:DEFAULT-NUM-WORKERS @script-paths|
-  var actual-test-scripts = [(-resolve-test-scripts $script-paths)]
-
-  var sandbox-result = (aggregator:run-test-scripts &num-workers=$num-workers $@actual-test-scripts)
+#
+# Runs the Velvet test system.
+#
 
   var summary = (summary:from-sandbox-result $sandbox-result)
 
