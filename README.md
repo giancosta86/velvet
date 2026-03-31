@@ -538,7 +538,7 @@ To run _all the tests_ within a directory containing _one or more test scripts_ 
 
 The command can be customized via a few _optional parameters_:
 
-- `&must-pass`: if _at least one test fails_, or if _at least one test script fails_, the command _throws an exception_. **Default**: disabled.
+- `&flawless`: if _at least one test fails_, or if _at least one test script fails_, the command _throws an exception_. **Default**: disabled.
 
 - `&reporters`: a list of _functions to report the test summary_; each reporter receives a `summary` map object - processing it as needed.
 
@@ -546,7 +546,7 @@ The command can be customized via a few _optional parameters_:
 
 - `&verbose`: overrides the `&reporters` option, always using the **full console reporter** instead.
 
-- `&put`: outputs the summary to the _value channel_. In this case, you'll probably want to set `&reporters=[]` or to a list containing _reporters not writing to the console_ - or simply pipe to `only-values`.
+- `&emit-summary`: outputs the summary to the _value channel_. In this case, you'll probably want to set `&reporters=[]` or to a list containing _reporters not writing to the console_ - or simply pipe to `only-values`.
 
   **Default**: disabled.
 

@@ -1,4 +1,5 @@
 use os
+use github.com/giancosta86/ethereal/v1/lang
 use github.com/giancosta86/ethereal/v1/parallel
 use github.com/giancosta86/ethereal/v1/seq
 use ./aggregator
@@ -42,6 +43,12 @@ fn -resolve-test-scripts {
 #
 # Runs the Velvet test system.
 #
+fn velvet { |&flawless=$false &emit-summary=$false &verbose=$false &reporters=[$terse:report~] &num-workers=$parallel:DEFAULT-NUM-WORKERS @script-paths|
+  var sandbox-result = (
+    lang:get-inputs $script-paths |
+      -resolve-test-scripts |
+      aggregator:run-test-scripts &num-workers=$num-workers
+  )
 
   var summary = (summary:from-sandbox-result $sandbox-result)
 
@@ -60,11 +67,11 @@ fn -resolve-test-scripts {
 
   var has-flaws = (or $has-failed-tests $has-crashed-scripts)
 
-  if (and $must-pass $has-flaws) {
-    fail '❌ There are failed tests!'
+  if (and $flawless $has-flaws) {
+    fail '❌ There are flaws in the tests!'
   }
 
-  if $put {
+  if $emit-summary {
     put $summary
   }
 }
