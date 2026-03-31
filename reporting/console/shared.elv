@@ -52,9 +52,7 @@ var report~ = (
           echo
         }
       } |
-        each { |line|
-          echo (get-indentation (+ $level 1))''$line
-        }
+        string:prefix-lines (get-indentation (+ $level 1))
     }
   }
 
