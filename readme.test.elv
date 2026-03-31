@@ -2,13 +2,14 @@ use path
 use str
 use github.com/giancosta86/ethereal/v1/string
 use ./reporting/console/full
+use ./reporting/console/terse
 use ./velvet
 
 >> 'README tests' {
   tmp pwd = (path:join tests readme)
 
   >> 'execution and stats' {
-    velvet:velvet &must-pass &put &reporters=[] |
+    velvet:velvet &flawless &emit-summary &reporters=[] |
       put (all)[stats] |
       should-be [
         &total=4
@@ -17,23 +18,23 @@ use ./velvet
       ]
   }
 
-  >> 'default console reporter log' {
-    var expected-log = (slurp < terse.log)
+  >> 'console reporter log' {
+    fn assert-readme-log { |reporter expected-basename|
+      var expected-log = (slurp < $expected-basename)
 
-    velvet:velvet |
-      slurp |
-      string:unstyled (all) |
-      str:trim-space (all) |
-      should-be $expected-log
-  }
+      velvet:velvet &reporters=[$reporter] |
+        slurp |
+        string:unstyled (all) |
+        str:trim-space (all) |
+        should-be $expected-log
+    }
 
-  >> 'full console reporter log' {
-    var expected-log = (slurp < full.log)
+    >> 'terse' {
+      assert-readme-log $terse:report~ terse.log
+    }
 
-    velvet:velvet &reporters=[$full:report~] |
-      slurp |
-      string:unstyled (all) |
-      str:trim-space (all) |
-      should-be $expected-log
+    >> 'full' {
+      assert-readme-log $full:report~ full.log
+    }
   }
 }
