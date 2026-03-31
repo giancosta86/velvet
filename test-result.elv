@@ -17,7 +17,7 @@ fn failure { |output-lines exception-lines|
   ]
 }
 
-var duplicate-test = (failure [] ['DUPLICATE TEST'])
+var duplicate-test = (failure [] ['DUPLICATE TEST!'])
 
 fn simplify { |@arguments|
   var test-result = (lang:get-single-input $arguments)
