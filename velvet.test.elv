@@ -66,7 +66,9 @@ fn get-aggregator-script { |basename|
   }
 
   >> 'when requesting directories' {
-    all [readme] |
+    all [
+      readme
+    ] |
       velvet:-resolve-test-scripts |
       should-be (path:join readme maths.test.elv)
   }
@@ -92,7 +94,9 @@ fn get-aggregator-script { |basename|
 
       cd ..
 
-      all [ciop] |
+      all [
+        ciop
+      ] |
         velvet:-resolve-test-scripts |
         should-be ciop.test.elv
     }
@@ -150,8 +154,9 @@ fn get-aggregator-script { |basename|
     var spy = (spy:create)
 
     velvet:velvet &reporters=[$spy[reporter]]
+
     $spy[get-summary] |
-      summary:simplify (all) |
+      summary:simplify |
       should-be $summaries:alpha-beta-gamma-simplified
   }
 
