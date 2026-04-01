@@ -482,8 +482,6 @@ As a plus, the `text` field contains the _buffered output_ as a string.
 The following script could be saved as a `.test.elv` file - ready to be run via the `velvet` command.
 
 ```elvish
-use str
-
 >> 'In arithmetic' {
   >> 'addition' {
     >> 'should work' {
@@ -511,8 +509,7 @@ use str
           / 92 0
         } |
           to-string (all)[reason] |
-          str:contains (all) divisor |
-          should-be $true
+          should-contain divisor
       }
     }
   }
