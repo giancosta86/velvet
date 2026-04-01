@@ -126,7 +126,7 @@ fn get-aggregator-script { |basename|
       )]
 
       get-aggregator-script alpha |
-        velvet:velvet &reporters=$reporters
+        velvet:velvet &reporters=$reporters (all)
 
       all $spies | each { |spy|
         $spy[get-summary] |
@@ -142,7 +142,7 @@ fn get-aggregator-script { |basename|
       (get-aggregator-script alpha)
       (get-aggregator-script beta)
     ] |
-      velvet:velvet &reporters=[$spy[reporter]]
+      velvet:velvet &reporters=[$spy[reporter]] (all)
 
     $spy[get-summary] |
       should-be $summaries:alpha-beta

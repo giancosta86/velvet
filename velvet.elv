@@ -45,7 +45,7 @@ fn -resolve-test-scripts {
 #
 fn velvet { |&flawless=$false &emit-summary=$false &verbose=$false &reporters=[$terse:report~] &num-workers=$parallel:DEFAULT-NUM-WORKERS @script-paths|
   var sandbox-result = (
-    lang:get-inputs $script-paths |
+    all $script-paths |
       -resolve-test-scripts |
       aggregator:run-test-scripts &num-workers=$num-workers
   )
