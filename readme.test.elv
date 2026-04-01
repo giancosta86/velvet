@@ -24,7 +24,7 @@ use ./velvet
 
       velvet:velvet &reporters=[$reporter] |
         slurp |
-        string:unstyled (all) |
+        string:unstyled |
         str:trim-space (all) |
         should-be $expected-log
     }
