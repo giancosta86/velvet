@@ -15,7 +15,6 @@ var run-test-scripts~ = (
   }
 
   put { |&num-workers=$parallel:DEFAULT-NUM-WORKERS|
-    all |
-      parallel:fork-join &num-workers=$num-workers $run-chunk-in-elvish-sandbox~ $sandbox-result:merge~
+    parallel:fork-join &num-workers=$num-workers $run-chunk-in-elvish-sandbox~ $sandbox-result:merge~
   }
 )

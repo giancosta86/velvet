@@ -16,8 +16,7 @@ var create~ = (
   put { |&keep-styles=$false|
     var text = (
       var original-text = (
-        all |
-          str:join "\n"
+        str:join "\n"
       )
 
       if $keep-styles {
