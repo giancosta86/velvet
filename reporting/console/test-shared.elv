@@ -31,7 +31,9 @@ fn run-console-tests { |settings|
     var sandbox-result = [
       &section=(
         section:create [
-          &Alpha=(test-result:success [Wiii!])
+          &Alpha=(
+            test-result:success [Wiii!]
+          )
         ]
       )
       &crashed-scripts=[&]
@@ -44,7 +46,9 @@ fn run-console-tests { |settings|
     var sandbox-result = [
       &section=(
         section:create [
-          &Beta=(test-result:failure [Wooo!] [DODO])
+          &Beta=(
+            test-result:failure [Wooo!] [DODO]
+          )
         ]
       )
       &crashed-scripts=[&]
@@ -57,7 +61,9 @@ fn run-console-tests { |settings|
     var sandbox-result = [
       &section=(
         section:create [
-          &Beta=(test-result:failure [Wooo!] [])
+          &Beta=(
+            test-result:failure [Wooo!] []
+          )
         ]
       )
       &crashed-scripts=[&]
@@ -70,7 +76,9 @@ fn run-console-tests { |settings|
     var sandbox-result = [
       &section=(
         section:create [
-          &Beta=(test-result:failure [] [DODO])
+          &Beta=(
+            test-result:failure [] [DODO]
+          )
         ]
       )
       &crashed-scripts=[&]
@@ -82,13 +90,17 @@ fn run-console-tests { |settings|
   >> 'with multi-level tree' {
     var section = (
       section:create [
-        &Alpha=(test-result:success [Wiii!])
+        &Alpha=(
+          test-result:success [Wiii!]
+        )
       ] [
         &SomeOther=(
           section:create [&] [
             &YetAnother=(
               section:create [
-                &Beta=(test-result:failure [Wooo!] [DODO])
+                &Beta=(
+                  test-result:failure [Wooo!] [DODO]
+                )
               ]
             )
           ]

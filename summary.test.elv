@@ -14,16 +14,26 @@ var crashed-scripts = [
 >> 'Summary' {
   >> 'creation from sandbox result' {
     var section = (
-      section:create [&alpha=(test-result:success [])] [
+      section:create [
+        &alpha=(
+          test-result:success []
+        )
+      ] [
         &beta=(
           section:create [
-            &gamma=(test-result:success [])
-            &delta=(test-result:failure [] [])
+            &gamma=(
+              test-result:success []
+            )
+            &delta=(
+              test-result:failure [] []
+            )
           ] [
             &epsilon=(
               section:create [
                 &zeta=$test-result:duplicate-test
-                &eta=(test-result:success [])
+                &eta=(
+                  test-result:success []
+                )
               ]
             )
           ]
@@ -51,14 +61,20 @@ var crashed-scripts = [
   >> 'simplification' {
     var section = (
       section:create [
-        &Yogi=(test-result:success [Wiii!])
+        &Yogi=(
+          test-result:success [Wiii!]
+        )
       ] [
         &Cip=(
           section:create [
-            &Bubu=(test-result:failure [Wooo!] [DODO])
+            &Bubu=(
+              test-result:failure [Wooo!] [DODO]
+            )
           ] [
             &Ciop=(
-              section:create [&Ranger=$test-result:duplicate-test]
+              section:create [
+                &Ranger=$test-result:duplicate-test
+              ]
             )
           ]
         )

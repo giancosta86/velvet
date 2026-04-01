@@ -13,7 +13,9 @@ use ./test-result
   }
 
   >> 'from single passed test' {
-    section:create [&alpha=$passed-test] |
+    section:create [
+      &alpha=$passed-test
+    ] |
       stats:from-section |
       should-be [
         &total=1
@@ -23,7 +25,9 @@ use ./test-result
   }
 
   >> 'from single failed test' {
-    section:create [&beta=$failed-test] |
+    section:create [
+      &beta=$failed-test
+    ] |
       stats:from-section |
       should-be [
         &total=1
@@ -33,7 +37,10 @@ use ./test-result
   }
 
   >> 'from both passed and failed test' {
-    section:create [&alpha=$passed-test &beta=$failed-test] |
+    section:create [
+      &alpha=$passed-test
+      &beta=$failed-test
+    ] |
       stats:from-section |
       should-be [
         &total=2
@@ -43,7 +50,16 @@ use ./test-result
   }
 
   >> 'from multi-level tests' {
-    section:create [&alpha=$passed-test &beta=$failed-test] [&sigma=(section:create [&gamma=$passed-test])] |
+    section:create [
+      &alpha=$passed-test
+      &beta=$failed-test
+    ] [
+      &sigma=(
+        section:create [
+          &gamma=$passed-test
+        ]
+      )
+    ] |
       stats:from-section |
       should-be [
         &total=3

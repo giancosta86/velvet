@@ -31,7 +31,11 @@ fn run-single-script { |basename|
   >> 'with root passing test' {
     run-single-script root-ok |
       should-be (
-        section:create [&'My passing test'=(test-result:success [Wiii! Wiii2!])]
+        section:create [
+          &'My passing test'=(
+            test-result:success [Wiii! Wiii2!]
+          )
+        ]
       )
   }
 
@@ -39,7 +43,11 @@ fn run-single-script { |basename|
     run-single-script root-failing |
       section:simplify |
       should-be (
-        section:create [&'My failing test'=(test-result:failure [Wooo! Wooo2!] [])]
+        section:create [
+          &'My failing test'=(
+            test-result:failure [Wooo! Wooo2!] []
+          )
+        ]
       )
   }
 
@@ -66,8 +74,12 @@ fn run-single-script { |basename|
       section:simplify |
       should-be (
         section:create [
-          &'My passing test'=(test-result:success [Wiii! Wiii2!])
-          &'My failing test'=(test-result:failure [Wooo! Wooo2!] [])
+          &'My passing test'=(
+            test-result:success [Wiii! Wiii2!]
+          )
+          &'My failing test'=(
+            test-result:failure [Wooo! Wooo2!] []
+          )
         ]
       )
   }
@@ -77,7 +89,11 @@ fn run-single-script { |basename|
       should-be (
         section:create [&] [
           &'My test'=(
-            section:create [&'should work'=(test-result:success [Wiii! Wiii2!])]
+            section:create [
+              &'should work'=(
+                test-result:success [Wiii! Wiii2!]
+              )
+            ]
           )
         ]
       )
@@ -89,7 +105,11 @@ fn run-single-script { |basename|
       should-be (
         section:create [&] [
           &'My test'=(
-            section:create [&'should fail'=(test-result:failure [Wooo! Wooo2!] [])]
+            section:create [
+              &'should fail'=(
+                test-result:failure [Wooo! Wooo2!] []
+              )
+            ]
           )
         ]
       )
@@ -125,7 +145,11 @@ fn run-single-script { |basename|
 
     section:simplify $section |
       should-be (
-        section:create [&Alpha=(test-result:failure [] [])]
+        section:create [
+          &Alpha=(
+            test-result:failure [] []
+          )
+        ]
       )
 
     all $section[test-results][Alpha][exception-lines] |
@@ -138,12 +162,22 @@ fn run-single-script { |basename|
 
     section:simplify $section |
       should-be (
-        section:create [&Alpha=(test-result:failure [] [])] [
+        section:create [
+          &Alpha=(
+            test-result:failure [] []
+          )
+        ] [
           &'In subsection'=(
             section:create [
-              &Beta=(test-result:failure [] [])
-              &Gamma=(test-result:failure [] [])
-              &'Longer title'=(test-result:failure [] [])
+              &Beta=(
+                test-result:failure [] []
+              )
+              &Gamma=(
+                test-result:failure [] []
+              )
+              &'Longer title'=(
+                test-result:failure [] []
+              )
             ]
           )
         ]
@@ -162,12 +196,18 @@ fn run-single-script { |basename|
         section:create [&] [
           &'My test'=(
             section:create [
-              &'should pass'=(test-result:success [Wiii!])
+              &'should pass'=(
+                test-result:success [Wiii!]
+              )
             ] [
               &Cip=(
                 section:create [&] [
                   &Ciop=(
-                    section:create [&'should fail'=(test-result:failure [Wooo!] [])]
+                    section:create [
+                      &'should fail'=(
+                        test-result:failure [Wooo!] []
+                      )
+                    ]
                   )
                 ]
               )
@@ -187,7 +227,11 @@ fn run-single-script { |basename|
       should-be (
         section:create [&] [
           &'Returning from a test'=(
-            section:create [&'should work'=(test-result:success [Alpha Beta])]
+            section:create [
+              &'should work'=(
+                test-result:success [Alpha Beta]
+              )
+            ]
           )
         ]
       )

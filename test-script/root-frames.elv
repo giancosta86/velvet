@@ -14,9 +14,13 @@ fn create {
       var frame-artifact = ($frame[to-artifact])
 
       if (section:is-section $frame-artifact) {
-        section:create [&] [&$frame-title=$frame-artifact]
+        section:create [&] [
+          &$frame-title=$frame-artifact
+        ]
       } else {
-        section:create [&$frame-title=$frame-artifact]
+        section:create [
+          &$frame-title=$frame-artifact
+        ]
       }
     } |
       section:merge

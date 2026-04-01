@@ -6,7 +6,11 @@ var alpha = (summary:from-sandbox-result [
   &section=(
     section:create [&] [
       &'In alpha'=(
-        section:create [&'should work'=(test-result:success ['Alpha 1'])]
+        section:create [
+          &'should work'=(
+            test-result:success ['Alpha 1']
+          )
+        ]
       )
     ]
   )
@@ -18,19 +22,29 @@ var alpha-beta = (summary:from-sandbox-result [
     section:create [&] [
       &'In alpha'=(
         section:create [
-          &'should work'=(test-result:success ['Alpha 1'])
+          &'should work'=(
+            test-result:success ['Alpha 1']
+          )
         ] [
           &'In sub-level'=(
             section:create [&] [
               &'In sub-sub-level'=(
-                section:create [&'should be ok'=(test-result:success ['Alpha X'])]
+                section:create [
+                  &'should be ok'=(
+                    test-result:success ['Alpha X']
+                  )
+                ]
               )
             ]
           )
         ]
       )
       &'In beta'=(
-        section:create [&'has duplicate in third source file'=(test-result:success ['Beta 2'])]
+        section:create [
+          &'has duplicate in third source file'=(
+            test-result:success ['Beta 2']
+          )
+        ]
       )
     ]
   )
@@ -42,15 +56,25 @@ var alpha-beta-gamma-simplified = (summary:from-sandbox-result [
     section:create [&] [
       &'In alpha'=(
         section:create [
-          &'should work'=(test-result:success ['Alpha 1'])
-          &'should work too'=(test-result:success ['Alpha 5'])
+          &'should work'=(
+            test-result:success ['Alpha 1']
+          )
+          &'should work too'=(
+            test-result:success ['Alpha 5']
+          )
         ] [
           &'In sub-level'=(
             section:create [
-              &'should fail'=(test-result:failure [Cip Ciop] [])
+              &'should fail'=(
+                test-result:failure [Cip Ciop] []
+              )
             ] [
               &'In sub-sub-level'=(
-                section:create [&'should be ok'=(test-result:success ['Alpha X'])]
+                section:create [
+                  &'should be ok'=(
+                    test-result:success ['Alpha X']
+                  )
+                ]
               )
             ]
           )
@@ -58,12 +82,16 @@ var alpha-beta-gamma-simplified = (summary:from-sandbox-result [
       )
       &'In beta'=(
         section:create [
-          &'has duplicate in third source file'=(test-result:failure [] [])
+          &'has duplicate in third source file'=(
+            test-result:failure [] []
+          )
         ]
       )
       &'In gamma'=(
         section:create [
-          &'should pass'=(test-result:success ['Gamma 3'])
+          &'should pass'=(
+            test-result:success ['Gamma 3']
+          )
         ]
       )
     ]

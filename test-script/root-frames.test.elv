@@ -40,10 +40,22 @@ var failing-block = {
     $root-frames[to-section] |
       section:simplify |
       should-be (
-        section:create [&Alpha=(test-result:success [Hello])] [
-          &Beta=(section:create [&] [
-            &Gamma=(section:create [&Delta=(test-result:failure [World] [])])
-          ])
+        section:create [
+          &Alpha=(
+            test-result:success [Hello]
+          )
+        ] [
+          &Beta=(
+            section:create [&] [
+              &Gamma=(
+                section:create [
+                  &Delta=(
+                    test-result:failure [World] []
+                  )
+                ]
+              )
+            ]
+          )
         ]
       )
   }

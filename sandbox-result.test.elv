@@ -5,7 +5,11 @@ use ./test-result
 
 var left-result = [
   &section=(
-    section:create [&test-from-left=(test-result:success ['Left test'])]
+    section:create [
+      &test-from-left=(
+        test-result:success ['Left test']
+      )
+    ]
   )
   &crashed-scripts=[
     &cip/ciop.test.elv=[
@@ -18,7 +22,11 @@ var left-result = [
 
 var right-result = [
   &section=(
-    section:create [&test-from-right=(test-result:failure ['Right test'] [Ex1 Ex2 Ex3])]
+    section:create [
+      &test-from-right=(
+        test-result:failure ['Right test'] [Ex1 Ex2 Ex3]
+      )
+    ]
   )
   &crashed-scripts=[
     &yogi/bubu.test.elv=[
@@ -68,8 +76,12 @@ var right-result = [
           should-be [
             &section=(
               section:create [
-                &test-from-left=(test-result:success ['Left test'])
-                &test-from-right=(test-result:failure ['Right test'] [Ex1 Ex2 Ex3])
+                &test-from-left=(
+                  test-result:success ['Left test']
+                )
+                &test-from-right=(
+                  test-result:failure ['Right test'] [Ex1 Ex2 Ex3]
+                )
               ]
             )
             &crashed-scripts=[

@@ -23,7 +23,11 @@ fn run-single-sandbox { |basename|
       should-be [
         &section=(section:create [&] [
           &'My test'=(
-            section:create [&'should work'=(test-result:success [Wiii! Wiii2!])]
+            section:create [
+              &'should work'=(
+                test-result:success [Wiii! Wiii2!]
+              )
+            ]
           )
         ])
         &crashed-scripts=[&]
@@ -38,7 +42,11 @@ fn run-single-sandbox { |basename|
       should-be (
         section:create [&] [
           &'My test'=(
-            section:create [&'should fail'=(test-result:failure [Wooo! Wooo2!] [])]
+            section:create [
+              &'should fail'=(
+                test-result:failure [Wooo! Wooo2!] []
+              )
+            ]
           )
         ]
       )

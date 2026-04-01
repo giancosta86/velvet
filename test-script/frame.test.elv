@@ -104,7 +104,11 @@ fn create-test-frame { |title|
 
       $alpha[to-artifact] |
         should-be (
-          section:create [&beta=(test-result:success [Wiii Wiii2])]
+          section:create [
+            &beta=(
+              test-result:success [Wiii Wiii2]
+            )
+          ]
         )
     }
 
@@ -123,7 +127,11 @@ fn create-test-frame { |title|
       put $section |
         section:simplify |
         should-be (
-          section:create [&beta=(test-result:failure [Wooo Wooo2] [])]
+          section:create [
+            &beta=(
+              test-result:failure [Wooo Wooo2] []
+            )
+          ]
         )
 
       all $section[test-results][beta][exception-lines] |
@@ -148,8 +156,12 @@ fn create-test-frame { |title|
         section:simplify |
         should-be (
           section:create [
-            &beta=(test-result:success [Wiii Wiii2])
-            &gamma=(test-result:failure [Wooo Wooo2] [])
+            &beta=(
+              test-result:success [Wiii Wiii2]
+            )
+            &gamma=(
+              test-result:failure [Wooo Wooo2] []
+            )
           ]
         )
     }
@@ -169,7 +181,9 @@ fn create-test-frame { |title|
 
       $alpha[to-artifact] |
         should-be (
-          section:create [&beta=$test-result:duplicate-test]
+          section:create [
+            &beta=$test-result:duplicate-test
+          ]
         )
     }
 
@@ -199,10 +213,18 @@ fn create-test-frame { |title|
       $alpha[to-artifact] |
         section:simplify |
         should-be (
-          section:create [&] [&beta=(section:create [
-            &gamma=(test-result:success [Wiii Wiii2])
-            &delta=(test-result:failure [Wooo Wooo2] [])
-          ])]
+          section:create [&] [
+            &beta=(
+              section:create [
+                &gamma=(
+                  test-result:success [Wiii Wiii2]
+                )
+                &delta=(
+                  test-result:failure [Wooo Wooo2] []
+                )
+              ]
+            )
+          ]
         )
     }
 
@@ -242,13 +264,21 @@ fn create-test-frame { |title|
 
       section:simplify $section |
         should-be (
-          section:create [&beta=(test-result:success [Beta])] [
+          section:create [
+            &beta=(
+              test-result:success [Beta]
+            )
+          ] [
             &gamma=(
               section:create [&] [
                 &delta=(
                   section:create [
-                    &epsilon=(test-result:success [Epsilon])
-                    &zeta=(test-result:failure [Zeta] [])
+                    &epsilon=(
+                      test-result:success [Epsilon]
+                    )
+                    &zeta=(
+                      test-result:failure [Zeta] []
+                    )
                   ]
                 )
               ]
