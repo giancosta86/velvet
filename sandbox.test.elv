@@ -1,6 +1,7 @@
 use path
 use str
 use ./outcomes
+use ./sandbox-result
 use ./section
 use ./test-result
 use ./tests/script-gallery
@@ -20,8 +21,8 @@ fn run-single-sandbox { |basename|
 >> 'Running in sandbox' {
   >> 'passing test' {
     run-single-sandbox in-section-ok |
-      should-be [
-        &section=(section:create [&] [
+      should-be (
+        section:create [&] [
           &'My test'=(
             section:create [
               &'should work'=(
@@ -29,9 +30,9 @@ fn run-single-sandbox { |basename|
               )
             ]
           )
-        ])
-        &crashed-scripts=[&]
-      ]
+        ] |
+          sandbox-result:create (all)
+      )
   }
 
   >> 'failing test' {

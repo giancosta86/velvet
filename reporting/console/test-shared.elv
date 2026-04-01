@@ -28,61 +28,53 @@ fn run-console-tests { |settings|
   }
 
   >> 'with single passed test' {
-    var sandbox-result = [
-      &section=(
-        section:create [
-          &Alpha=(
-            test-result:success [Wiii!]
-          )
-        ]
-      )
-      &crashed-scripts=[&]
-    ]
+    var sandbox-result = (
+      section:create [
+        &Alpha=(
+          test-result:success [Wiii!]
+        )
+      ] |
+        sandbox-result:create (all)
+    )
 
     run-sandbox-scenario $sandbox-result $settings[scenarios][single-passed-test]
   }
 
   >> 'with single failed test - having both output and exception lines' {
-    var sandbox-result = [
-      &section=(
-        section:create [
-          &Beta=(
-            test-result:failure [Wooo!] [DODO]
-          )
-        ]
-      )
-      &crashed-scripts=[&]
-    ]
+    var sandbox-result = (
+      section:create [
+        &Beta=(
+          test-result:failure [Wooo!] [DODO]
+        )
+      ] |
+        sandbox-result:create (all)
+    )
 
     run-sandbox-scenario $sandbox-result $settings[scenarios][single-failed-having-output-and-exception]
   }
 
   >> 'with single failed test - having only output lines' {
-    var sandbox-result = [
-      &section=(
-        section:create [
-          &Beta=(
-            test-result:failure [Wooo!] []
-          )
-        ]
-      )
-      &crashed-scripts=[&]
-    ]
+    var sandbox-result = (
+      section:create [
+        &Beta=(
+          test-result:failure [Wooo!] []
+        )
+      ] |
+        sandbox-result:create (all)
+    )
 
     run-sandbox-scenario $sandbox-result $settings[scenarios][single-failed-having-output-only]
   }
 
   >> 'with single failed test - having only exception lines' {
-    var sandbox-result = [
-      &section=(
-        section:create [
-          &Beta=(
-            test-result:failure [] [DODO]
-          )
-        ]
-      )
-      &crashed-scripts=[&]
-    ]
+    var sandbox-result = (
+      section:create [
+        &Beta=(
+          test-result:failure [] [DODO]
+        )
+      ] |
+        sandbox-result:create (all)
+    )
 
     run-sandbox-scenario $sandbox-result $settings[scenarios][single-failed-having-exception-only]
   }
@@ -108,18 +100,16 @@ fn run-console-tests { |settings|
       ]
     )
 
-    var sandbox-result = [
-      &section=$section
-      &crashed-scripts=[&]
-    ]
+    var sandbox-result = (
+      sandbox-result:create $section
+    )
 
     run-sandbox-scenario $sandbox-result $settings[scenarios][multi-level-tree]
   }
 
   >> 'when running just crashed scripts' {
-    var output-tester = (create-console-output-tester [
-      &section=$section:empty
-      &crashed-scripts=[
+    var sandbox-result = (
+      sandbox-result:create $section:empty [
         &yogi.test.elv=[
           alpha
           beta
@@ -130,7 +120,11 @@ fn run-console-tests { |settings|
           sigma
         ]
       ]
-    ])
+    )
+
+    var output-tester = (
+      create-console-output-tester $sandbox-result
+    )
 
     $output-tester[should-contain-all] [
       'Total tests: 0'

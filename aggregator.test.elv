@@ -19,10 +19,9 @@ fn get-aggregator-script { |basename|
   >> 'when running 1 script' {
     get-aggregator-script alpha |
       aggregator:run-test-scripts |
-      should-be [
-        &section=$summaries:alpha[section]
-        &crashed-scripts=[&]
-      ]
+      should-be (
+        sandbox-result:create $summaries:alpha[section]
+      )
   }
 
   >> 'when running 2 scripts' {
@@ -31,10 +30,9 @@ fn get-aggregator-script { |basename|
       (get-aggregator-script beta)
     ] |
       aggregator:run-test-scripts |
-      should-be [
-        &section=$summaries:alpha-beta[section]
-        &crashed-scripts=[&]
-      ]
+      should-be (
+        sandbox-result:create $summaries:alpha-beta[section]
+      )
   }
 
   >> 'when running the same 3 scripts with different numbers of workers' {

@@ -1,12 +1,11 @@
 use github.com/giancosta86/ethereal/v1/lang
+use ./sandbox-result
 use ./section
 use ./stats
 
-var empty = [
-  &section=$section:empty
-  &stats=$stats:empty
-  &crashed-scripts=[&]
-]
+var empty = (
+  assoc $sandbox-result:empty stats $stats:empty
+)
 
 fn from-sandbox-result { |@arguments|
   var sandbox-result = (lang:get-single-input $arguments)

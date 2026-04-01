@@ -3,47 +3,88 @@ use ./sandbox-result
 use ./section
 use ./test-result
 
-var left-result = [
-  &section=(
-    section:create [
-      &test-from-left=(
-        test-result:success ['Left test']
-      )
-    ]
-  )
-  &crashed-scripts=[
-    &cip/ciop.test.elv=[
-      alpha
-      beta
-      gamma
-    ]
-  ]
-]
-
-var right-result = [
-  &section=(
-    section:create [
-      &test-from-right=(
-        test-result:failure ['Right test'] [Ex1 Ex2 Ex3]
-      )
-    ]
-  )
-  &crashed-scripts=[
-    &yogi/bubu.test.elv=[
-      ro
-      sigma
-    ]
-    &park/ranger.test.elv=[
-      line-1
-      line-2
-      line-3
-      line-4
-    ]
-  ]
-]
-
 >> 'Sandbox result' {
+  >> 'creation' {
+    var section = (
+      section:create [
+        &alpha=(
+          test-result:success [Hello]
+        )
+      ]
+    )
+
+    var crashed-scripts = [
+      &alpha.test.elv=[
+        line-1
+        line-2
+        line-3
+      ]
+    ]
+
+    >> 'when passing no values' {
+      all [] |
+        sandbox-result:create |
+        should-be [
+          &section=$section:empty
+          &crashed-scripts=[&]
+        ]
+    }
+
+    >> 'when passing just the section' {
+      sandbox-result:create $section |
+        should-be [
+          &section=$section
+          &crashed-scripts=[&]
+        ]
+    }
+
+    >> 'when passing both the section and the crashed scripts' {
+      sandbox-result:create $section $crashed-scripts |
+        should-be [
+          &section=$section
+          &crashed-scripts=$crashed-scripts
+        ]
+    }
+  }
+
   >> 'merging' {
+    var left-result = (
+      sandbox-result:create (
+        section:create [
+          &test-from-left=(
+            test-result:success ['Left test']
+          )
+        ]
+      ) [
+        &cip/ciop.test.elv=[
+          alpha
+          beta
+          gamma
+        ]
+      ]
+    )
+
+    var right-result = (
+      sandbox-result:create (
+        section:create [
+          &test-from-right=(
+            test-result:failure ['Right test'] [Ex1 Ex2 Ex3]
+          )
+        ]
+      ) [
+          &yogi/bubu.test.elv=[
+            ro
+            sigma
+          ]
+          &park/ranger.test.elv=[
+            line-1
+            line-2
+            line-3
+            line-4
+          ]
+      ]
+    )
+
     >> 'with no operands' {
       all [] |
         sandbox-result:merge |
@@ -73,8 +114,8 @@ var right-result = [
 
       >> 'when both operands are non-empty' {
         sandbox-result:merge $left-result $right-result |
-          should-be [
-            &section=(
+          should-be (
+            sandbox-result:create (
               section:create [
                 &test-from-left=(
                   test-result:success ['Left test']
@@ -83,8 +124,7 @@ var right-result = [
                   test-result:failure ['Right test'] [Ex1 Ex2 Ex3]
                 )
               ]
-            )
-            &crashed-scripts=[
+            ) [
               &cip/ciop.test.elv=[
                 alpha
                 beta
@@ -101,7 +141,7 @@ var right-result = [
                 line-4
               ]
             ]
-          ]
+          )
       }
     }
   }

@@ -1,4 +1,5 @@
 use ./outcomes
+use ./sandbox-result
 use ./section
 use ./summary
 use ./test-result
@@ -41,12 +42,8 @@ var crashed-scripts = [
       ]
     )
 
-    var sandbox-result = [
-      &section=$section
-      &crashed-scripts=$crashed-scripts
-    ]
-
-    summary:from-sandbox-result $sandbox-result |
+    sandbox-result:create $section $crashed-scripts |
+      summary:from-sandbox-result |
       should-be [
         &section=$section
         &stats=[
@@ -81,12 +78,7 @@ var crashed-scripts = [
       ]
     )
 
-    var sandbox-result = [
-      &section=$section
-      &crashed-scripts=$crashed-scripts
-    ]
-
-    put $sandbox-result |
+    sandbox-result:create $section $crashed-scripts |
       summary:from-sandbox-result |
       summary:simplify |
       should-be [

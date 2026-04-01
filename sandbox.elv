@@ -11,10 +11,7 @@ all $test-script-paths | seq:reduce $sandbox-result:empty { |cumulated-sandbox-r
     try {
       var section = (test-script:run $script-path)
 
-      put [
-        &section=$section
-        &crashed-scripts=[&]
-      ]
+      sandbox-result:create $section
     } catch e {
       var exception-lines = [(
         show $e |
@@ -22,11 +19,8 @@ all $test-script-paths | seq:reduce $sandbox-result:empty { |cumulated-sandbox-r
           exception-lines:replace-bottom-eval $script-path
       )]
 
-      put [
-        &section=$section:empty
-        &crashed-scripts=[
-          &$script-path=$exception-lines
-        ]
+      sandbox-result:create $section:empty [
+        &$script-path=$exception-lines
       ]
     }
   )
