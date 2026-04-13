@@ -1,9 +1,9 @@
+use ./assertion-fails
 use ./shared
 use ./should-be
 
+var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-be~ = $should-be:should-be~
-
-var expect-failure~ = (shared:create-expect-failure $should-be~ $should-be:-error-message-base)
 
 >> 'Assertions: should-be' {
   >> 'non-strict' {
@@ -13,7 +13,10 @@ var expect-failure~ = (shared:create-expect-failure $should-be~ $should-be:-erro
     }
 
     >> 'with different strings' {
-      expect-failure Alpha Beta
+      assertion-fails (src) {
+        put Alpha |
+          should-be Beta
+      }
     }
 
     >> 'with number and numeric string' {
@@ -29,7 +32,10 @@ var expect-failure~ = (shared:create-expect-failure $should-be~ $should-be:-erro
     }
 
     >> 'with different strings' {
-      expect-failure &strict Alpha Beta
+      assertion-fails (src) {
+        put Alpha |
+          should-be &strict Beta
+      }
     }
 
     >> 'with equal numbers' {
@@ -38,7 +44,10 @@ var expect-failure~ = (shared:create-expect-failure $should-be~ $should-be:-erro
     }
 
     >> 'with number and numeric string' {
-      expect-failure &strict 90 (num 90)
+      assertion-fails (src) {
+        put 90 |
+        should-be &strict (num 90)
+      }
     }
 
     >> 'with equal booleans' {

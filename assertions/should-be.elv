@@ -1,6 +1,5 @@
+use ../assertion
 use ./shared
-
-var -error-message-base = 'should-be assertion failed'
 
 fn should-be { |&strict=$false expected|
   var actual expected = (shared:get-minimals &strict=$strict $expected)
@@ -14,6 +13,6 @@ fn should-be { |&strict=$false expected|
       &show-diff=$true
     ]
 
-    shared:fail-with-strict-prefix &strict=$strict $-error-message-base
+    assertion:fail (src)
   }
 }
