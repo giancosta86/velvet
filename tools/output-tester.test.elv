@@ -1,4 +1,7 @@
+use ../assertions/assertion-fails
 use ./output-tester
+
+var assertion-fails~ = $assertion-fails:assertion-fails~
 
 >> 'Output tester' {
   var output-tester = (
@@ -48,14 +51,13 @@ use ./output-tester
     }
 
     >> 'when one of the strings is not contained' {
-      fails {
+      assertion-fails should-contain {
         $output-tester[should-contain-all] [
           Alpha
           Beta
           INEXISTENT
         ]
-      } |
-        should-contain 'should-contain'
+      }
     }
 
     >> 'when looking for a partial string' {
@@ -86,25 +88,23 @@ use ./output-tester
     }
 
     >> 'when one of the strings is contained' {
-      fails {
+      assertion-fails should-not-contain {
         $output-tester[should-contain-none] [
           INEXISTENT
           Alpha
           MISSING
         ]
-      } |
-        should-contain 'should-not-contain'
+      }
     }
 
     >> 'when looking for a partial string' {
-      fails {
+      assertion-fails should-not-contain {
         $output-tester[should-contain-none] [
           Al
           eta
           amm
         ]
-      } |
-        should-contain 'should-not-contain'
+      }
     }
 
     >> 'when not expecting a non-string value' {
@@ -126,13 +126,12 @@ use ./output-tester
     }
 
     >> 'when looking for a missing snippet' {
-      fails {
+      assertion-fails should-contain {
         $output-tester[should-contain-snippet] [
           Cip
           Ciop
         ]
-      } |
-        should-contain 'should-contain assertion failed'
+      }
     }
 
     >> 'when the output is styled' {
@@ -155,14 +154,13 @@ use ./output-tester
 
   >> 'should-not-contain-snippet' {
     >> 'when not expecting an existing snippet' {
-      fails {
+      assertion-fails should-not-contain {
         $output-tester[should-not-contain-snippet] [
           Alpha
           Beta
           Gamma
         ]
-      } |
-        should-contain 'should-not-contain assertion failed'
+      }
     }
 
     >> 'when not expecting a missing snippet' {

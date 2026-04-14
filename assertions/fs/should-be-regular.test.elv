@@ -1,5 +1,7 @@
+use ../assertion-fails
 use ./should-be-regular
 
+var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-be-regular~ = $should-be-regular:should-be-regular~
 
 >> 'Assertions: should-be-regular' {
@@ -36,10 +38,9 @@ var should-be-regular~ = $should-be-regular:should-be-regular~
       }
 
       >> 'should fail' {
-        fails {
+        assertion-fails (src) {
           $failing-assertion
-        } |
-          should-be $should-be-regular:-error-message
+        }
       }
 
       >> 'should display just such files' {

@@ -1,10 +1,9 @@
+use ../assertion
 use ./shared
-
-var -error-message-base = 'should-emit assertion failed'
 
 fn should-emit { |&strict=$false &order-key=$nil &any-order=$false expected|
   if (not-eq (kind-of $expected) list) {
-    fail 'The expected argument must be a list of values'
+    fail 'The expected argument must be a list'
   }
 
   if $any-order {
@@ -19,20 +18,20 @@ fn should-emit { |&strict=$false &order-key=$nil &any-order=$false expected|
     shared:equalize &strict=$strict &order-key=$order-key
   )]
 
-  var expected = [(
+  var equalized-expected = [(
     all $expected |
       shared:equalize &strict=$strict &order-key=$order-key
   )]
 
-  if (not-eq $actual $expected) {
+  if (not-eq $actual $equalized-expected) {
     shared:contrast [
       &red-description='Expected values'
-      &red=$expected
+      &red=$equalized-expected
       &green-description='Emitted values'
       &green=$actual
       &show-diff=$true
     ]
 
-    shared:fail-with-strict-prefix &strict=$strict $-error-message-base
+    assertion:fail (src)
   }
 }

@@ -2,20 +2,7 @@ use github.com/giancosta86/ethereal/v1/diff
 use github.com/giancosta86/ethereal/v1/lang
 use github.com/giancosta86/ethereal/v1/seq
 use github.com/giancosta86/ethereal/v1/string
-
-fn with-strict-prefix { |&strict=$true @arguments|
-  var message = (lang:get-single-input $arguments)
-
-  var strictness-prefix = (
-    if $strict {
-      put 'strict '
-    } else {
-      put ''
-    }
-  )
-
-  put $strictness-prefix''$message
-}
+use ../assertion
 
 fn get-minimal { |&strict=$true @arguments|
   var value = (lang:get-single-input $arguments)
@@ -25,12 +12,6 @@ fn get-minimal { |&strict=$true @arguments|
   } else {
     lang:flat-num $value
   }
-}
-
-fn fail-with-strict-prefix { |&strict=$true @arguments|
-  lang:get-single-input $arguments |
-    with-strict-prefix &strict=$strict |
-    fail (all)
 }
 
 fn contrast { |inputs|
@@ -70,26 +51,9 @@ fn get-minimals { |&strict=$true argument|
   get-minimal &strict=$strict $argument
 }
 
-fn create-expect-failure { |assertion-function error-message-base|
-  var expect-failure = { |&strict=$false pipe-operand argument-operand|
-    use ./fails
-    use ./should-be
+fn create-assertion-testing-entries { |test failure-entries-description|
+  var assertion-reference = (one)
 
-    fails:fails {
-      if (lang:is-function $pipe-operand) {
-        $pipe-operand
-      } else {
-        put $pipe-operand
-      } |
-        $assertion-function &strict=$strict $argument-operand
-    } |
-      should-be:should-be (with-strict-prefix &strict=$strict $error-message-base)
-  }
-
-  put $expect-failure
-}
-
-fn create-assertion-on-tested-entries { |test description fail-message|
   put {
     var failure-entries = [(
       each { |entry|
@@ -100,9 +64,9 @@ fn create-assertion-on-tested-entries { |test description fail-message|
     )]
 
     if (seq:is-non-empty $failure-entries) {
-      highlight-wrong-value $description $failure-entries
+      highlight-wrong-value $failure-entries-description $failure-entries
 
-      fail $fail-message
+      assertion:fail $assertion-reference
     }
   }
 }

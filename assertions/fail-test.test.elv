@@ -5,10 +5,9 @@ var fail-test~ = $fail-test:fail-test~
 
 >> 'Assertions: fail-test' {
   >> 'when raising a test failure' {
-    throws {
+    fails {
       fail-test
     } |
-      exception:get-fail-content |
       should-be 'TEST SET TO FAIL'
   }
 }

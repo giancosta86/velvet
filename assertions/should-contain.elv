@@ -1,7 +1,6 @@
+use ../assertion
 use ./containers
 use ./shared
-
-var -error-message-base = 'should-contain assertion failed'
 
 fn should-contain { |&strict=$false value|
   var container value = (shared:get-minimals &strict=$strict $value)
@@ -15,6 +14,6 @@ fn should-contain { |&strict=$false value|
       &show-diff=$false
     ]
 
-    shared:fail-with-strict-prefix &strict=$strict $-error-message-base
+    assertion:fail (src)
   }
 }

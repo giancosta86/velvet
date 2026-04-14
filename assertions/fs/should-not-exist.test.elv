@@ -1,6 +1,8 @@
 use os
+use ../assertion-fails
 use ./should-not-exist
 
+var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-not-exist~ = $should-not-exist:should-not-exist~
 
 >> 'Assertions: should-not-exist' {
@@ -33,10 +35,9 @@ var should-not-exist~ = $should-not-exist:should-not-exist~
       }
 
       >> 'should fail' {
-        fails {
+        assertion-fails (src) {
           $failing-assertion
-        } |
-          should-be $should-not-exist:-error-message
+        }
       }
 
       >> 'should display just such file system entries' {

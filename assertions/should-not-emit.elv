@@ -1,11 +1,10 @@
 use github.com/giancosta86/ethereal/v1/seq
+use ../assertion
 use ./shared
 
-var -error-message-base = 'should-not-emit assertion failed'
-
-fn should-not-emit { |&strict=$false unexpected-values|
-  if (not-eq (kind-of $unexpected-values) list) {
-    fail 'The argument must be a list of values'
+fn should-not-emit { |&strict=$false unexpected|
+  if (not-eq (kind-of $unexpected) list) {
+    fail 'The unexpected argument must be a list'
   }
 
   var actual = (
@@ -15,11 +14,13 @@ fn should-not-emit { |&strict=$false unexpected-values|
 
   var unexpected-found = []
 
-  all $unexpected-values | each { |raw-unexpected|
-    var unexpected = (shared:get-minimal &strict=$strict $raw-unexpected)
+  all $unexpected | each { |raw-unexpected|
+    var current-unexpected = (
+      shared:get-minimal &strict=$strict $raw-unexpected
+    )
 
-    if (has-value $actual $unexpected) {
-      set unexpected-found = (conj $unexpected-found $unexpected)
+    if (has-value $actual $current-unexpected) {
+      set unexpected-found = (conj $unexpected-found $current-unexpected)
     }
   }
 
@@ -32,6 +33,6 @@ fn should-not-emit { |&strict=$false unexpected-values|
       &show-diff=$false
     ]
 
-    shared:fail-with-strict-prefix &strict=$strict $-error-message-base
+    assertion:fail (src)
   }
 }

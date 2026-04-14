@@ -1,6 +1,5 @@
+use ../assertion
 use ./shared
-
-var -error-message-base = 'should-not-be assertion failed'
 
 fn should-not-be { |&strict=$false unexpected|
   var actual unexpected = (shared:get-minimals &strict=$strict $unexpected)
@@ -14,6 +13,6 @@ fn should-not-be { |&strict=$false unexpected|
       &show-diff=$false
     ]
 
-    shared:fail-with-strict-prefix &strict=$strict $-error-message-base
+    assertion:fail (src)
   }
 }

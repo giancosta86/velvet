@@ -1,6 +1,8 @@
 use os
+use ../assertion-fails
 use ./should-not-be-dir
 
+var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-not-be-dir~ = $should-not-be-dir:should-not-be-dir~
 
 >> 'Assertions: should-not-be-dir' {
@@ -33,10 +35,9 @@ var should-not-be-dir~ = $should-not-be-dir:should-not-be-dir~
       }
 
       >> 'should fail' {
-        fails {
+        assertion-fails (src) {
           $failing-assertion
-        } |
-          should-be $should-not-be-dir:-error-message
+        }
       }
 
       >> 'should display just such directories' {

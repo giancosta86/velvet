@@ -1,19 +1,6 @@
 use ./shared
 
 >> 'Shared assertion utilities' {
-  >> 'with-strict-prefix' {
-    >> 'with strict disabled' {
-      shared:with-strict-prefix &strict=$false Yogi |
-        should-be Yogi
-    }
-
-    >> 'with strict enabled' {
-      put Bubu |
-        shared:with-strict-prefix &strict |
-        should-be 'strict Bubu'
-    }
-  }
-
   >> 'getting a minimal value' {
     >> 'with strict disabled' {
       shared:get-minimal &strict=$false (num 90) |
@@ -24,25 +11,6 @@ use ./shared
       put (num 92) |
         shared:get-minimal &strict |
         should-be &strict (num 92)
-    }
-  }
-
-  >> 'fail-with-strict-prefix' {
-    >> 'with strict disabled' {
-      throws {
-        shared:fail-with-strict-prefix &strict=$false Yogi
-      } |
-        exception:get-fail-content |
-        should-be Yogi
-    }
-
-    >> 'with strict enabled' {
-      throws {
-        put Bubu |
-          shared:fail-with-strict-prefix &strict
-      } |
-        exception:get-fail-content |
-        should-be 'strict Bubu'
     }
   }
 
