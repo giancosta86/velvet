@@ -11,7 +11,7 @@ var fails~ = $fails:fails~
       }
     } |
       exception:get-fail-content |
-      should-be 'The given code block did not fail!'
+      should-be 'The given code block did not throw!'
   }
 
   >> 'when the block throws a fail' {
@@ -24,7 +24,7 @@ var fails~ = $fails:fails~
   >> 'when the block throws a non-fail exception' {
     throws {
       fails {
-        ASD
+        INEXISTING-EXECUTABLE-LOL
       }
     } |
       show (all) |
