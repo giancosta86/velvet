@@ -55,7 +55,7 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
     fails {
       assertion-fails $expected-assertion { }
     } |
-      should-be 'The given code block did not fail!'
+      should-be 'The given code block did not throw!'
   }
 
   >> 'when passing the result of src' {
