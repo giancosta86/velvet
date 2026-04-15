@@ -1,5 +1,4 @@
 use ./fail-test
-use ./throws
 
 var fail-test~ = $fail-test:fail-test~
 

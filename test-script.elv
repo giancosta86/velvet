@@ -32,7 +32,7 @@ fn run { |script-path|
       if (== $rest-count 1) {
         put $rest[0]
       } elif (== $rest-count 0) {
-        put $assertions:fail-test~
+        put $tools:fail-test~
       } else {
         fail 'Only 1 or 2 arguments are allowed!'
       }

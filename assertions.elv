@@ -1,4 +1,3 @@
-use ./assertions/fail-test
 use ./assertions/fails
 use ./assertions/fs/should-be-dir
 use ./assertions/fs/should-be-regular
@@ -14,7 +13,6 @@ use ./assertions/should-not-contain
 use ./assertions/should-not-emit
 use ./assertions/throws
 
-var fail-test~ = $fail-test:fail-test~
 var fails~ = $fails:fails~
 var should-be~ = $should-be:should-be~
 var should-contain~ = $should-contain:should-contain~
