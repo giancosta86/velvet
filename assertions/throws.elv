@@ -10,6 +10,6 @@ fn throws { |&swallow=$false block|
       put $e
     }
   } else {
-    fail 'The given code block did not fail!'
+    fail 'The given code block did not throw!'
   }
 }

@@ -7,14 +7,14 @@ var throws~ = $throws:throws~
     try {
       throws { }
 
-      fail 'No exception was thrown by the expectation!'
+      fail 'THE CODE SHOULD NOT REACH THIS POINT!'
     } catch e {
       exception:get-fail-content $e |
-        should-be 'The given code block did not fail!'
+        should-be 'The given code block did not throw!'
     }
   }
 
-  >> 'when there is an exception' {
+  >> 'when there is a failure' {
     throws {
       fail DODO
     } |
@@ -22,12 +22,31 @@ var throws~ = $throws:throws~
       should-be DODO
   }
 
-  >> 'in a pipeline, without arguments' {
+  >> 'when there is another exception' {
     throws {
-      fail CIOP
+      / 9 0
     } |
-      exception:get-fail-content |
-      should-be CIOP
+      exception:get-reason |
+      to-string (all) |
+      should-contain divisor
+  }
+
+  >> 'when emitting bytes' {
+    throws {
+      echo Hello
+      fail DODO
+    } |
+      kind-of (all) |
+      should-be exception
+  }
+
+  >> 'when emitting values' {
+    throws {
+      put 90
+      fail DODO
+    } |
+      kind-of (all) |
+      should-be exception
   }
 
   >> 'when swallowing the exception' {
@@ -47,10 +66,12 @@ var throws~ = $throws:throws~
       >> 'when emitting bytes' {
         throws &swallow {
           echo Hello
+          echo World
           fail DODO
         } |
           should-emit [
             Hello
+            World
           ]
       }
     }
@@ -61,7 +82,7 @@ var throws~ = $throws:throws~
           put 90
         }
       } |
-        should-be 'The given code block did not fail!'
+        should-be 'The given code block did not throw!'
     }
   }
 }
