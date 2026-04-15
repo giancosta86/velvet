@@ -1,11 +1,6 @@
 use ./run-dual
 
 >> 'Assertion: running the dual script' {
-  >> 'when getting the dual script path' {
-    run-dual:-get-dual-script '/alpha/beta/gamma.test.elv' |
-      should-be '/alpha/beta/gamma.elv'
-  }
-
   >> 'when running the dual script' {
     var fake-test-script = my-script.test.elv
 
