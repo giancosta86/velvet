@@ -1,5 +1,5 @@
 use ../assertion
-use ./shared
+use ../utils/output
 
 fn should-emit { |&strict=$false &order-key=$nil &any-order=$false expected|
   if (not-eq (kind-of $expected) list) {
@@ -14,21 +14,32 @@ fn should-emit { |&strict=$false &order-key=$nil &any-order=$false expected|
     }
   }
 
-  var actual = [(
-    shared:equalize &strict=$strict &order-key=$order-key
-  )]
+  var sorting-block = (
+    if $order-key {
+      put { order &key=$order-key }
+    } else {
+      put $all~
+    }
+  )
 
-  var equalized-expected = [(
+  var list-processor = {
+    each { |value| assertion:get-input &strict=$strict $value } |
+      $sorting-block
+  }
+
+  var actual = [($list-processor)]
+
+  var expected = [(
     all $expected |
-      shared:equalize &strict=$strict &order-key=$order-key
+      $list-processor
   )]
 
-  if (not-eq $actual $equalized-expected) {
-    shared:contrast [
-      &red-description='Expected values'
-      &red=$equalized-expected
-      &green-description='Emitted values'
-      &green=$actual
+  if (not-eq $actual $expected) {
+    output:contrast [
+      &red-description='Emitted values'
+      &red=$actual
+      &green-description='Expected values'
+      &green=$expected
       &show-diff=$true
     ]
 

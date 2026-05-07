@@ -1,22 +1,21 @@
 use github.com/giancosta86/ethereal/v1/seq
 use ../assertion
-use ./shared
+use ../utils/output
 
 fn should-not-emit { |&strict=$false unexpected|
   if (not-eq (kind-of $unexpected) list) {
     fail 'The unexpected argument must be a list'
   }
 
-  var actual = (
-    put [(all)] |
-      shared:get-minimal &strict=$strict
-  )
+  var actual = [(
+    each { |value| assertion:get-input &strict=$strict $value }
+  )]
 
   var unexpected-found = []
 
   all $unexpected | each { |raw-unexpected|
     var current-unexpected = (
-      shared:get-minimal &strict=$strict $raw-unexpected
+      assertion:get-input &strict=$strict $raw-unexpected
     )
 
     if (has-value $actual $current-unexpected) {
@@ -25,13 +24,7 @@ fn should-not-emit { |&strict=$false unexpected|
   }
 
   if (seq:is-non-empty $unexpected-found) {
-    shared:contrast [
-      &red-description='Unexpected values found'
-      &red=$unexpected-found
-      &green-description='Emitted values'
-      &green=$actual
-      &show-diff=$false
-    ]
+    output:highlight-wrong 'Unexpected values' $unexpected-found
 
     assertion:fail (src)
   }

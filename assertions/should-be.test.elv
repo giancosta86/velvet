@@ -1,5 +1,4 @@
-use ./assertion-fails
-use ./shared
+use ../block-handlers/assertion-fails
 use ./should-be
 
 var assertion-fails~ = $assertion-fails:assertion-fails~
@@ -47,7 +46,7 @@ var should-be~ = $should-be:should-be~
       >> 'with number and numeric string' {
         assertion-fails (src) {
           put 90 |
-          should-be &strict (num 90)
+            should-be &strict (num 90)
         }
       }
 
@@ -60,7 +59,20 @@ var should-be~ = $should-be:should-be~
       }
 
       >> 'with equal multi-level lists' {
-        var test-list = [Alpha [Beta [Gamma Delta] Epsilon] Zeta Eta Theta]
+        var test-list = [
+          Alpha
+          [
+            Beta
+            [
+              Gamma
+              Delta
+            ]
+            Epsilon
+          ]
+          Zeta
+          Eta
+          Theta
+        ]
 
         put $test-list |
           should-be &strict $test-list
@@ -95,10 +107,10 @@ var should-be~ = $should-be:should-be~
         )
 
         $output-tester[should-contain-snippet] [
-          Expected:
-          Beta
           Actual:
           Alpha
+          Expected:
+          Beta
           '🔎 DIFF:'
           '@@ -1 +1 @@'
           -Beta

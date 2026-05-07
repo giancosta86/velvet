@@ -1,7 +1,6 @@
 use os
-use ../shared
+use ../../assertion
 
-var should-exist~ = (
-  src |
-    shared:create-assertion-testing-entries $os:exists~ 'Missing file system entries'
-)
+fn should-exist {
+  assertion:enforce-predicate (src) $os:exists~ 'Missing file system entries'
+}

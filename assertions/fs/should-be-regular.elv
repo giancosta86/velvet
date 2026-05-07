@@ -1,7 +1,6 @@
 use os
-use ../shared
+use ../../assertion
 
-var should-be-regular~ = (
-  src |
-    shared:create-assertion-testing-entries $os:is-regular~ 'Missing files'
-)
+fn should-be-regular {
+  assertion:enforce-predicate (src) $os:is-regular~ 'Missing files'
+}

@@ -1,6 +1,7 @@
 use path
 use github.com/giancosta86/ethereal/v1/map
 use ./assertions
+use ./block-handlers
 use ./ethereal
 use ./test-script/frame
 use ./test-script/root-frames
@@ -65,6 +66,7 @@ fn run { |script-path|
       $script-functions
       $ethereal:namespaces
       $assertions:
+      $block-handlers:
       $tools:
     ] |
       map:merge |

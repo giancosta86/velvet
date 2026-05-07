@@ -1,7 +1,6 @@
 use os
-use ../shared
+use ../../assertion
 
-var should-be-dir~ = (
-  src |
-    shared:create-assertion-testing-entries $os:is-dir~ 'Missing directories'
-)
+fn should-be-dir {
+  assertion:enforce-predicate (src) $os:is-dir~ 'Missing directories'
+}

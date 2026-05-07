@@ -11,7 +11,7 @@ var -first-clockwork-line-pattern = (
     ['velvet' 'test-script\.elv']
   ] |
     each { |path-component-list|
-      path:join $path:separator $@path-component-list
+      path:join $@path-component-list
     } |
     str:join '|'
 )
@@ -45,13 +45,13 @@ fn replace-bottom-eval { |replacement|
     set last-eval = $find-result[0][groups][1][text]
   }
 
-  if (not $last-eval) {
-    all $lines
-  } else {
+  if $last-eval {
     var specific-eval-pattern = '^(\s*)'(re:quote $last-eval)
 
     all $lines | each { |line|
       re:replace $specific-eval-pattern '${1}'$replacement $line
     }
+  } else {
+    all $lines
   }
 }

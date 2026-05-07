@@ -108,7 +108,7 @@ use ./exception-lines
         ]
     }
 
-    >> 'with different initial spaces for same eval' {
+    >> 'with different leading spaces for same eval' {
       all [
         Alpha
         Beta
@@ -126,7 +126,7 @@ use ./exception-lines
         ]
     }
 
-    >> 'with multiple instances of eval' {
+    >> 'with different instances of eval' {
       all [
         Alpha
         Beta
@@ -151,21 +151,23 @@ use ./exception-lines
     }
 
     >> 'with eval call within command capturing' {
-      var capture-result = (command:capture {
-        var code = '
-          fn beta {
-            fail DODO
-          }
+      var capture-result = (
+        command:capture {
+          var code = '
+            fn beta {
+              fail DODO
+            }
 
-          fn alpha {
-            beta
-          }
+            fn alpha {
+              beta
+            }
 
-          alpha
-        '
+            alpha
+          '
 
-        eval $code
-      })
+          eval $code
+        }
+      )
 
       var exception-log = (
         show $capture-result[exception] |

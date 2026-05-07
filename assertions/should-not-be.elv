@@ -1,17 +1,13 @@
 use ../assertion
-use ./shared
+use ../utils/output
 
 fn should-not-be { |&strict=$false unexpected|
-  var actual unexpected = (shared:get-minimals &strict=$strict $unexpected)
+  var actual = (one | assertion:get-input &strict=$strict)
+
+  set unexpected = (assertion:get-input &strict=$strict $unexpected)
 
   if (eq $unexpected $actual) {
-    shared:contrast [
-      &red-description='Unexpected'
-      &red=$unexpected
-      &green-description='Actual'
-      &green=$actual
-      &show-diff=$false
-    ]
+    output:highlight-wrong 'Unexpected value' $unexpected
 
     assertion:fail (src)
   }

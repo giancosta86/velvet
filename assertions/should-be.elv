@@ -1,15 +1,17 @@
 use ../assertion
-use ./shared
+use ../utils/output
 
 fn should-be { |&strict=$false expected|
-  var actual expected = (shared:get-minimals &strict=$strict $expected)
+  var actual = (one | assertion:get-input &strict=$strict)
+
+  set expected = (assertion:get-input &strict=$strict $expected)
 
   if (not-eq $expected $actual) {
-    shared:contrast [
-      &red-description='Expected'
-      &red=$expected
-      &green-description='Actual'
-      &green=$actual
+    output:contrast [
+      &red-description='Actual'
+      &red=$actual
+      &green-description='Expected'
+      &green=$expected
       &show-diff=$true
     ]
 

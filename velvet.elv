@@ -1,5 +1,4 @@
 use os
-use github.com/giancosta86/ethereal/v1/lang
 use github.com/giancosta86/ethereal/v1/parallel
 use github.com/giancosta86/ethereal/v1/seq
 use ./aggregator

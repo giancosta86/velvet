@@ -1,9 +1,7 @@
-use ./assertion-fails
-use ./fails
+use ../block-handlers/assertion-fails
 use ./should-not-emit
 
 var assertion-fails~ = $assertion-fails:assertion-fails~
-var fails~ = $fails:fails~
 var should-not-emit~ = $should-not-emit:should-not-emit~
 
 >> 'Assertions' {
@@ -141,16 +139,10 @@ var should-not-emit~ = $should-not-emit:should-not-emit~
         )
 
         $output-tester[should-contain-snippet] [
-          'Unexpected values found:'
+          'Unexpected values:'
           '['
           ' Alpha'
           ' Beta'
-          ']'
-          'Emitted values:'
-          '['
-          ' Alpha'
-          ' Beta'
-          ' Gamma'
           ']'
         ]
       }

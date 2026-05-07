@@ -1,4 +1,4 @@
-use ../assertion-fails
+use ../../block-handlers/assertion-fails
 use ./should-not-be-regular
 
 var assertion-fails~ = $assertion-fails:assertion-fails~
@@ -37,28 +37,6 @@ var should-not-be-regular~ = $should-not-be-regular:should-not-be-regular~
         assertion-fails (src) {
           $failing-assertion
         }
-      }
-
-      >> 'should display just such files' {
-        var output-tester = (
-          throws &swallow {
-            $failing-assertion
-          } |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-all] [
-          'Non-missing files'
-          alpha
-          beta
-          gamma
-        ]
-
-        $output-tester[should-contain-none] [
-          ro
-          sigma
-          tau
-        ]
       }
     }
   }

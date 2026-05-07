@@ -1,9 +1,6 @@
-use ./assertion-fails
-use ./fails
-use ./shared
+use ../block-handlers/assertion-fails
 use ./should-emit
 
-var fails~ = $fails:fails~
 var should-emit~ = $should-emit:should-emit~
 
 var assertion-fails~ = $assertion-fails:assertion-fails~
@@ -62,7 +59,7 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
         } |
           should-emit [
             Hello
-            90
+            (num 90)
           ]
       }
 
@@ -183,16 +180,16 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
         )
 
         $output-tester[should-contain-snippet] [
-          'Expected values:'
-          '['
-          ' Ro'
-          ' Sigma'
-          ']'
           'Emitted values:'
           '['
           ' Alpha'
           ' Beta'
           ' Gamma'
+          ']'
+          'Expected values:'
+          '['
+          ' Ro'
+          ' Sigma'
           ']'
           '🔎 DIFF:'
           '@@ -1,4 +1,5 @@'

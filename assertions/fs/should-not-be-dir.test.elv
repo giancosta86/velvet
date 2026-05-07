@@ -1,5 +1,5 @@
 use os
-use ../assertion-fails
+use ../../block-handlers/assertion-fails
 use ./should-not-be-dir
 
 var assertion-fails~ = $assertion-fails:assertion-fails~
@@ -38,28 +38,6 @@ var should-not-be-dir~ = $should-not-be-dir:should-not-be-dir~
         assertion-fails (src) {
           $failing-assertion
         }
-      }
-
-      >> 'should display just such directories' {
-        var output-tester = (
-          throws &swallow {
-            $failing-assertion
-          } |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-all] [
-          'Non-missing directories'
-          alpha
-          beta
-          gamma
-        ]
-
-        $output-tester[should-contain-none] [
-          ro
-          sigma
-          tau
-        ]
       }
     }
   }

@@ -1,13 +1,11 @@
-use ./assertion-fails
-use ./fails
+use ../../block-handlers/assertion-fails
 use ./should-not-contain
 
 var assertion-fails~ = $assertion-fails:assertion-fails~
-var fails~ = $fails:fails~
 var should-not-contain~ = $should-not-contain:should-not-contain~
 
 >> 'Assertions: should-not-contain' {
-  >> 'when the container is a number' {
+  >> 'when the argument is not a collection' {
     >> 'in non-strict mode' {
       >> 'it should convert the number to string' {
         put (num 90) |
@@ -21,12 +19,12 @@ var should-not-contain~ = $should-not-contain:should-not-contain~
           put (num 90) |
             should-not-contain &strict ANYTHING
         } |
-          should-be 'Unsupported container kind: number'
+          should-be 'Data type not supported as a collection: number'
       }
     }
   }
 
-  >> 'when the container is a string' {
+  >> 'when the collection is a string' {
     >> 'when the sub-string is present' {
       assertion-fails (src) {
         put 'Greetings, magic world!' |
@@ -40,7 +38,7 @@ var should-not-contain~ = $should-not-contain:should-not-contain~
     }
   }
 
-  >> 'when the container is a list' {
+  >> 'when the collection is a list' {
     >> 'when the item is present' {
       assertion-fails (src) {
         put [alpha beta gamma] |
@@ -70,7 +68,7 @@ var should-not-contain~ = $should-not-contain:should-not-contain~
     }
   }
 
-  >> 'when the container is a map' {
+  >> 'when the collection is a map' {
     >> 'when the key is present' {
       assertion-fails (src) {
         put [
@@ -92,7 +90,7 @@ var should-not-contain~ = $should-not-contain:should-not-contain~
     }
   }
 
-  >> 'when the container is a set from Ethereal' {
+  >> 'when the collection is a set from Ethereal' {
     >> 'when the item is present' {
       assertion-fails (src) {
         set:of alpha beta gamma |
@@ -134,10 +132,10 @@ var should-not-contain~ = $should-not-contain:should-not-contain~
         )
 
         $output-tester[should-contain-snippet] [
-          'Unexpected substring:'
-          ph
           'Actual string:'
           Alpha
+          'Unexpected substring:'
+          ph
         ]
       }
 
@@ -151,12 +149,12 @@ var should-not-contain~ = $should-not-contain:should-not-contain~
         )
 
         $output-tester[should-contain-snippet] [
-          'Unexpected item:'
-          Alpha
           'Actual list:'
           '['
           ' Alpha'
           ']'
+          'Unexpected item:'
+          Alpha
         ]
       }
 
@@ -170,12 +168,12 @@ var should-not-contain~ = $should-not-contain:should-not-contain~
         )
 
         $output-tester[should-contain-snippet] [
-          'Unexpected key:'
-          Alpha
           'Actual map:'
           '['
           " &Alpha=\t90"
           ']'
+          'Unexpected key:'
+          Alpha
         ]
       }
 
@@ -189,12 +187,12 @@ var should-not-contain~ = $should-not-contain:should-not-contain~
         )
 
         $output-tester[should-contain-snippet] [
-          'Unexpected item:'
-          Alpha
           'Actual ethereal-set:'
           '['
           ' Alpha'
           ']'
+          'Unexpected item:'
+          Alpha
         ]
       }
     }

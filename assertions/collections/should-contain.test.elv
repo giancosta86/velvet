@@ -1,34 +1,31 @@
-use ./assertion-fails
-use ./fails
-use ./shared
+use ../../block-handlers/assertion-fails
 use ./should-contain
 
 var assertion-fails~ = $assertion-fails:assertion-fails~
-var fails~ = $fails:fails~
 var should-contain~ = $should-contain:should-contain~
 
 >> 'Assertions' {
   >> 'should-contain' {
-    >> 'when the container is a number' {
-      >> 'in non-strict mode' {
+    >> 'when the argument is not a collection' {
+      >> 'when non-strict' {
         >> 'it should convert the number to string' {
           put (num 9020192) |
             should-contain '201'
         }
       }
 
-      >> 'in strict mode' {
+      >> 'when strict' {
         >> 'it should fail' {
           fails {
             put (num 90) |
               should-contain &strict ANYTHING
           } |
-            should-be 'Unsupported container kind: number'
+            should-be 'Data type not supported as a collection: number'
         }
       }
     }
 
-    >> 'when the container is a string' {
+    >> 'when the collection is a string' {
       >> 'when the sub-string is present' {
         put 'Greetings, magic world!' |
           should-contain magic
@@ -42,7 +39,7 @@ var should-contain~ = $should-contain:should-contain~
       }
     }
 
-    >> 'when the container is a list' {
+    >> 'when the collection is a list' {
       >> 'when the item is present' {
         put [alpha beta gamma] |
           should-contain beta
@@ -57,12 +54,12 @@ var should-contain~ = $should-contain:should-contain~
 
       >> 'when the list contains string representations of numbers' {
         >> 'when the item is a number' {
-          >> 'by default' {
+          >> 'when non-strict' {
             put [90 92 95 98] |
               should-contain (num 92)
           }
 
-          >> 'when strict equality is enabled' {
+          >> 'when strict' {
             assertion-fails (src) {
               put [90 92 95 98] |
                 should-contain &strict (num 92)
@@ -72,7 +69,7 @@ var should-contain~ = $should-contain:should-contain~
       }
     }
 
-    >> 'when the container is a map' {
+    >> 'when the collection is a map' {
       >> 'when the key is present' {
         put [
           &a=90
@@ -94,7 +91,7 @@ var should-contain~ = $should-contain:should-contain~
       }
     }
 
-    >> 'when the container is a set from Ethereal' {
+    >> 'when the collection is a set from Ethereal' {
       >> 'when the item is present' {
         all [alpha beta gamma] |
           set:of |
@@ -103,22 +100,22 @@ var should-contain~ = $should-contain:should-contain~
 
       >> 'when the item is missing' {
         assertion-fails (src) {
-          set:of [alpha beta gamma] |
+          set:from [alpha beta gamma] |
             should-contain ro
         }
       }
 
       >> 'when the set contains string representations of numbers' {
         >> 'when the item is a number' {
-          >> 'by default' {
+          >> 'when non-strict' {
             all [90 92 95 98] |
               set:of |
               should-contain (num 92)
           }
 
-          >> 'when strict equality is enabled' {
+          >> 'when strict' {
             assertion-fails (src) {
-              set:of [90 92 95 98] |
+              set:from [90 92 95 98] |
                 should-contain &strict (num 92)
             }
           }
@@ -138,10 +135,10 @@ var should-contain~ = $should-contain:should-contain~
           )
 
           $output-tester[should-contain-snippet] [
-            'Expected substring:'
-            Dodo
             'Actual string:'
             Alpha
+            'Expected substring:'
+            Dodo
           ]
         }
 
@@ -155,12 +152,12 @@ var should-contain~ = $should-contain:should-contain~
           )
 
           $output-tester[should-contain-snippet] [
-            'Expected item:'
-            Dodo
             'Actual list:'
             '['
             ' Alpha'
             ']'
+            'Expected item:'
+            Dodo
           ]
         }
 
@@ -174,12 +171,12 @@ var should-contain~ = $should-contain:should-contain~
           )
 
           $output-tester[should-contain-snippet] [
-            'Expected key:'
-            Dodo
             'Actual map:'
             '['
             " &Alpha=\t90"
             ']'
+            'Expected key:'
+            Dodo
           ]
         }
 
@@ -193,12 +190,12 @@ var should-contain~ = $should-contain:should-contain~
           )
 
           $output-tester[should-contain-snippet] [
-            'Expected item:'
-            Dodo
             'Actual ethereal-set:'
             '['
             ' Alpha'
             ']'
+            'Expected item:'
+            Dodo
           ]
         }
       }

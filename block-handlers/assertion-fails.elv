@@ -1,7 +1,7 @@
 use str
 use github.com/giancosta86/ethereal/v1/exception
 use ../assertion
-use ./shared
+use ../utils/output
 use ./throws
 
 var throws~ = $throws:throws~
@@ -28,7 +28,7 @@ fn assertion-fails { |assertion block|
 
     var actual-assertion = $failure-message[(count $assertion:failure-prefix)..]
 
-    shared:contrast [
+    output:contrast [
       &red-description='Expected assertion'
       &red=$assertion
       &green-description='Actual assertion'

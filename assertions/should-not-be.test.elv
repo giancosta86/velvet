@@ -1,4 +1,4 @@
-use ./assertion-fails
+use ../block-handlers/assertion-fails
 use ./should-not-be
 
 var should-not-be~ = $should-not-be:should-not-be~
@@ -36,7 +36,20 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
       }
 
       >> 'with equal multi-level lists' {
-        var test-list = [Alpha [Beta [Gamma Delta] Epsilon] Zeta Eta Theta]
+        var test-list = [
+          Alpha
+          [
+            Beta
+            [
+              Gamma
+              Delta
+            ]
+            Epsilon
+          ]
+          Zeta
+          Eta
+          Theta
+        ]
 
         assertion-fails (src) {
           put $test-list |
@@ -101,9 +114,7 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
         )
 
         $output-tester[should-contain-snippet] [
-          Unexpected:
-          Alpha
-          Actual:
+          'Unexpected value:'
           Alpha
         ]
       }
