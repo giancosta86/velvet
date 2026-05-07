@@ -1,9 +1,6 @@
 use path
-use github.com/giancosta86/ethereal/v1/map
-use ./assertions
-use ./block-handlers
-use ./ethereal
 use ./test-script/frame
+use ./test-script/namespace
 use ./test-script/root-frames
 use ./tools
 
@@ -56,22 +53,12 @@ fn run { |script-path|
     $current-frame[run-block] $block
   }
 
-  var script-functions = [
+  var script-builtins = [
     &src~=$custom-src~
     &'>>'~=$'>>~'
   ]
 
-  var namespace = (
-    all [
-      $script-functions
-      $ethereal:namespaces
-      $assertions:
-      $block-handlers:
-      $tools:
-    ] |
-      map:merge |
-      ns (all)
-  )
+  var namespace = (namespace:create-for-script $script-builtins)
 
   tmp pwd = (path:dir $abs-script-path)
 
