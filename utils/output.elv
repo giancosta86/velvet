@@ -1,8 +1,5 @@
 use github.com/giancosta86/ethereal/v1/diff
-use github.com/giancosta86/ethereal/v1/lang
-use github.com/giancosta86/ethereal/v1/seq
 use github.com/giancosta86/ethereal/v1/string
-use ../assertion
 
 fn contrast { |inputs|
   var red-description = $inputs[red-description]
@@ -28,7 +25,7 @@ fn contrast { |inputs|
   }
 }
 
-fn highlight-wrong-value { |description value|
+fn highlight-wrong { |description value|
   echo (styled $description':' red bold)
   echo (string:pretty $value)
 }
