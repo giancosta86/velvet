@@ -1,8 +1,6 @@
 use os
-use ../../block-handlers/assertion-fails
 use ./should-not-exist
 
-var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-not-exist~ = $should-not-exist:should-not-exist~
 
 >> 'Assertions: should-not-exist' {

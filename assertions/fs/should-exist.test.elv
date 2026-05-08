@@ -1,7 +1,5 @@
-use ../../block-handlers/assertion-fails
 use ./should-exist
 
-var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-exist~ = $should-exist:should-exist~
 
 >> 'Assertions: should-exist' {

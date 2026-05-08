@@ -1,7 +1,5 @@
-use ../../block-handlers/assertion-fails
 use ./should-contain-all
 
-var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-contain-all~ = $should-contain-all:should-contain-all~
 
 >> 'Assertions' {

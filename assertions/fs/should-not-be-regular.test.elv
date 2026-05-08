@@ -1,7 +1,5 @@
-use ../../block-handlers/assertion-fails
 use ./should-not-be-regular
 
-var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-not-be-regular~ = $should-not-be-regular:should-not-be-regular~
 
 >> 'Assertions: should-not-be-regular' {

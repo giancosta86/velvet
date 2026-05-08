@@ -1,7 +1,5 @@
-use ../../block-handlers/assertion-fails
 use ./should-contain-none
 
-var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-contain-none~ = $should-contain-none:should-contain-none~
 
 >> 'Assertions' {

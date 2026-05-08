@@ -1,7 +1,5 @@
-use ../../block-handlers/assertion-fails
 use ./should-contain-snippet
 
-var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-contain-snippet~ = $should-contain-snippet:should-contain-snippet~
 
 >> 'Assertions' {

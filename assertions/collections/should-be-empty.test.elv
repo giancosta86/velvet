@@ -1,8 +1,6 @@
 use github.com/giancosta86/ethereal/v1/set
-use ../../block-handlers/assertion-fails
 use ./should-be-empty
 
-var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-be-empty~ = $should-be-empty:should-be-empty~
 
 >> 'Assertions' {

@@ -1,9 +1,6 @@
-use ../block-handlers/assertion-fails
 use ./should-not-be
 
 var should-not-be~ = $should-not-be:should-not-be~
-
-var assertion-fails~ = $assertion-fails:assertion-fails~
 
 >> 'Assertions' {
   >> 'should-not-be' {

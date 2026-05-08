@@ -1,8 +1,6 @@
 use os
-use ../../block-handlers/assertion-fails
 use ./should-be-dir
 
-var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-be-dir~ = $should-be-dir:should-be-dir~
 
 >> 'Assertions: should-be-dir' {

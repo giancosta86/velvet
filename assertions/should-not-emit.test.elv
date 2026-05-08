@@ -1,7 +1,5 @@
-use ../block-handlers/assertion-fails
 use ./should-not-emit
 
-var assertion-fails~ = $assertion-fails:assertion-fails~
 var should-not-emit~ = $should-not-emit:should-not-emit~
 
 >> 'Assertions' {

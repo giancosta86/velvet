@@ -1,8 +1,6 @@
 use ./assertion
 use ./block-handlers/assertion-fails
 
-var assertion-fails~ = $assertion-fails:assertion-fails~
-
 >> 'Assertions' {
   var assertion = 'should-be-ninety'
 
