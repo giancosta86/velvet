@@ -1,4 +1,4 @@
-use ../assertions/assertion-fails
+use ../block-handlers/assertion-fails
 use ./output-tester
 
 var assertion-fails~ = $assertion-fails:assertion-fails~
