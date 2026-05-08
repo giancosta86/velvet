@@ -29,12 +29,8 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
       }
 
       >> 'a contrast should be shown' {
-        var output-tester = (
-          throws &swallow $mismatching-block |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-snippet] [
+        capture &throws $mismatching-block |
+          should-contain-snippet [
           'Expected assertion:'
           $expected-assertion
           'Actual assertion:'

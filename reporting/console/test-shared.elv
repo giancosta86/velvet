@@ -1,26 +1,39 @@
+use ../../assertions
+use ../../block-handlers
 use ../../sandbox-result
 use ../../section
 use ../../summary
 use ../../test-result
-use ../../tools/output-tester
+
+var should-contain~ = $assertions:should-contain~
+var should-contain-all~ = $assertions:should-contain-all~
+var should-contain-none~ = $assertions:should-contain-none~
+var should-not-contain~ = $assertions:should-not-contain~
+
+var capture~ = $block-handlers:capture~
 
 fn run-console-tests { |settings|
   var '>>~' = $settings['>>~']
 
   var console-reporter = $settings[console-reporter]
 
-  fn create-console-output-tester { |sandbox-result|
-    summary:from-sandbox-result $sandbox-result |
-      $console-reporter (all) |
-      output-tester:create
+  fn get-console-output { |sandbox-result|
+    capture {
+      summary:from-sandbox-result $sandbox-result |
+        $console-reporter (all)
+    }
   }
 
   fn run-sandbox-scenario { |sandbox-result scenario|
-    var output-tester = (create-console-output-tester $sandbox-result)
+    var console-output = (
+      get-console-output $sandbox-result
+    )
 
-    $output-tester[should-contain-all] $scenario[all]
+    put $console-output |
+      should-contain-all $scenario[all]
 
-    $output-tester[should-contain-none] $scenario[none]
+    put $console-output |
+      should-contain-none $scenario[none]
   }
 
   >> 'with empty section' {
@@ -122,22 +135,24 @@ fn run-console-tests { |settings|
       ]
     )
 
-    var output-tester = (
-      create-console-output-tester $sandbox-result
+    var console-output = (
+      get-console-output $sandbox-result
     )
 
-    $output-tester[should-contain-all] [
-      'Total tests: 0'
-      '⛔⛔⛔ CRASHED SCRIPTS'
-      yogi.test.elv
-      alpha
-      bubu.test.elv
-      ro
-    ]
+    put $console-output |
+      should-contain-all [
+        'Total tests: 0'
+        '⛔⛔⛔ CRASHED SCRIPTS'
+        yogi.test.elv
+        alpha
+        bubu.test.elv
+        ro
+      ]
 
-    $output-tester[should-contain-none] [
-      💬
-      'No test structure found.'
-    ]
+    put $console-output |
+      should-contain-none [
+        💬
+        'No test structure found.'
+      ]
   }
 }

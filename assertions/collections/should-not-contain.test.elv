@@ -123,77 +123,61 @@ var should-not-contain~ = $should-not-contain:should-not-contain~
   >> 'when failing' {
     >> 'the output should describe the context' {
       >> 'for string' {
-        var output-tester = (
-          throws &swallow {
-            put Alpha |
-              should-not-contain ph
-          } |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-snippet] [
-          'Actual string:'
-          Alpha
-          'Unexpected substring:'
-          ph
-        ]
+        capture &throws {
+          put Alpha |
+            should-not-contain ph
+        } |
+          should-contain-snippet [
+            'Actual string:'
+            Alpha
+            'Unexpected substring:'
+            ph
+          ]
       }
 
       >> 'for list' {
-        var output-tester = (
-          throws &swallow {
-            put [Alpha] |
-              should-not-contain Alpha
-          } |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-snippet] [
-          'Actual list:'
-          '['
-          ' Alpha'
-          ']'
-          'Unexpected item:'
-          Alpha
-        ]
+        capture &throws {
+          put [Alpha] |
+            should-not-contain Alpha
+        } |
+          should-contain-snippet [
+            'Actual list:'
+            '['
+            ' Alpha'
+            ']'
+            'Unexpected item:'
+            Alpha
+          ]
       }
 
       >> 'for map' {
-        var output-tester = (
-          throws &swallow {
-            put [&Alpha=90] |
-              should-not-contain Alpha
-          } |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-snippet] [
-          'Actual map:'
-          '['
-          " &Alpha=\t90"
-          ']'
-          'Unexpected key:'
-          Alpha
-        ]
+        capture &throws {
+          put [&Alpha=90] |
+            should-not-contain Alpha
+        } |
+          should-contain-snippet [
+            'Actual map:'
+            '['
+            " &Alpha=\t90"
+            ']'
+            'Unexpected key:'
+            Alpha
+          ]
       }
 
       >> 'for set' {
-        var output-tester = (
-          throws &swallow {
-            set:of Alpha |
-              should-not-contain Alpha
-          } |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-snippet] [
-          'Actual ethereal-set:'
-          '['
-          ' Alpha'
-          ']'
-          'Unexpected item:'
-          Alpha
-        ]
+        capture &throws {
+          set:of Alpha |
+            should-not-contain Alpha
+        } |
+          should-contain-snippet [
+            'Actual ethereal-set:'
+            '['
+            ' Alpha'
+            ']'
+            'Unexpected item:'
+            Alpha
+          ]
       }
     }
   }

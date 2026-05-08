@@ -164,45 +164,41 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
 
     >> 'when failing' {
       >> 'the output should describe the context' {
-        var output-tester = (
-          throws &swallow {
-            {
-              put Alpha
-              put Beta
-              put Gamma
-            } |
-              should-emit [
-                Ro
-                Sigma
-              ]
+        capture &throws {
+          {
+            put Alpha
+            put Beta
+            put Gamma
           } |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-snippet] [
-          'Emitted values:'
-          '['
-          ' Alpha'
-          ' Beta'
-          ' Gamma'
-          ']'
-          'Expected values:'
-          '['
-          ' Ro'
-          ' Sigma'
-          ']'
-          '🔎 DIFF:'
-          '@@ -1,4 +1,5 @@'
-          ' ['
-          '- Ro'
-          '- Sigma'
-          '+ Alpha'
-          '+ Beta'
-          '+ Gamma'
-          ' ]'
-          '\ No newline at end of file'
-          🔎🔎🔎
-        ]
+            should-emit [
+              Ro
+              Sigma
+            ]
+        } |
+          should-contain-snippet [
+            'Emitted values:'
+            '['
+            ' Alpha'
+            ' Beta'
+            ' Gamma'
+            ']'
+            'Expected values:'
+            '['
+            ' Ro'
+            ' Sigma'
+            ']'
+            '🔎 DIFF:'
+            '@@ -1,4 +1,5 @@'
+            ' ['
+            '- Ro'
+            '- Sigma'
+            '+ Alpha'
+            '+ Beta'
+            '+ Gamma'
+            ' ]'
+            '\ No newline at end of file'
+            🔎🔎🔎
+          ]
       }
     }
   }

@@ -36,33 +36,29 @@ var should-contain-snippet~ = $should-contain-snippet:should-contain-snippet~
       }
 
       >> 'should describe the context' {
-        var output-tester = (
-          throws &swallow $failing-block |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-snippet] [
-          'Actual string:'
-          Alpha
-          Beta
-          Gamma
-          Delta
-          Epsilon
-          'Expected snippet:'
-          Beta
-          MISSING-STRING
-          '🔎 DIFF:'
-          '@@ -1,2 +1,5 @@'
-          +Alpha
-          ' Beta'
-          -MISSING-STRING
-          '\ No newline at end of file'
-          +Gamma
-          +Delta
-          +Epsilon
-          '\ No newline at end of file'
-          🔎🔎🔎
-        ]
+        capture &throws $failing-block |
+          should-contain-snippet [
+            'Actual string:'
+            Alpha
+            Beta
+            Gamma
+            Delta
+            Epsilon
+            'Expected snippet:'
+            Beta
+            MISSING-STRING
+            '🔎 DIFF:'
+            '@@ -1,2 +1,5 @@'
+            +Alpha
+            ' Beta'
+            -MISSING-STRING
+            '\ No newline at end of file'
+            +Gamma
+            +Delta
+            +Epsilon
+            '\ No newline at end of file'
+            🔎🔎🔎
+          ]
       }
     }
   }

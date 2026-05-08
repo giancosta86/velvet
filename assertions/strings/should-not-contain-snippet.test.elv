@@ -27,33 +27,29 @@ var should-not-contain-snippet~ = $should-not-contain-snippet:should-not-contain
       }
 
       >> 'should describe the context' {
-        var output-tester = (
-          throws &swallow $failing-block |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-snippet] [
-          'Actual string:'
-          Alpha
-          Beta
-          Gamma
-          Delta
-          Epsilon
-          'Unexpected snippet:'
-          Beta
-          Gamma
-          '🔎 DIFF:'
-          '@@ -1,2 +1,5 @@'
-          +Alpha
-          ' Beta'
-          -Gamma
-          '\ No newline at end of file'
-          +Gamma
-          +Delta
-          +Epsilon
-          '\ No newline at end of file'
-          🔎🔎🔎
-        ]
+        capture &throws $failing-block |
+          should-contain-snippet [
+            'Actual string:'
+            Alpha
+            Beta
+            Gamma
+            Delta
+            Epsilon
+            'Unexpected snippet:'
+            Beta
+            Gamma
+            '🔎 DIFF:'
+            '@@ -1,2 +1,5 @@'
+            +Alpha
+            ' Beta'
+            -Gamma
+            '\ No newline at end of file'
+            +Gamma
+            +Delta
+            +Epsilon
+            '\ No newline at end of file'
+            🔎🔎🔎
+          ]
       }
     }
 

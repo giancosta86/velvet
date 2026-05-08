@@ -160,114 +160,98 @@ var should-contain-none~ = $should-contain-none:should-contain-none~
     >> 'when failing' {
       >> 'the output should describe the context' {
         >> 'for string' {
-          var output-tester = (
-            throws &swallow {
-              put Alpha |
-                should-contain-none [
-                  lph
-                  Dodo
-                  od
-                  Alp
-                ]
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Actual string:'
-            Alpha
-            'Unexpected substrings:'
-            '['
-            ' lph'
-            ' Alp'
-            ']'
-          ]
+          capture &throws {
+            put Alpha |
+              should-contain-none [
+                lph
+                Dodo
+                od
+                Alp
+              ]
+          } |
+            should-contain-snippet [
+              'Actual string:'
+              Alpha
+              'Unexpected substrings:'
+              '['
+              ' lph'
+              ' Alp'
+              ']'
+            ]
         }
 
         >> 'for list' {
-          var output-tester = (
-            throws &swallow {
-              put [90 92 95 98] |
-                should-contain-none [
-                  7
-                  95
-                  13
-                  90
-                  6
-                ]
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Actual list:'
-            '['
-            ' 90'
-            ' 92'
-            ' 95'
-            ' 98'
-            ']'
-            'Unexpected items:'
-            '['
-            ' 95'
-            ' 90'
-            ']'
-          ]
+          capture &throws {
+            put [90 92 95 98] |
+              should-contain-none [
+                7
+                95
+                13
+                90
+                6
+              ]
+          } |
+            should-contain-snippet [
+              'Actual list:'
+              '['
+              ' 90'
+              ' 92'
+              ' 95'
+              ' 98'
+              ']'
+              'Unexpected items:'
+              '['
+              ' 95'
+              ' 90'
+              ']'
+            ]
         }
 
         >> 'for map' {
-          var output-tester = (
-            throws &swallow {
-              put [&a=90 &b=92 &c=95] |
-                should-contain-none [
-                  a
-                  x
-                  b
-                  c
-                ]
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Actual map:'
-            '['
-            " &a=\t90"
-            " &b=\t92"
-            " &c=\t95"
-            ']'
-            'Unexpected keys:'
-            '['
-            ' a'
-            ' b'
-            ' c'
-            ']'
-          ]
+          capture &throws {
+            put [&a=90 &b=92 &c=95] |
+              should-contain-none [
+                a
+                x
+                b
+                c
+              ]
+          } |
+            should-contain-snippet [
+              'Actual map:'
+              '['
+              " &a=\t90"
+              " &b=\t92"
+              " &c=\t95"
+              ']'
+              'Unexpected keys:'
+              '['
+              ' a'
+              ' b'
+              ' c'
+              ']'
+            ]
         }
 
         >> 'for set' {
-          var output-tester = (
-            throws &swallow {
-              set:of Alpha |
-                should-contain-none [
-                  Dodo
-                  Alpha
-                  Yogi
-                ]
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Actual ethereal-set:'
-            '['
-            ' Alpha'
-            ']'
-            'Unexpected items:'
-            '['
-            ' Alpha'
-            ']'
-          ]
+          capture &throws {
+            set:of Alpha |
+              should-contain-none [
+                Dodo
+                Alpha
+                Yogi
+              ]
+          } |
+            should-contain-snippet [
+              'Actual ethereal-set:'
+              '['
+              ' Alpha'
+              ']'
+              'Unexpected items:'
+              '['
+              ' Alpha'
+              ']'
+            ]
         }
       }
     }

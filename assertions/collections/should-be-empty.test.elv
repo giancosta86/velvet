@@ -74,22 +74,18 @@ var should-be-empty~ = $should-be-empty:should-be-empty~
     >> 'when failing' {
       >> 'the output should describe the context' {
         >> 'for list' {
-          var output-tester = (
-            throws &swallow {
-              put [90 92 95] |
-                should-be-empty
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Unexpected non-empty list:'
-            '['
-            ' 90'
-            ' 92'
-            ' 95'
-            ']'
-          ]
+          capture &throws {
+            put [90 92 95] |
+              should-be-empty
+          } |
+            should-contain-snippet [
+              'Unexpected non-empty list:'
+              '['
+              ' 90'
+              ' 92'
+              ' 95'
+              ']'
+            ]
         }
       }
     }

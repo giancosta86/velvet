@@ -225,8 +225,6 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
 
   **Please, note**: in lieu of a `should-emit` with just one value, it's more expressive to use `should-be`.
 
-  **Please, note**: for more _granular tests_ focused on the string output of a command, please refer to `create-output-tester`.
-
 - `should-not-emit`: ensures that the values passed via pipe (`|`) _do not include any_ of the values in the `unexpected-values` list; the `strict` option works according to the equality rules described within the context of `should-be`.
 
   ##### Example
@@ -243,8 +241,6 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     ]
   ```
 
-  **Please, note**: for more _granular tests_ focused on the string output of a command, please refer to `create-output-tester`.
-
 - `fails <block>`: requires `block` to _throw a fail exception_ - via `fail` - outputting the **content** of such failure and _failing if no fail was actually thrown_; if another type of exception is thrown by `block` - for example, a syntax error - it simply passes through. This assertion is preferable to `throws`, which is more general-purpose.
 
   ##### Example
@@ -255,8 +251,6 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
   } |
     should-be Dodo
   ```
-
-  **Please, note**: for more granular tests focused on the output of a command, please refer to `create-output-tester`.
 
 - `assertion-fails`: specific version of `fails` taking as arguments the **assertion** that should fail (for example, `should be`) and a block where such assertion is violated. It is especially useful when testing new assertions.
 
@@ -437,56 +431,6 @@ Tools are _utility constructs_ that can be used in _advanced test scripts_; just
 ```elvish
 use github.com/giancosta86/velvet/<VERSION>/tools
 ```
-
-#### Output tester
-
-Enables _bulk tests_ - more precisely, multiple `should-contain` and `should-not-contain` assertions _on the same command output_ in the form of a **string** containing both **bytes** and **values**, all converted via `to-lines`.
-
-In particular, the `create-output-tester` function creates an object with the following methods:
-
-- `should-contain-all`: takes a _list_ of **strings** and ensures, via `should-contain`, that the buffered command output contains _each and every_ given string.
-
-- `should-contain-none`: takes a _list_ of **strings** and ensures, via `should-not-contain`, that the buffered command output does **not** contain _each and every_ given string.
-
-- `should-contain-snippet`: takes a _list_ of **strings**, joins them into _a single string_ via the _newline character_, and ensures that such string is contained into _the command output text_.
-
-- `should-not-contain-snippet`: takes a _list_ of **strings**, joins them into _a single string_ via the _newline character_, and ensures that such string is _not_ contained into _the command output text_.
-
-As a plus, the `text` field contains the _buffered output_ as a string.
-
-**Please, note**: `create-output-tester` **prunes** any _style-related control sequence_ from the command output text by default - via the `string:unstyled` function provided by [Ethereal](https://github.com/giancosta86/ethereal); to keep style information, please use the `&keep-styles` flag.
-
-##### Example
-
-1. Create the output tester, by piping a command output into `create-output-tester`:
-
-   ```elvish
-   var tester = (
-    {
-      put Alpha
-      echo Beta
-      put Gamma
-      echo Delta
-    } |
-      output-tester:create
-   ```
-
-2. Invoke the assertions
-
-   ```elvish
-   $tester[should-contain-all] [
-     Alpha
-     Beta
-     Gamma
-     Delta
-   ]
-
-   $tester[should-contain-none] [
-     INEXISTENT
-     MISSING
-     'SOMETHING ELSE'
-   ]
-   ```
 
 ### Example test script
 

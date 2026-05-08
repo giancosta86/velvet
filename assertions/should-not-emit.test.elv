@@ -122,29 +122,25 @@ var should-not-emit~ = $should-not-emit:should-not-emit~
 
     >> 'when failing' {
       >> 'the output should describe the context' {
-        var output-tester = (
-          throws &swallow {
-            {
-              put Alpha
-              put Beta
-              put Gamma
-            } |
-              should-not-emit [
-                Alpha
-                Omega
-                Beta
-              ]
+        capture &throws {
+          {
+            put Alpha
+            put Beta
+            put Gamma
           } |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-snippet] [
-          'Unexpected values:'
-          '['
-          ' Alpha'
-          ' Beta'
-          ']'
-        ]
+            should-not-emit [
+              Alpha
+              Omega
+              Beta
+            ]
+        } |
+          should-contain-snippet [
+            'Unexpected values:'
+            '['
+            ' Alpha'
+            ' Beta'
+            ']'
+          ]
       }
     }
   }

@@ -73,24 +73,22 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
     }
 
     >> 'when all values are compliant' {
-      var output-tester = (
+      capture {
         all [
           92
           95
           98
           101
         ] |
-          should-be-greater-than-ninety |
-          create-output-tester
-      )
-
-      $output-tester[should-contain-none] [
-        92
-        95
-        98
-        101
-        $non-compliant-description
-      ]
+          should-be-greater-than-ninety
+      } |
+        should-contain-none [
+          92
+          95
+          98
+          101
+          $non-compliant-description
+        ]
     }
 
     >> 'when there are non-compliant values' {
@@ -110,22 +108,23 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
       }
 
       >> 'should output the non-compliant values' {
-        var output-tester = (
-          throws &swallow $failing-block |
-            create-output-tester &unstyled
+        var output = (
+          capture &throws $failing-block
         )
 
-        $output-tester[should-contain-all] [
-          $non-compliant-description
-          7
-          39
-          90
-        ]
+        put $output |
+          should-contain-all [
+            $non-compliant-description
+            7
+            39
+            90
+          ]
 
-        $output-tester[should-contain-none] [
-          92
-          95
-        ]
+        put $output |
+          should-contain-none [
+            92
+            95
+          ]
       }
     }
   }

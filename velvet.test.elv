@@ -226,28 +226,24 @@ fn get-aggregator-script { |basename|
 
         printf '>> ''%s'' { }' $test-title > basic.test.elv
 
-        var output-tester = (
-          velvet:velvet &verbose=$verbose |
-            output-tester:create
-        )
-
-        $block $output-tester $test-title
+        capture {
+          velvet:velvet &verbose=$verbose
+        } |
+          $block (all) $test-title
       }
     }
 
     >> 'when disabled' {
-      with-empty-test { |output-tester test-title|
-        $output-tester[should-contain-none] [
-          $test-title
-        ]
+      with-empty-test { |output test-title|
+        put $output |
+          should-not-contain $test-title
       }
     }
 
     >> 'when enabled' {
-      with-empty-test &verbose { |output-tester test-title|
-        $output-tester[should-contain-all] [
-          $test-title
-        ]
+      with-empty-test &verbose { |output test-title|
+        put $output |
+          should-contain $test-title
       }
     }
   }

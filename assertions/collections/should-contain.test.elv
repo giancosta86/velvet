@@ -126,77 +126,61 @@ var should-contain~ = $should-contain:should-contain~
     >> 'when failing' {
       >> 'the output should describe the context' {
         >> 'for string' {
-          var output-tester = (
-            throws &swallow {
-              put Alpha |
-                should-contain Dodo
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Actual string:'
-            Alpha
-            'Expected substring:'
-            Dodo
-          ]
+          capture &throws {
+            put Alpha |
+              should-contain Dodo
+          } |
+            should-contain-snippet [
+              'Actual string:'
+              Alpha
+              'Expected substring:'
+              Dodo
+            ]
         }
 
         >> 'for list' {
-          var output-tester = (
-            throws &swallow {
-              put [Alpha] |
-                should-contain Dodo
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Actual list:'
-            '['
-            ' Alpha'
-            ']'
-            'Expected item:'
-            Dodo
-          ]
+          capture &throws {
+            put [Alpha] |
+              should-contain Dodo
+          } |
+            should-contain-snippet [
+              'Actual list:'
+              '['
+              ' Alpha'
+              ']'
+              'Expected item:'
+              Dodo
+            ]
         }
 
         >> 'for map' {
-          var output-tester = (
-            throws &swallow {
-              put [&Alpha=90] |
-                should-contain Dodo
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Actual map:'
-            '['
-            " &Alpha=\t90"
-            ']'
-            'Expected key:'
-            Dodo
-          ]
+          capture &throws {
+            put [&Alpha=90] |
+              should-contain Dodo
+          } |
+            should-contain-snippet [
+              'Actual map:'
+              '['
+              " &Alpha=\t90"
+              ']'
+              'Expected key:'
+              Dodo
+            ]
         }
 
         >> 'for set' {
-          var output-tester = (
-            throws &swallow {
-              set:of Alpha |
-                should-contain Dodo
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Actual ethereal-set:'
-            '['
-            ' Alpha'
-            ']'
-            'Expected item:'
-            Dodo
-          ]
+          capture &throws {
+            set:of Alpha |
+              should-contain Dodo
+          } |
+            should-contain-snippet [
+              'Actual ethereal-set:'
+              '['
+              ' Alpha'
+              ']'
+              'Expected item:'
+              Dodo
+            ]
         }
       }
     }

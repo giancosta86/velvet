@@ -166,114 +166,98 @@ var should-contain-all~ = $should-contain-all:should-contain-all~
     >> 'when failing' {
       >> 'the output should describe the context' {
         >> 'for string' {
-          var output-tester = (
-            throws &swallow {
-              put Alpha |
-                should-contain-all [
-                  lph
-                  Dodo
-                  od
-                  Alp
-                ]
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Actual string:'
-            Alpha
-            'Missing substrings:'
-            '['
-            ' Dodo'
-            ' od'
-            ']'
-          ]
+          capture &throws {
+            put Alpha |
+              should-contain-all [
+                lph
+                Dodo
+                od
+                Alp
+              ]
+          } |
+            should-contain-snippet [
+              'Actual string:'
+              Alpha
+              'Missing substrings:'
+              '['
+              ' Dodo'
+              ' od'
+              ']'
+            ]
         }
 
         >> 'for list' {
-          var output-tester = (
-            throws &swallow {
-              put [90 92 95 98] |
-                should-contain-all [
-                  7
-                  95
-                  13
-                  90
-                  6
-                ]
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Actual list:'
-            '['
-            ' 90'
-            ' 92'
-            ' 95'
-            ' 98'
-            ']'
-            'Missing items:'
-            '['
-            ' 7'
-            ' 13'
-            ' 6'
-            ']'
-          ]
+          capture &throws {
+            put [90 92 95 98] |
+              should-contain-all [
+                7
+                95
+                13
+                90
+                6
+              ]
+          } |
+            should-contain-snippet [
+              'Actual list:'
+              '['
+              ' 90'
+              ' 92'
+              ' 95'
+              ' 98'
+              ']'
+              'Missing items:'
+              '['
+              ' 7'
+              ' 13'
+              ' 6'
+              ']'
+            ]
         }
 
         >> 'for map' {
-          var output-tester = (
-            throws &swallow {
-              put [&a=90 &b=92 &c=95] |
-                should-contain-all [
-                  a
-                  x
-                  b
-                  c
-                ]
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Actual map:'
-            '['
-            " &a=\t90"
-            " &b=\t92"
-            " &c=\t95"
-            ']'
-            'Missing keys:'
-            '['
-            ' x'
-            ']'
-          ]
+          capture &throws {
+            put [&a=90 &b=92 &c=95] |
+              should-contain-all [
+                a
+                x
+                b
+                c
+              ]
+          } |
+            should-contain-snippet [
+              'Actual map:'
+              '['
+              " &a=\t90"
+              " &b=\t92"
+              " &c=\t95"
+              ']'
+              'Missing keys:'
+              '['
+              ' x'
+              ']'
+            ]
         }
 
         >> 'for set' {
-          var output-tester = (
-            throws &swallow {
-              set:of Alpha |
-                should-contain-all [
-                  Alpha
-                  Dodo
-                  Yogi
-                ]
-            } |
-              create-output-tester &unstyled
-          )
-
-          $output-tester[should-contain-snippet] [
-            'Actual ethereal-set:'
-            '['
-            ' Alpha'
-            ']'
-            'Missing items:'
-            '['
-            ' Dodo'
-            ' Yogi'
-            ']'
-          ]
+          capture &throws {
+            set:of Alpha |
+              should-contain-all [
+                Alpha
+                Dodo
+                Yogi
+              ]
+          } |
+            should-contain-snippet [
+              'Actual ethereal-set:'
+              '['
+              ' Alpha'
+              ']'
+              'Missing items:'
+              '['
+              ' Dodo'
+              ' Yogi'
+              ']'
+            ]
         }
       }
     }

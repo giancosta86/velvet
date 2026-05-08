@@ -105,18 +105,14 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
 
     >> 'when failing' {
       >> 'the output should describe the context' {
-        var output-tester = (
-          throws &swallow {
-            put Alpha |
-              should-not-be Alpha
-          } |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-snippet] [
-          'Unexpected value:'
-          Alpha
-        ]
+        capture &throws {
+          put Alpha |
+            should-not-be Alpha
+        } |
+          should-contain-snippet [
+            'Unexpected value:'
+            Alpha
+          ]
       }
     }
   }

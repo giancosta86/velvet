@@ -98,27 +98,23 @@ var should-be~ = $should-be:should-be~
 
     >> 'when failing' {
       >> 'the output should describe the context' {
-        var output-tester = (
-          throws &swallow {
-            put Alpha |
-              should-be Beta
-          } |
-            create-output-tester &unstyled
-        )
-
-        $output-tester[should-contain-snippet] [
-          Actual:
-          Alpha
-          Expected:
-          Beta
-          '🔎 DIFF:'
-          '@@ -1 +1 @@'
-          -Beta
-          '\ No newline at end of file'
-          +Alpha
-          '\ No newline at end of file'
-          🔎🔎🔎
-        ]
+        capture &throws {
+          put Alpha |
+            should-be Beta
+        } |
+          should-contain-snippet [
+            Actual:
+            Alpha
+            Expected:
+            Beta
+            '🔎 DIFF:'
+            '@@ -1 +1 @@'
+            -Beta
+            '\ No newline at end of file'
+            +Alpha
+            '\ No newline at end of file'
+            🔎🔎🔎
+          ]
       }
     }
   }
