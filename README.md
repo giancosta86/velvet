@@ -258,14 +258,25 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
 
   **Please, note**: for more granular tests focused on the output of a command, please refer to `create-output-tester`.
 
-- `should-contain`: receives a _container_ via pipe (`|`) and a `value` as argument, then:
-  - if the container is a **string**, ensures that `value` is _a substring_
+- `assertion-fails`: specific version of `fails` taking as arguments the **assertion** that should fail (for example, `should be`) and a block where such assertion is violated. It is especially useful when testing new assertions.
 
-  - if the container is a **list**, ensures that `value` is _contained in the list_
+  ##### Example
 
-  - if the container is a **map**, ensures that `value` is _a key of the map_
+  ```elvish
+  assertion-fails 'should not contain' {
+    assertion:format-failure $expected-assertion |
+      fail (all)
+  }
+  ```
 
-  - if the container is a **set** from [Ethereal](https://github.com/giancosta86/ethereal), ensures that `value` belongs to the set
+- `should-contain`: receives a _collection_ via pipe (`|`) and a `value` as argument, then:
+  - if the collection is a **string**, ensures that `value` is _a substring_
+
+  - if the collection is a **list**, ensures that `value` is _contained in the list_
+
+  - if the collection is a **map**, ensures that `value` is _a key of the map_
+
+  - if the collection is a **set** from [Ethereal](https://github.com/giancosta86/ethereal), ensures that `value` belongs to the set
 
   In all cases, the `strict` flag is supported - enabling _strict equality_, as described in the related section above.
 
@@ -296,7 +307,7 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     should-contain beta
   ```
 
-- `should-not-contain`: the negation of `should-contain` - please, see its documentation for aspects such as the supported container types.
+- `should-not-contain`: the negation of `should-contain` - please, see its documentation for aspects such as the supported collection types.
 
   ##### Example
 
