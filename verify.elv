@@ -1,5 +1,5 @@
 use github.com/giancosta86/ethereal/v1/set
-use github.com/giancosta86/velvet/v3/velvet
+use github.com/giancosta86/velvet/v4.0.0-beta/velvet
 
 var all-tests = (
   put **.test.elv |
@@ -16,4 +16,4 @@ var actual-tests = (
     set:to-list
 )
 
-velvet:velvet &must-pass $@actual-tests
+velvet:velvet &flawless $@actual-tests
