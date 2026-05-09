@@ -1,7 +1,7 @@
 use ./run-dual
 
->> 'Assertion: running the dual script' {
-  >> 'when running the dual script' {
+>> 'Tools' {
+  >> 'run-dual' {
     var fake-test-script = my-script.test.elv
 
     var fake-dual-script = my-script.elv
