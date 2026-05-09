@@ -1,12 +1,20 @@
 use github.com/giancosta86/ethereal/v1/diff
+use github.com/giancosta86/ethereal/v1/lang
 use github.com/giancosta86/ethereal/v1/string
 
-fn contrast { |inputs|
-  var red-description = $inputs[red-description]
-  var red = $inputs[red]
-  var green-description = $inputs[green-description]
-  var green = $inputs[green]
-  var show-diff = $inputs[show-diff]
+fn highlight-wrong { |description value|
+  echo (styled $description':' red bold)
+  echo (string:pretty $value)
+}
+
+fn contrast { |@arguments|
+  var settings = (lang:get-single-input $arguments)
+
+  var red-description = $settings[red-description]
+  var red = $settings[red]
+  var green-description = $settings[green-description]
+  var green = $settings[green]
+  var show-diff = $settings[show-diff]
 
   var formatted-red = (string:pretty $red)
   var formatted-green = (string:pretty $green)
@@ -23,9 +31,4 @@ fn contrast { |inputs|
       tail -n +3
     echo 🔎🔎🔎
   }
-}
-
-fn highlight-wrong { |description value|
-  echo (styled $description':' red bold)
-  echo (string:pretty $value)
 }
