@@ -25,7 +25,7 @@ epm:install github.com/giancosta86/velvet
 Even better, if you have [epm-plus](https://github.com/giancosta86/epm-plus), you can run:
 
 ```elvish
-epm:install github.com/giancosta86/velvet@v3
+epm:install github.com/giancosta86/velvet@v4
 ```
 
 or any other specific Git reference.
