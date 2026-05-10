@@ -4,9 +4,7 @@ use ./ethereal
 
 >> 'Loading Ethereal namespaces' {
   >> 'should work' {
-    map:entries $ethereal:namespaces | each { |entry|
-      var namespace-name namespace = (all $entry)
-
+    map:iterate $ethereal:namespaces { |namespace-name namespace|
       str:has-suffix $namespace-name ':' |
         should-be $true
 
