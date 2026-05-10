@@ -51,19 +51,20 @@ var throws~ = $throws:throws~
     }
 
     >> 'when swallowing the exception' {
-      >> 'when an exception actually occurs' {
-        >> 'when emitting values' {
+      >> 'when no exception occurs' {
+        try {
           throws &swallow {
             put 90
-            put (num 92)
-            fail DODO
-          } |
-            should-emit &strict [
-              90
-              (num 92)
-            ]
-        }
+          }
 
+          fail 'THE CODE SHOULD NOT REACH THIS POINT!'
+        } catch e {
+          exception:get-fail-content $e |
+            should-be 'The given code block did not throw!'
+        }
+      }
+
+      >> 'when an exception actually occurs' {
         >> 'when emitting bytes' {
           throws &swallow {
             echo Hello
@@ -75,15 +76,18 @@ var throws~ = $throws:throws~
               World
             ]
         }
-      }
 
-      >> 'when no exception occurs' {
-        fails {
+        >> 'when emitting values' {
           throws &swallow {
             put 90
-          }
-        } |
-          should-be 'The given code block did not throw!'
+            put (num 92)
+            fail DODO
+          } |
+            should-emit &strict [
+              90
+              (num 92)
+            ]
+        }
       }
     }
   }

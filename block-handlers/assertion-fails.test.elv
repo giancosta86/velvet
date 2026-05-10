@@ -5,9 +5,9 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
 
 >> 'Block handlers' {
   >> 'assertion-fails' {
-    var expected-assertion = 'should-not-exist'
+    var expected-assertion = 'should-be-even'
 
-    var actual-assertion = 'should-contain'
+    var actual-assertion = 'should-be-odd'
 
     >> 'when the expected assertion fails' {
       assertion-fails $expected-assertion {
@@ -18,8 +18,7 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
     >> 'when another assertion fails' {
       var mismatching-block = {
         assertion-fails $expected-assertion {
-          assertion:format-failure $actual-assertion |
-            fail (all)
+          assertion:fail $actual-assertion
         }
       }
 
@@ -31,18 +30,27 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
       >> 'a contrast should be shown' {
         capture &throws $mismatching-block |
           should-contain-snippet [
-          'Expected assertion:'
-          $expected-assertion
-          'Actual assertion:'
-          $actual-assertion
-        ]
+            'Actual assertion:'
+            $actual-assertion
+            'Expected assertion:'
+            $expected-assertion
+          ]
       }
     }
 
     >> 'when a failure not induced by assertions occurs' {
       fails {
-        assertion-fails 'should-be-ninety' {
+        assertion-fails $expected-assertion {
           fail DODO
+        }
+      } |
+        should-be 'There was an exception, but not induced by an assertion'
+    }
+
+    >> 'when another exception occurs' {
+      fails {
+        assertion-fails $expected-assertion {
+          / 9 0
         }
       } |
         should-be 'There was an exception, but not induced by an assertion'
@@ -56,14 +64,28 @@ var assertion-fails~ = $assertion-fails:assertion-fails~
     }
 
     >> 'when passing the result of src' {
-      var assertion-name = 'should-be-ninety'
-
       var fake-src-result = [
-        &name='/some/test/'$assertion-name'.test.elv'
+        &name='/some/test/'$expected-assertion'.test.elv'
       ]
 
-      assertion-fails $fake-src-result {
-        assertion:fail $fake-src-result
+      >> 'when the expected assertion fails' {
+        assertion-fails $fake-src-result {
+          assertion:fail $expected-assertion
+        }
+      }
+
+      >> 'when another assertion fails' {
+        capture &throws {
+          assertion-fails $fake-src-result {
+            assertion:fail $actual-assertion
+          }
+        } |
+          should-contain-snippet [
+            'Actual assertion:'
+            $actual-assertion
+            'Expected assertion:'
+            $expected-assertion
+          ]
       }
     }
   }

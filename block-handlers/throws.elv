@@ -3,6 +3,10 @@ fn throws { |&swallow=$false block|
     if $swallow {
       $block
     } else {
+      # When not swallowing the exception, the only output
+      # of the command must be the exception itself,
+      # therefore the block output must be redirected to stderr,
+      # which only supports bytes.
       $block | only-bytes >&2
     }
   } catch e {

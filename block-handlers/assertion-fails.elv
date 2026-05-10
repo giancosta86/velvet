@@ -6,9 +6,9 @@ use ./throws
 
 var throws~ = $throws:throws~
 
-fn assertion-fails { |assertion block|
+fn assertion-fails { |assertion-reference block|
   var expected-failure-message = (
-    assertion:format-failure $assertion
+    assertion:format-failure $assertion-reference
   )
 
   var exception = (
@@ -21,18 +21,22 @@ fn assertion-fails { |assertion block|
     show $exception
 
     if (
-      not (str:has-prefix $failure-message $assertion:failure-prefix)
+      or ^
+        (not $failure-message) ^
+        (not (str:has-prefix $failure-message $assertion:failure-prefix))
     ) {
       fail 'There was an exception, but not induced by an assertion'
     }
 
     var actual-assertion = $failure-message[(count $assertion:failure-prefix)..]
 
+    var expected-assertion = (assertion:get-name $assertion-reference)
+
     output:contrast [
-      &red-description='Expected assertion'
-      &red=$assertion
-      &green-description='Actual assertion'
-      &green=$actual-assertion
+      &red-description='Actual assertion'
+      &red=$actual-assertion
+      &green-description='Expected assertion'
+      &green=$expected-assertion
       &show-diff=$false
     ]
 

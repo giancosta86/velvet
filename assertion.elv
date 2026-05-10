@@ -7,22 +7,29 @@ use ./utils/output
 var failure-prefix = 'Assertion failed: '
 
 #
+# Given an assertion reference - an assertion name or the output of the `src` function
+# called from within the script of an assertion or the related test file - returns the
+# assertion name, such as `should-be`.
+#
+fn get-name { |@arguments|
+  var assertion-reference = (lang:get-single-input $arguments)
+
+  if (eq (kind-of $assertion-reference) map) {
+    put $assertion-reference[name] |
+      fs:get-script-subject
+  } else {
+    put $assertion-reference
+  }
+}
+
+#
 # Creates an assertion-specific failure message having a recognizable prefix.
 #
 # This function is designed for fairly specific uses all over the codebase:
 # instead of using it directly, you should call the assertion-specific `fail` function instead.
 #
 fn format-failure { |@arguments|
-  var assertion-reference = (lang:get-single-input $arguments)
-
-  var assertion-name = (
-    if (eq (kind-of $assertion-reference) map) {
-      put $assertion-reference[name] |
-        fs:get-script-subject
-    } else {
-      put $assertion-reference
-    }
-  )
+  var assertion-name = (get-name $@arguments)
 
   put $failure-prefix''$assertion-name
 }

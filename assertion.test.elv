@@ -1,7 +1,7 @@
 use ./assertion
 use ./block-handlers/assertion-fails
 
->> 'Assertions' {
+>> 'Assertion' {
   var assertion = 'should-be-ninety'
 
   fn fake-src {
@@ -14,6 +14,25 @@ use ./block-handlers/assertion-fails
     put [
       &name='/some/test/'$assertion'.test.elv'
     ]
+  }
+
+  >> 'getting the name' {
+    >> 'from the name itself' {
+      assertion:get-name $assertion |
+        should-be $assertion
+    }
+
+    >> 'from the script src' {
+      fake-src |
+        assertion:get-name |
+        should-be $assertion
+    }
+
+    >> 'from the test script src' {
+      fake-test-src |
+        assertion:get-name |
+        should-be $assertion
+    }
   }
 
   >> 'formatting a failure' {

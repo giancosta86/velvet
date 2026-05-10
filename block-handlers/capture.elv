@@ -3,15 +3,13 @@ use github.com/giancosta86/ethereal/v1/command
 use github.com/giancosta86/ethereal/v1/string
 use ./throws
 
-fn -simplify-capture-result {
+fn -replay-capture-result {
   var capture-result = (one)
-
-  var exception = $capture-result[exception]
 
   all $capture-result[data]
 
-  if (not-eq $exception $nil) {
-    fail $exception
+  if (not-eq $capture-result[exception] $nil) {
+    fail $capture-result[exception]
   }
 }
 
@@ -28,7 +26,7 @@ fn -process-style { |styled|
 fn capture { |&throws=$false &styled=$false &stream=both &type=both block|
   var capturing-block = {
     command:capture &stream=$stream &type=$type $block |
-      -simplify-capture-result
+      -replay-capture-result
   }
 
   if $throws {
