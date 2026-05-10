@@ -7,13 +7,10 @@ use ./utils/output
 var failure-prefix = 'Assertion failed: '
 
 #
-# Gets a single input (via pipe or as argument) - the assertion reference - which can be:
+# Creates an assertion-specific failure message having a recognizable prefix.
 #
-# - the name of the assertion command itself (e.g.: «should-be»)
-#
-# - the output of the `src` command within the assertion script
-#
-# and returns, as a string, a recognizable message for the `fail` function.
+# This function is designed for fairly specific uses all over the codebase:
+# instead of using it directly, you should call the assertion-specific `fail` function instead.
 #
 fn format-failure { |@arguments|
   var assertion-reference = (lang:get-single-input $arguments)
@@ -31,8 +28,13 @@ fn format-failure { |@arguments|
 }
 
 #
-# Given in input - via pipe or as argument - an assertion reference (see `format-failure`),
-# invokes the `fail` function, with a message created by `format-failure`-
+# Gets a single input (via pipe or as argument) - the assertion reference - which can be:
+#
+# - the name of the assertion command itself (e.g.: «should-be»)
+#
+# - the output of the `src` command within the assertion script or its related test script
+#
+# and invokes the builtin `fail` function, with a message having a recognizable prefix.
 #
 fn fail { |@arguments|
   format-failure $@arguments |
@@ -40,11 +42,11 @@ fn fail { |@arguments|
 }
 
 #
-# Simplifies input processing:
+# Given an input `value` - passed via pipe or as argument:
 #
 # * if `&strict` is enabled, returns `value` itself
 #
-# * otherwise, returns the outcome of `lang:flatnum` applied to `value`
+# * otherwise, returns the outcome of `lang:flat-num` applied to `value`
 #
 fn get-input { |&strict=$false @arguments|
   var value = (lang:get-single-input $arguments)
@@ -63,7 +65,7 @@ fn get-input { |&strict=$false @arguments|
 #
 # 1. Lists such items, in arrival order
 #
-# 2. Fails via the assertion-dedicated failure method
+# 2. Fails via the assertion-dedicated `fail` function
 #
 fn enforce-predicate { |assertion-reference entry-predicate failure-entries-description|
   var failure-entries = [(

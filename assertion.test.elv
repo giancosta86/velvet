@@ -4,9 +4,17 @@ use ./block-handlers/assertion-fails
 >> 'Assertions' {
   var assertion = 'should-be-ninety'
 
-  var fake-src-result = [
-    &name='/some/test/'$assertion'.elv'
-  ]
+  fn fake-src {
+    put [
+      &name='/some/test/'$assertion'.elv'
+    ]
+  }
+
+  fn fake-test-src {
+    put [
+      &name='/some/test/'$assertion'.test.elv'
+    ]
+  }
 
   >> 'formatting a failure' {
     >> 'passing the name' {
@@ -15,7 +23,13 @@ use ./block-handlers/assertion-fails
     }
 
     >> 'from src' {
-      put $fake-src-result |
+      fake-src |
+        assertion:format-failure |
+        should-be 'Assertion failed: '$assertion
+    }
+
+    >> 'from test' {
+      fake-test-src |
         assertion:format-failure |
         should-be 'Assertion failed: '$assertion
     }
@@ -33,7 +47,17 @@ use ./block-handlers/assertion-fails
 
     >> 'from src' {
       fails {
-        put $fake-src-result |
+        fake-src |
+          assertion:fail
+      } |
+        should-be (
+          assertion:format-failure $assertion
+        )
+    }
+
+    >> 'from test' {
+      fails {
+        fake-test-src |
           assertion:fail
       } |
         should-be (
@@ -49,8 +73,7 @@ use ./block-handlers/assertion-fails
         should-be (set:from [
           Alpha
           92
-        ]
-      )
+        ])
     }
 
     >> 'when strict' {
@@ -64,10 +87,12 @@ use ./block-handlers/assertion-fails
   }
 
   >> 'enforcing predicate' {
-    var non-compliant-description = 'Values that are <= 90'
+    var assertion-reference = 'should-be-greater-than-ninety'
+
+    var failure-description = 'Values that are <= 90'
 
     fn should-be-greater-than-ninety {
-      assertion:enforce-predicate 'should-be-greater-than-ninety' { |value| > $value 90 } $non-compliant-description
+      assertion:enforce-predicate $assertion-reference { |value| > $value 90 } $failure-description
     }
 
     >> 'when all values are compliant' {
@@ -85,7 +110,7 @@ use ./block-handlers/assertion-fails
           95
           98
           101
-          $non-compliant-description
+          $failure-description
         ]
     }
 
@@ -93,16 +118,16 @@ use ./block-handlers/assertion-fails
       var failing-block = {
         all [
           7
-          39
           90
           92
+          39
           95
         ] |
           should-be-greater-than-ninety
       }
 
       >> 'should fail' {
-        assertion-fails 'should-be-greater-than-ninety' $failing-block
+        assertion-fails $assertion-reference $failing-block
       }
 
       >> 'should output the non-compliant values' {
@@ -111,11 +136,13 @@ use ./block-handlers/assertion-fails
         )
 
         put $output |
-          should-contain-all [
-            $non-compliant-description
-            7
-            39
-            90
+          should-contain-snippet [
+            $failure-description':'
+            '['
+            ' 7'
+            ' 90'
+            ' 39'
+            ']'
           ]
 
         put $output |

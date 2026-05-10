@@ -257,9 +257,8 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
   ##### Example
 
   ```elvish
-  assertion-fails 'should not contain' {
-    assertion:format-failure $expected-assertion |
-      fail (all)
+  assertion-fails $expected-exception {
+    assertion:fail $expected-assertion
   }
   ```
 
