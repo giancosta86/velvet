@@ -39,6 +39,17 @@ var should-emit~ = $should-emit:should-emit~
             ]
         }
 
+        >> 'when in number format' {
+          {
+            put (num 90)
+            put (num 92)
+          } |
+            should-emit [
+              (num 90)
+              (num 92)
+            ]
+        }
+
         >> 'when in different formats' {
           {
             put 90
@@ -119,7 +130,7 @@ var should-emit~ = $should-emit:should-emit~
         put 100
         put 92
       } |
-        should-emit &order-key=$num~ [
+        should-emit &order-key=$num~ &strict [
           90
           92
           95
@@ -136,11 +147,11 @@ var should-emit~ = $should-emit:should-emit~
           (num 98)
           95
         ] |
-          should-emit &any-order [
+          should-emit &any-order &strict [
             90
             92
             95
-            98
+            (num 98)
           ]
       }
 
