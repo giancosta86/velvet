@@ -84,7 +84,7 @@ fn enforce-predicate { |assertion-reference entry-predicate failure-entries-desc
   )]
 
   if (seq:is-non-empty $failure-entries) {
-    output:highlight-wrong $failure-entries-description $failure-entries
+    output:display-wrong $failure-entries-description $failure-entries
 
     fail $assertion-reference
   }

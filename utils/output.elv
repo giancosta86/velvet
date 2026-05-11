@@ -2,7 +2,7 @@ use github.com/giancosta86/ethereal/v1/diff
 use github.com/giancosta86/ethereal/v1/lang
 use github.com/giancosta86/ethereal/v1/string
 
-fn highlight-wrong { |description value|
+fn display-wrong { |description value|
   echo (styled $description':' red bold)
   echo (string:pretty $value)
 }

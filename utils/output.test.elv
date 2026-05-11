@@ -4,7 +4,7 @@ use ./output
   >> 'output' {
     >> 'highlighting a wrong value' {
       capture {
-        output:highlight-wrong 'Test description' [90 92 95]
+        output:display-wrong 'Test description' [90 92 95]
       } |
         should-contain-snippet [
           'Test description:'

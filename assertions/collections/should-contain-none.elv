@@ -19,9 +19,9 @@ fn should-contain-none { |&strict=$false unexpected-values|
   )
 
   if (collection:is-non-empty $present-values) {
-    output:highlight-wrong 'Actual '(collection:detect-kind $collection) $collection
+    output:display-wrong 'Actual '(collection:detect-kind $collection) $collection
 
-    output:highlight-wrong 'Unexpected '(collection:get-value-description $collection)'s' $present-values
+    output:display-wrong 'Unexpected '(collection:get-value-description $collection)'s' $present-values
 
     assertion:fail (src)
   }

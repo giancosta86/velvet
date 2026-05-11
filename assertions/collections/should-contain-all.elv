@@ -19,9 +19,9 @@ fn should-contain-all { |&strict=$false expected-values|
   )
 
   if (collection:is-non-empty $missing-values) {
-    output:highlight-wrong 'Actual '(collection:detect-kind $collection) $collection
+    output:display-wrong 'Actual '(collection:detect-kind $collection) $collection
 
-    output:highlight-wrong 'Missing '(collection:get-value-description $collection)'s' $missing-values
+    output:display-wrong 'Missing '(collection:get-value-description $collection)'s' $missing-values
 
     assertion:fail (src)
   }

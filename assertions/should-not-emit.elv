@@ -26,7 +26,7 @@ fn should-not-emit { |&strict=$false unexpected|
   )
 
   if (seq:is-non-empty $unexpected-found) {
-    output:highlight-wrong 'Unexpected values' $unexpected-found
+    output:display-wrong 'Unexpected values' $unexpected-found
 
     assertion:fail (src)
   }

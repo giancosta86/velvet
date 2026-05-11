@@ -7,7 +7,7 @@ fn should-not-be { |&strict=$false unexpected|
   set unexpected = (assertion:get-input &strict=$strict $unexpected)
 
   if (eq $unexpected $actual) {
-    output:highlight-wrong 'Unexpected value' $unexpected
+    output:display-wrong 'Unexpected value' $unexpected
 
     assertion:fail (src)
   }

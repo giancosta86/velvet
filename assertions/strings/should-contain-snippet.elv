@@ -1,4 +1,5 @@
 use str
+use github.com/giancosta86/ethereal/v1/collection
 use ../../assertion
 use ../../utils/output
 
@@ -9,7 +10,10 @@ fn should-contain-snippet { |snippet-lines|
     fail 'The subject must be a string'
   }
 
-  var expected-snippet = (str:join "\n" $snippet-lines)
+  var expected-snippet = (
+    collection:to-list $snippet-lines |
+      str:join "\n" (all)
+  )
 
   if (not (str:contains $subject $expected-snippet)) {
     output:contrast [
