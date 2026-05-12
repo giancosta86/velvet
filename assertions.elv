@@ -13,7 +13,13 @@ use ./assertions/fs/should-not-be-regular
 use ./assertions/fs/should-not-exist
 
 use ./assertions/strings/should-contain-snippet
+use ./assertions/strings/should-have-prefix
+use ./assertions/strings/should-have-suffix
+use ./assertions/strings/should-match-regex
 use ./assertions/strings/should-not-contain-snippet
+use ./assertions/strings/should-not-have-prefix
+use ./assertions/strings/should-not-have-suffix
+use ./assertions/strings/should-not-match-regex
 
 use ./assertions/should-be
 use ./assertions/should-emit
@@ -36,7 +42,13 @@ var should-not-be-regular~ = $should-not-be-regular:should-not-be-regular~
 var should-not-exist~ = $should-not-exist:should-not-exist~
 
 var should-contain-snippet~ = $should-contain-snippet:should-contain-snippet~
+var should-have-prefix~ = $should-have-prefix:should-have-prefix~
+var should-have-suffix~ = $should-have-suffix:should-have-suffix~
+var should-match-regex~ = $should-match-regex:should-match-regex~
 var should-not-contain-snippet~ = $should-not-contain-snippet:should-not-contain-snippet~
+var should-not-have-prefix~ = $should-not-have-prefix:should-not-have-prefix~
+var should-not-have-suffix~ = $should-not-have-suffix:should-not-have-suffix~
+var should-not-match-regex~ = $should-not-match-regex:should-not-match-regex~
 
 var should-be~ = $should-be:should-be~
 var should-emit~ = $should-emit:should-emit~

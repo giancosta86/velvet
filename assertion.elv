@@ -89,3 +89,25 @@ fn enforce-predicate { |assertion-reference entry-predicate failure-entries-desc
     fail $assertion-reference
   }
 }
+
+#
+# Emits the assertion subject, passed via pipe - failing if it's not a string.
+#
+fn get-string-subject {
+  var subject = (one)
+
+  if (not (eq (kind-of $subject) string)) {
+    builtin:fail 'The subject must be a string'
+  }
+
+  put $subject
+}
+
+#
+# Enforces that the given assertion argument is a string - failing otherwise.
+#
+fn enforce-string-argument { |argument|
+  if (not (eq (kind-of $argument) string)) {
+    builtin:fail 'The assertion argument must be a string'
+  }
+}

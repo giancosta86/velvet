@@ -4,11 +4,7 @@ use ../../assertion
 use ../../utils/output
 
 fn should-contain-snippet { |snippet-lines|
-  var subject = (one)
-
-  if (not (eq (kind-of $subject) string)) {
-    fail 'The subject must be a string'
-  }
+  var subject = (assertion:get-string-subject)
 
   var expected-snippet = (
     collection:to-list $snippet-lines |

@@ -8,7 +8,7 @@ fn should-be-empty {
   if (not (collection:is-empty $collection)) {
     var collection-kind = (collection:detect-kind $collection)
 
-    output:display-wrong 'Unexpected non-empty '$collection-kind $collection
+    output:display-wrong 'This '$collection-kind' should be empty' $collection
 
     assertion:fail (src)
   }

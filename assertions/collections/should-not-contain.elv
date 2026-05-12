@@ -8,13 +8,9 @@ fn should-not-contain { |&strict=$false unexpected-value|
   set unexpected-value = (assertion:get-input &strict=$strict $unexpected-value)
 
   if (collection:contains $collection $unexpected-value) {
-    output:contrast [
-      &red-description='Actual '(collection:detect-kind $collection)
-      &red=$collection
-      &green-description='Unexpected '(collection:get-value-description $collection)
-      &green=$unexpected-value
-      &show-diff=$false
-    ]
+    output:display-wrong 'Actual '(collection:detect-kind $collection) $collection
+
+    output:display-wrong 'Unexpected '(collection:get-value-description $collection) $unexpected-value
 
     assertion:fail (src)
   }

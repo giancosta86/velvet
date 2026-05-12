@@ -171,5 +171,34 @@ use ./block-handlers/assertion-fails
           ]
       }
     }
+
+    >> 'getting string subject' {
+      >> 'when the subject is a string' {
+        put Dodo |
+          assertion:get-string-subject |
+          should-be Dodo
+      }
+
+      >> 'when the subject is not a string' {
+        fails {
+          put (num 90) |
+            assertion:get-string-subject
+        } |
+          should-be 'The subject must be a string'
+      }
+    }
+
+    >> 'enforcing string argument' {
+      >> 'when the argument is a string' {
+        assertion:enforce-string-argument Dodo
+      }
+
+      >> 'when the argument is not a string' {
+        fails {
+          assertion:enforce-string-argument (num 90)
+        } |
+          should-be 'The assertion argument must be a string'
+      }
+    }
   }
 }
