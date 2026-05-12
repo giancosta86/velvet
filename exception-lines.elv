@@ -33,16 +33,14 @@ fn replace-bottom-eval { |replacement|
 
   var last-eval = $nil
 
-  var generic-eval-pattern = '^\s*(\[eval\s+\d+\]):\d+?:\d+?.*?:'
-
   all $lines | each { |line|
+    var generic-eval-pattern = '^\s*(\[eval\s+\d+\]):\d+?:\d+?.*?:'
+
     var find-result = [(re:find $generic-eval-pattern $line)]
 
-    if (eq $find-result []) {
-      continue
+    if (not-eq $find-result []) {
+      set last-eval = $find-result[0][groups][1][text]
     }
-
-    set last-eval = $find-result[0][groups][1][text]
   }
 
   if $last-eval {

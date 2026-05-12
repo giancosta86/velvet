@@ -1,5 +1,6 @@
 use str
 use github.com/giancosta86/ethereal/v1/command
+use github.com/giancosta86/ethereal/v1/string
 use ./exception-lines
 
 >> 'Exception lines' {
@@ -169,21 +170,61 @@ use ./exception-lines
         }
       )
 
-      var exception-log = (
+      var exception-lines = [(
         show $capture-result[exception] |
           exception-lines:trim-clockwork-stack |
           exception-lines:replace-bottom-eval ciop.elv |
-          str:join "\n"
-      )
+          each $string:unstyled~
+      )]
 
-      put $exception-log |
-        should-contain DODO
+      count $exception-lines |
+        should-be 5
 
-      put $exception-log |
-        should-contain ciop.elv
+      put $exception-lines[0] |
+        should-be 'Exception: DODO'
 
-      put $exception-log |
-        should-not-contain command.elv
+      {
+        var in-beta = $exception-lines[1]
+
+        put $in-beta |
+          should-contain '[eval'
+
+        put $in-beta |
+          should-contain 'fail DODO'
+      }
+
+      {
+        var in-alpha = $exception-lines[2]
+
+        put $in-alpha |
+          should-contain '[eval'
+
+        put $in-alpha |
+          should-contain beta
+      }
+
+      {
+        var in-root = $exception-lines[3]
+
+        put $in-root |
+          should-contain '[eval'
+
+        put $in-root |
+          should-contain alpha
+      }
+
+      {
+        var in-script = $exception-lines[4]
+
+        put $in-script |
+          should-not-contain '[eval'
+
+        put $in-script |
+          should-contain ciop.elv
+
+        put $in-script |
+          should-contain 'eval $code'
+      }
     }
   }
 }
