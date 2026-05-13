@@ -190,7 +190,7 @@ use ./exception-lines
           should-contain '[eval'
 
         put $in-beta |
-          should-contain 'fail DODO'
+          should-have-suffix 'fail DODO'
       }
 
       {
@@ -200,7 +200,7 @@ use ./exception-lines
           should-contain '[eval'
 
         put $in-alpha |
-          should-contain beta
+          should-have-suffix beta
       }
 
       {
@@ -210,7 +210,7 @@ use ./exception-lines
           should-contain '[eval'
 
         put $in-root |
-          should-contain alpha
+          should-have-suffix alpha
       }
 
       {
@@ -223,7 +223,7 @@ use ./exception-lines
           should-contain ciop.elv
 
         put $in-script |
-          should-contain 'eval $code'
+          should-have-suffix 'eval $code'
       }
     }
   }
