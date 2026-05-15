@@ -115,8 +115,8 @@ var report~ = (
     echo $@fragments
   }
 
-  fn display-crashed-scripts { |crashed-scripts|
-    if (seq:is-empty $crashed-scripts) {
+  fn display-crashed-scripts { |exception-lines-by-script|
+    if (seq:is-empty $exception-lines-by-script) {
       return
     }
 
@@ -124,10 +124,10 @@ var report~ = (
     echo
     echo ⛔⛔⛔ (styled 'CRASHED SCRIPTS' bold red) ⛔⛔⛔
 
-    keys $crashed-scripts |
+    keys $exception-lines-by-script |
       order &key=$sorting-algorithm |
       each { |crashed-script-path|
-        var exception-lines = $crashed-scripts[$crashed-script-path]
+        var exception-lines = $exception-lines-by-script[$crashed-script-path]
 
         echo
         echo ⛔ (styled $crashed-script-path bold red)
@@ -153,6 +153,6 @@ var report~ = (
 
     display-stats $summary[stats]
 
-    display-crashed-scripts $summary[crashed-scripts]
+    display-crashed-scripts $summary[exception-lines-by-script]
   }
 )

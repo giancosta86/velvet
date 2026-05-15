@@ -4,7 +4,7 @@ use ./section
 use ./summary
 use ./test-result
 
-var crashed-scripts = [
+var exception-lines-by-script = [
   &park/yogi.test.elv=[
     alpha
     beta
@@ -42,7 +42,7 @@ var crashed-scripts = [
       ]
     )
 
-    sandbox-result:create $section $crashed-scripts |
+    sandbox-result:create $section $exception-lines-by-script |
       summary:from-sandbox-result |
       should-be [
         &section=$section
@@ -51,7 +51,7 @@ var crashed-scripts = [
           &passed=3
           &failed=2
         ]
-        &crashed-scripts=$crashed-scripts
+        &exception-lines-by-script=$exception-lines-by-script
       ]
   }
 
@@ -78,7 +78,7 @@ var crashed-scripts = [
       ]
     )
 
-    sandbox-result:create $section $crashed-scripts |
+    sandbox-result:create $section $exception-lines-by-script |
       summary:from-sandbox-result |
       summary:simplify |
       should-be [
@@ -88,7 +88,7 @@ var crashed-scripts = [
           &passed=1
           &failed=2
         ]
-        &crashed-scripts=$crashed-scripts
+        &exception-lines-by-script=$exception-lines-by-script
       ]
   }
 }

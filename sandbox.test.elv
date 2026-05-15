@@ -56,7 +56,7 @@ fn run-single-sandbox { |basename|
       str:join "\n" |
       should-contain DODO
 
-    put $sandbox-result[crashed-scripts] |
+    put $sandbox-result[exception-lines-by-script] |
       should-be [&]
   }
 
@@ -72,7 +72,7 @@ fn run-single-sandbox { |basename|
       should-be $section:empty
 
     var exception-log = (
-      all $sandbox-result[crashed-scripts][$crashing-script-path] |
+      all $sandbox-result[exception-lines-by-script][$crashing-script-path] |
         str:join "\n"
     )
 

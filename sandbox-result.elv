@@ -4,7 +4,7 @@ use github.com/giancosta86/ethereal/v1/operator
 use ./section
 
 fn create { |@arguments|
-  var section crashed-scripts = (
+  var section exception-lines-by-script = (
     all $arguments |
       lang:ensure-put &min-values=2
   )
@@ -13,8 +13,8 @@ fn create { |@arguments|
     &section=(
       coalesce $section $section:empty
     )
-    &crashed-scripts=(
-      coalesce $crashed-scripts [&]
+    &exception-lines-by-script=(
+      coalesce $exception-lines-by-script [&]
     )
   ]
 }
@@ -26,7 +26,7 @@ var merge~ = (
     create (
       section:merge $left[section] $right[section]
     ) (
-      map:merge $left[crashed-scripts] $right[crashed-scripts]
+      map:merge $left[exception-lines-by-script] $right[exception-lines-by-script]
     )
   }
 

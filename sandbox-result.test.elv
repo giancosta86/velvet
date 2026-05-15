@@ -13,7 +13,7 @@ use ./test-result
       ]
     )
 
-    var crashed-scripts = [
+    var exception-lines-by-script = [
       &alpha.test.elv=[
         line-1
         line-2
@@ -26,7 +26,7 @@ use ./test-result
         sandbox-result:create |
         should-be [
           &section=$section:empty
-          &crashed-scripts=[&]
+          &exception-lines-by-script=[&]
         ]
     }
 
@@ -34,21 +34,21 @@ use ./test-result
       sandbox-result:create $section |
         should-be [
           &section=$section
-          &crashed-scripts=[&]
+          &exception-lines-by-script=[&]
         ]
     }
 
     >> 'when passing both the section and the crashed scripts' {
-      sandbox-result:create $section $crashed-scripts |
+      sandbox-result:create $section $exception-lines-by-script |
         should-be [
           &section=$section
-          &crashed-scripts=$crashed-scripts
+          &exception-lines-by-script=$exception-lines-by-script
         ]
     }
   }
 
   >> 'merging' {
-    var left-result = (
+    var left = (
       sandbox-result:create (
         section:create [
           &test-from-left=(
@@ -64,7 +64,7 @@ use ./test-result
       ]
     )
 
-    var right-result = (
+    var right = (
       sandbox-result:create (
         section:create [
           &test-from-right=(
@@ -92,8 +92,8 @@ use ./test-result
     }
 
     >> 'with 1 operand' {
-      sandbox-result:merge $left-result |
-        should-be $left-result
+      sandbox-result:merge $left |
+        should-be $left
     }
 
     >> 'with 2 operands' {
@@ -103,17 +103,17 @@ use ./test-result
       }
 
       >> 'when only the left operand is non-empty' {
-        sandbox-result:merge $left-result $sandbox-result:empty |
-          should-be $left-result
+        sandbox-result:merge $left $sandbox-result:empty |
+          should-be $left
       }
 
       >> 'when only the right operand is non-empty' {
-        sandbox-result:merge $sandbox-result:empty $right-result |
-          should-be $right-result
+        sandbox-result:merge $sandbox-result:empty $right |
+          should-be $right
       }
 
       >> 'when both operands are non-empty' {
-        sandbox-result:merge $left-result $right-result |
+        sandbox-result:merge $left $right |
           should-be (
             sandbox-result:create (
               section:create [

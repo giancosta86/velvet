@@ -62,7 +62,7 @@ fn velvet { |&flawless=$false &emit-summary=$false &verbose=$false &reporters=[$
 
   var has-failed-tests = (> $summary[stats][failed] 0)
 
-  var has-crashed-scripts = (seq:is-non-empty $summary[crashed-scripts])
+  var has-crashed-scripts = (seq:is-non-empty $summary[exception-lines-by-script])
 
   var has-flaws = (or $has-failed-tests $has-crashed-scripts)
 

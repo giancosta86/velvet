@@ -50,7 +50,7 @@ fn get-aggregator-script { |basename|
         section:simplify |
         should-be $summaries:alpha-beta-gamma-simplified[section]
 
-      put $sandbox-result[crashed-scripts] |
+      put $sandbox-result[exception-lines-by-script] |
         should-be [&]
     }
   }
@@ -66,7 +66,7 @@ fn get-aggregator-script { |basename|
     put $sandbox-result[section] |
       should-be $section:empty
 
-    all $sandbox-result[crashed-scripts][$crashing-script-path] |
+    all $sandbox-result[exception-lines-by-script][$crashing-script-path] |
       str:join "\n" |
       should-not-contain "test-script.elv"
   }
