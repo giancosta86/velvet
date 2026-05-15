@@ -3,7 +3,7 @@ use ./test-result
 
 var passed-test = (test-result:success ['This is a passed test!'])
 
-var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine1 ExceptionLine2])
+var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine-1 ExceptionLine-2])
 
 >> 'Section' {
   >> 'creation' {
@@ -57,14 +57,14 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
     }
   }
 
-  >> 'mapping test results within an entire tree' {
+  >> 'mapping test results' {
     fn append-hello { |test-result|
       conj $test-result[output-lines] Hello |
         assoc $test-result output-lines (all)
     }
 
     >> 'with empty section' {
-      section:map-test-results-in-tree $section:empty $append-hello~ |
+      section:map-test-results $section:empty $append-hello~ |
         should-be $section:empty
     }
 
@@ -72,7 +72,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
       section:create [
         &alpha=$passed-test
       ] |
-        section:map-test-results-in-tree $append-hello~ |
+        section:map-test-results $append-hello~ |
         should-be (
           section:create [
             &alpha=(
@@ -87,7 +87,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
         &alpha=$passed-test
         &beta=$failed-test
       ] |
-        section:map-test-results-in-tree $append-hello~ |
+        section:map-test-results $append-hello~ |
         should-be (
           section:create [
             &alpha=(
@@ -108,7 +108,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
           ]
         )
       ] |
-        section:map-test-results-in-tree $append-hello~ |
+        section:map-test-results $append-hello~ |
         should-be (
           section:create [&] [
             &sigma=(
@@ -132,7 +132,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
           ]
         )
       ] |
-        section:map-test-results-in-tree $append-hello~ |
+        section:map-test-results $append-hello~ |
         should-be (
           section:create [
             &alpha=(
@@ -151,9 +151,9 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
     }
   }
 
-  >> 'trimming empty sections' {
+  >> 'trimming empty sub-sections' {
     >> 'on empty section' {
-      section:trim-empty $section:empty |
+      section:trim-empty-sub-sections $section:empty |
         should-be $section:empty
     }
 
@@ -165,7 +165,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
       )
 
       put $section |
-        section:trim-empty |
+        section:trim-empty-sub-sections |
         should-be $section
     }
 
@@ -183,7 +183,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
       )
 
       put $section |
-        section:trim-empty |
+        section:trim-empty-sub-sections |
         should-be $section
     }
 
@@ -195,13 +195,13 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
           section:create [&] [
             &sigma=(
               section:create [&] [
-                &tau=(section:create)
+                &tau=$section:empty
               ]
             )
           ]
         )
       ] |
-        section:trim-empty |
+        section:trim-empty-sub-sections |
         should-be (
           section:create [
             &alpha=$passed-test
@@ -210,10 +210,10 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
     }
   }
 
-  >> 'keeping only failed test results' {
+  >> 'trimming passed test results' {
     >> 'when the section is empty' {
       put $section:empty |
-        section:keep-failed-test-results |
+        section:trim-passed-test-results |
         should-be $section:empty
     }
 
@@ -222,7 +222,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
         &alpha=$passed-test
         &beta=$failed-test
       ] |
-        section:keep-failed-test-results |
+        section:trim-passed-test-results |
         should-be (
           section:create [
             &beta=$failed-test
@@ -239,7 +239,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
           ]
         )
       ] |
-        section:keep-failed-test-results |
+        section:trim-passed-test-results |
         should-be (
           section:create [&] [
             &sigma=(
@@ -261,7 +261,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
           ]
         )
       ] |
-        section:keep-failed-test-results |
+        section:trim-passed-test-results |
         should-be (
           section:create [&] [
             &sigma=(
@@ -283,7 +283,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
           ]
         )
       ] |
-        section:keep-failed-test-results |
+        section:trim-passed-test-results |
         should-be (
           section:create [
             &alpha=$failed-test
@@ -306,6 +306,20 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
         should-be (
           section:create [
             &alpha=$passed-test
+          ]
+        )
+    }
+
+    >> 'with just one failed root test' {
+      section:create [
+        &beta=$failed-test
+      ] |
+        section:simplify |
+        should-be (
+          section:create [
+            &beta=(
+              test-result:failure $failed-test[output-lines] []
+            )
           ]
         )
     }
@@ -448,10 +462,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
       >> 'when there are multiple levels of tests' {
         all [
           $section-with-alpha
-          (
-            put $section-with-beta |
-              section:add-sub-section sigma $section-with-gamma
-          )
+          (assoc $section-with-beta sub-sections [&sigma=$section-with-gamma])
         ] |
           section:merge |
           should-be (
@@ -510,7 +521,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
   }
 
   >> 'adding a sub-section' {
-    >> 'when the sub-section does not belong to the section' {
+    >> 'when the sub-title does not belong to the section' {
       var sub-section = (
         section:create [&] [
           &alpha=$failed-test
@@ -526,7 +537,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
         )
     }
 
-    >> 'when the sub-section already belongs to the section, with different tests' {
+    >> 'when the sub-title already belongs to the section, having tests with different titles' {
       var first = (
         section:create [
           &alpha=$passed-test
@@ -554,7 +565,7 @@ var failed-test = (test-result:failure ['This is a failed test!'] [ExceptionLine
         )
     }
 
-    >> 'when the sub-section already belongs to the section, with the same test' {
+    >> 'when the sub-title already belongs to the section, having tests with the same title' {
       var first = (
         section:create [
           &alpha=$passed-test
