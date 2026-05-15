@@ -22,34 +22,34 @@ var from-section~ = (
   var raw-from-test-results~
   var raw-from-sub-sections~
 
+  set raw-from-test-results~ = { |test-results|
+    var total-passed = 0
+    var total-failed = 0
+
+    map:values $test-results | each { |test-result|
+      var outcome = $test-result[outcome]
+
+      if (eq $outcome $outcomes:passed) {
+        set total-passed = (+ $total-passed 1)
+      } elif (eq $outcome $outcomes:failed) {
+        set total-failed = (+ $total-failed 1)
+      } else {
+        fail 'Uknown outcome: '$outcome
+      }
+    }
+
+    put [
+      &passed=$total-passed
+      &failed=$total-failed
+    ]
+  }
+
   fn raw-from-section { |section|
     var test-result-raw = (raw-from-test-results $section[test-results])
 
     var sub-sections-raw = (raw-from-sub-sections $section[sub-sections])
 
     raw-sum-two $test-result-raw $sub-sections-raw
-  }
-
-  set raw-from-test-results~ = { |test-results|
-    var counts-by-outcome = [
-      &$outcomes:passed=0
-      &$outcomes:failed=0
-    ]
-
-    map:values $test-results | each { |test-result|
-      var outcome = $test-result[outcome]
-
-      var updated-outcome-count = (+ $counts-by-outcome[$outcome] 1)
-
-      set counts-by-outcome = (
-        assoc $counts-by-outcome $outcome $updated-outcome-count
-      )
-    }
-
-    put [
-      &passed=$counts-by-outcome[$outcomes:passed]
-      &failed=$counts-by-outcome[$outcomes:failed]
-    ]
   }
 
   set raw-from-sub-sections~ = { |sub-sections|
