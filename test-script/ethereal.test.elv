@@ -2,14 +2,16 @@ use str
 use github.com/giancosta86/ethereal/v1/map
 use ./ethereal
 
->> 'Loading Ethereal namespaces' {
-  >> 'should work' {
-    map:iterate $ethereal:namespaces { |namespace-name namespace|
-      str:has-suffix $namespace-name ':' |
-        should-be $true
+>> 'Test script' {
+  >> 'Ethereal namespaces' {
+    >> 'should work' {
+      map:iterate $ethereal:namespaces { |namespace-name namespace|
+        put $namespace-name |
+          should-have-suffix ':'
 
-      kind-of $namespace |
-        should-be ns
+        kind-of $namespace |
+          should-be ns
+      }
     }
   }
 }

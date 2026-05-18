@@ -1,3 +1,4 @@
+use github.com/giancosta86/ethereal/v1/collection
 use github.com/giancosta86/ethereal/v1/command
 use github.com/giancosta86/ethereal/v1/edit
 use github.com/giancosta86/ethereal/v1/exception
@@ -11,6 +12,7 @@ use github.com/giancosta86/ethereal/v1/set
 use github.com/giancosta86/ethereal/v1/string
 
 var namespaces = [
+  &collection:=$collection:
   &command:=$command:
   &edit:=$edit:
   &exception:=$exception:

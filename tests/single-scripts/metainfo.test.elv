@@ -10,14 +10,13 @@ use str
   }
 
   >> 'should contain the script path' {
-    str:has-suffix $script-src[name] metainfo.test.elv |
-      should-be $true
+    put $script-src[name] |
+      should-have-suffix metainfo.test.elv
   }
 
   >> 'should contain the source code' {
     put $script-src[code] |
-      str:contains (all) 'should contain the source code' |
-      should-be $true
+      should-contain 'should contain the source code'
   }
 }
 

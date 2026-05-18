@@ -1,30 +1,19 @@
 use path
 
-var single-scripts = [
-  single-scripts/empty.test.elv
-  single-scripts/exceptions.test.elv
-  single-scripts/in-section-failing.test.elv
-  single-scripts/in-section-mixed.test.elv
-  single-scripts/in-section-ok.test.elv
-  single-scripts/metainfo.test.elv
-  single-scripts/returning.test.elv
-  single-scripts/root-failing.test.elv
-  single-scripts/root-mixed.test.elv
-  single-scripts/root-ok.test.elv
-  single-scripts/root-test-without-title.test.elv
-  single-scripts/sub-section-without-title.test.elv
-  single-scripts/test-drafts.test.elv
-]
+var -script-dir = (path:dir (src)[name])
 
-var aggregator = [
-  aggregator/alpha.test.elv
-  aggregator/beta.test.elv
-  aggregator/gamma.test.elv
-]
+fn -get-scripts-from-sub-dir { |subdir|
+  put $-script-dir/$subdir/*.test.elv | each { |script-path|
+    count $-script-dir'/' |
+      put $script-path[(all)..]
+  }
+}
 
-var readme = [
-  readme/maths.test.elv
-]
+var single-scripts = [(-get-scripts-from-sub-dir single-scripts)]
+
+var aggregator = [(-get-scripts-from-sub-dir aggregator)]
+
+var readme = [(-get-scripts-from-sub-dir readme)]
 
 var all = [(
   all [
@@ -35,10 +24,6 @@ var all = [(
     order
 )]
 
-var get-script-path~ = (
-  var this-script-dir = (path:dir (src)[name])
-
-  put { |subdirectory basename|
-    path:join $this-script-dir $subdirectory $basename'.test.elv'
-  }
-)
+fn get-script-path { |subdirectory basename|
+  path:join $-script-dir $subdirectory $basename'.test.elv'
+}

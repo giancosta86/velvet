@@ -32,7 +32,7 @@ fn run { |script-path|
       } elif (== $rest-count 0) {
         put $tools:fail-test~
       } else {
-        fail 'Only 1 or 2 arguments are allowed!'
+        fail 'Only <title> or <title> <block> arguments are allowed!'
       }
     )
 

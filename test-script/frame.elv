@@ -42,6 +42,12 @@ fn create { |script-path title|
   }
 
   fn to-section {
+    var exception = $block-result[exception]
+
+    if (not-eq $exception $nil) {
+      fail $exception
+    }
+
     all $sub-frames | seq:reduce $section:empty { |cumulated-section sub-frame|
       var sub-title = $sub-frame[title]
 
@@ -63,12 +69,6 @@ fn create { |script-path title|
     var is-section-frame = (seq:is-non-empty $sub-frames)
 
     if $is-section-frame {
-      var exception = $block-result[exception]
-
-      if (not-eq $exception $nil) {
-        fail $exception
-      }
-
       to-section
     } else {
       to-test-result
