@@ -9,6 +9,10 @@ var -first-clockwork-line-pattern = (
     ['velvet' 'v\d+' 'test-script\.elv']
 
     ['velvet' 'test-script\.elv']
+
+    ['velvet' 'v\d+' 'sandbox\.elv']
+
+    ['velvet' 'sandbox\.elv']
   ] |
     each { |path-component-list|
       path:join $@path-component-list

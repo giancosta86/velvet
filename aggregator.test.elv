@@ -20,7 +20,7 @@ fn get-aggregator-script { |basename|
     get-aggregator-script alpha |
       aggregator:run-test-scripts |
       should-be (
-        sandbox-result:create $summaries:alpha[section]
+        sandbox-result:from-section $summaries:alpha[section]
       )
   }
 
@@ -31,7 +31,7 @@ fn get-aggregator-script { |basename|
     ] |
       aggregator:run-test-scripts |
       should-be (
-        sandbox-result:create $summaries:alpha-beta[section]
+        sandbox-result:from-section $summaries:alpha-beta[section]
       )
   }
 

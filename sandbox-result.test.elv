@@ -1,3 +1,4 @@
+use str
 use ./outcomes
 use ./sandbox-result
 use ./section
@@ -38,11 +39,38 @@ use ./test-result
         ]
     }
 
-    >> 'when passing both the section and the crashed scripts' {
+    >> 'when passing both the section and the exception lines' {
       sandbox-result:create $section $exception-lines-by-script |
         should-be [
           &section=$section
           &exception-lines-by-script=$exception-lines-by-script
+        ]
+    }
+
+    >> 'from section' {
+      put $section |
+        sandbox-result:from-section |
+        should-be (
+          sandbox-result:create $section
+        )
+    }
+
+    >> 'from exception' {
+      var script-path = (src)[name]
+      var exception = ?(fail DODO)
+
+      var result = (
+        sandbox-result:from-exception $script-path $exception
+      )
+
+      put $result[section] |
+        should-be $section:empty
+
+      all $result[exception-lines-by-script][$script-path] |
+        str:join "\n" |
+        should-contain-all [
+          DODO
+          $script-path
         ]
     }
   }

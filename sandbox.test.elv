@@ -12,7 +12,9 @@ var sandbox-path = (
 )
 
 fn run-single-sandbox { |basename|
-  var test-script-path = (script-gallery:get-script-path single-scripts $basename)
+  var test-script-path = (
+    script-gallery:get-script-path single-scripts $basename
+  )
 
   elvish -norc $sandbox-path $test-script-path |
     from-json
@@ -31,7 +33,7 @@ fn run-single-sandbox { |basename|
             ]
           )
         ] |
-          sandbox-result:create (all)
+          sandbox-result:from-section
       )
   }
 
@@ -61,7 +63,9 @@ fn run-single-sandbox { |basename|
   }
 
   >> 'crashing script' {
-    var crashing-script-path = (script-gallery:get-script-path single-scripts root-test-without-title)
+    var crashing-script-path = (
+      script-gallery:get-script-path single-scripts root-test-without-title
+    )
 
     var sandbox-result = (
       elvish -norc $sandbox-path $crashing-script-path |
@@ -76,10 +80,21 @@ fn run-single-sandbox { |basename|
         str:join "\n"
     )
 
-    put $exception-log |
-      should-contain 'The title must be a string!'
+    >> 'exception log' {
+      >> 'should contain the exception message' {
+        put $exception-log |
+          should-contain 'The title must be a string!'
+      }
 
-    put $exception-log |
-      should-not-contain "test-script.elv"
+      >> 'should not reference the test-script machinery' {
+        put $exception-log |
+          should-not-contain "test-script.elv"
+      }
+
+      >> 'should not reference the sandbox machinery' {
+        put $exception-log |
+          should-not-contain "sandbox.elv"
+      }
+    }
   }
 }

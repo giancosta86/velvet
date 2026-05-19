@@ -47,7 +47,7 @@ fn run-console-tests { |settings|
           test-result:success [Wiii!]
         )
       ] |
-        sandbox-result:create (all)
+        sandbox-result:from-section
     )
 
     run-sandbox-scenario $sandbox-result $settings[scenarios][single-passed-test]
@@ -60,7 +60,7 @@ fn run-console-tests { |settings|
           test-result:failure [Wooo!] [DODO]
         )
       ] |
-        sandbox-result:create (all)
+        sandbox-result:from-section
     )
 
     run-sandbox-scenario $sandbox-result $settings[scenarios][single-failed-having-output-and-exception]
@@ -73,7 +73,7 @@ fn run-console-tests { |settings|
           test-result:failure [Wooo!] []
         )
       ] |
-        sandbox-result:create (all)
+        sandbox-result:from-section
     )
 
     run-sandbox-scenario $sandbox-result $settings[scenarios][single-failed-having-output-only]
@@ -86,14 +86,14 @@ fn run-console-tests { |settings|
           test-result:failure [] [DODO]
         )
       ] |
-        sandbox-result:create (all)
+        sandbox-result:from-section
     )
 
     run-sandbox-scenario $sandbox-result $settings[scenarios][single-failed-having-exception-only]
   }
 
   >> 'with multi-level tree' {
-    var section = (
+    var sandbox-result = (
       section:create [
         &Alpha=(
           test-result:success [Wiii!]
@@ -110,11 +110,8 @@ fn run-console-tests { |settings|
             )
           ]
         )
-      ]
-    )
-
-    var sandbox-result = (
-      sandbox-result:create $section
+      ] |
+        sandbox-result:from-section
     )
 
     run-sandbox-scenario $sandbox-result $settings[scenarios][multi-level-tree]

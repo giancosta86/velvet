@@ -13,7 +13,7 @@ var alpha = (
       ]
     )
   ] |
-    sandbox-result:create (all) |
+    sandbox-result:from-section |
     summary:from-sandbox-result
 )
 
@@ -46,7 +46,7 @@ var alpha-beta = (
       ]
     )
   ] |
-    sandbox-result:create (all) |
+    sandbox-result:from-section |
     summary:from-sandbox-result
 )
 
@@ -93,6 +93,6 @@ var alpha-beta-gamma-simplified = (
       ]
     )
   ] |
-    sandbox-result:create (all) |
+    sandbox-result:from-section |
     summary:from-sandbox-result
 )

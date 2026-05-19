@@ -35,13 +35,32 @@ use ./exception-lines
         Sigma
         'github.com/giancosta86/velvet/v3/test-script.elv:34'
         SomeOtherLine
-        '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v3/sandbox.elv:7:3-25:   each $test-script:run~ |'
+        '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v3/test-script.elv:7:3-25:   each $test-script:run~ |'
       ] |
         exception-lines:trim-clockwork-stack |
         should-emit [
           '[eval 1]:8:9-12: var v = $asd'
           Ro
           Sigma
+        ]
+    }
+
+    >> 'with hand-made exception referencing sandbox from a specific Velvet version' {
+      all [
+        Super
+        Basic
+        Test
+        'github.com/giancosta86/velvet/v3/sandbox.elv:11'
+        Yet
+        More
+        Lines
+        '~/.local/share/elvish/lib/github.com/giancosta86/velvet/v3/sandbox.elv:7:3-25:   each $test-script:run~ |'
+      ] |
+        exception-lines:trim-clockwork-stack |
+        should-emit [
+          Super
+          Basic
+          Test
         ]
     }
 
