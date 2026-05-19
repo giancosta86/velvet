@@ -86,14 +86,14 @@ fn run-single-sandbox { |basename|
           should-contain 'The title must be a string!'
       }
 
-      >> 'should not reference the test-script machinery' {
+      >> 'should not reference test-script' {
         put $exception-log |
-          should-not-contain "test-script.elv"
+          should-not-contain "test-script"
       }
 
-      >> 'should not reference the sandbox machinery' {
+      >> 'should not reference sandbox' {
         put $exception-log |
-          should-not-contain "sandbox.elv"
+          should-not-contain "sandbox"
       }
     }
   }

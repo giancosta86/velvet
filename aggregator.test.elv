@@ -61,13 +61,33 @@ fn get-aggregator-script { |basename|
     var sandbox-result = (
       put $crashing-script-path |
         aggregator:run-test-scripts
+    )
+
+    >> 'should output a result with an empty section' {
+      put $sandbox-result[section] |
+        should-be $section:empty
+    }
+
+    >> 'exception log' {
+      var exception-log = (
+        all $sandbox-result[exception-lines-by-script][$crashing-script-path] |
+          str:join "\n"
       )
 
-    put $sandbox-result[section] |
-      should-be $section:empty
+      >> 'should not reference test-script' {
+        put $exception-log |
+          should-not-contain "test-script"
+      }
 
-    all $sandbox-result[exception-lines-by-script][$crashing-script-path] |
-      str:join "\n" |
-      should-not-contain "test-script.elv"
+      >> 'should not reference sandbox' {
+        put $exception-log |
+          should-not-contain 'sandbox'
+      }
+
+      >> 'should not reference aggregator' {
+        put $exception-log |
+          should-not-contain 'aggregator'
+      }
+    }
   }
 }
