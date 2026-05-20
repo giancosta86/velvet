@@ -239,7 +239,7 @@ var this-script-dir = (path:dir (src)[name])
         var spy = (spy:create)
 
         fs:with-temp-file { |json-report-path|
-          var json-reporter = (json:report $json-report-path)
+          var json-reporter = (json:create-reporter $json-report-path)
 
           velvet:velvet &reporters=[$json-reporter $spy[reporter]]
 

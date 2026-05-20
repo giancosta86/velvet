@@ -553,7 +553,7 @@ The reporter must be created via a _factory function_ - `reporting/json/report`,
 For example:
 
 ```elvish
-var json-reporter = (json:report $json-report-path)
+var json-reporter = (json:create-reporter $json-report-path)
 
 velvet:velvet &reporters=[$json-reporter]
 ```

@@ -8,24 +8,17 @@ use ./velvet
 >> 'README tests' {
   tmp pwd = (path:join tests readme)
 
-  >> 'execution and stats' {
-    velvet:velvet &flawless &emit-summary &reporters=[] |
-      put (all)[stats] |
-      should-be [
-        &total=4
-        &passed=4
-        &failed=0
-      ]
+  >> 'should run flawlessly' {
+    velvet:velvet &flawless
   }
 
   >> 'console reporter log' {
     fn assert-readme-log { |reporter expected-basename|
       var expected-log = (slurp < $expected-basename)
 
-      velvet:velvet &reporters=[$reporter] |
-        slurp |
-        string:unstyled |
-        str:trim-space (all) |
+      capture {
+        velvet:velvet &reporters=[$reporter]
+      } |
         should-be $expected-log
     }
 

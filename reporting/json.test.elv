@@ -4,7 +4,7 @@ use ./json
 >> 'JSON reporter' {
   >> 'when reporting to a file path' {
     fs:with-temp-file { |json-file|
-      var reporter = (json:report $json-file)
+      var reporter = (json:create-reporter $json-file)
 
       var test-summary = $summaries:alpha-beta
 
