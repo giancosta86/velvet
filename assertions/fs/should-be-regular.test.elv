@@ -8,9 +8,9 @@ var should-be-regular~ = $should-be-regular:should-be-regular~
       fs:with-temp-dir { |temp-dir|
         cd $temp-dir
 
-        echo Alpha > alpha
-        echo Beta > beta
-        echo Gamma > gamma
+        echo '' > alpha
+        echo '' > beta
+        echo '' > gamma
 
         >> 'when the files exist' {
           all [

@@ -1,6 +1,5 @@
 use github.com/giancosta86/ethereal/v1/seq
 use ./sandbox-result
-use ./section
 use ./test-script
 
 var test-script-paths = $args

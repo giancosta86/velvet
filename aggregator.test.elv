@@ -5,10 +5,6 @@ use ./section
 use ./tests/aggregator/summaries
 use ./tests/script-gallery
 
-fn get-aggregator-script { |basename|
-  script-gallery:get-script-path aggregator $basename
-}
-
 >> 'Aggregator' {
   >> 'when running no scripts' {
     all [] |
@@ -17,7 +13,7 @@ fn get-aggregator-script { |basename|
   }
 
   >> 'when running 1 script' {
-    get-aggregator-script alpha |
+    script-gallery:get-aggregator-script alpha |
       aggregator:run-test-scripts |
       should-be (
         sandbox-result:from-section $summaries:alpha[section]
@@ -26,8 +22,8 @@ fn get-aggregator-script { |basename|
 
   >> 'when running 2 scripts' {
     all [
-      (get-aggregator-script alpha)
-      (get-aggregator-script beta)
+      (script-gallery:get-aggregator-script alpha)
+      (script-gallery:get-aggregator-script beta)
     ] |
       aggregator:run-test-scripts |
       should-be (
@@ -39,9 +35,9 @@ fn get-aggregator-script { |basename|
     range 1 5 | each { |num-workers|
       var sandbox-result = (
         all [
-          (get-aggregator-script alpha)
-          (get-aggregator-script beta)
-          (get-aggregator-script gamma)
+          (script-gallery:get-aggregator-script alpha)
+          (script-gallery:get-aggregator-script beta)
+          (script-gallery:get-aggregator-script gamma)
         ] |
           aggregator:run-test-scripts &num-workers=$num-workers
       )
@@ -56,7 +52,7 @@ fn get-aggregator-script { |basename|
   }
 
   >> 'when running a crashing script' {
-    var crashing-script-path = (script-gallery:get-script-path single-scripts root-test-without-title)
+    var crashing-script-path = (script-gallery:get-standalone-script root-test-without-title)
 
     var sandbox-result = (
       put $crashing-script-path |
@@ -74,17 +70,17 @@ fn get-aggregator-script { |basename|
           str:join "\n"
       )
 
-      >> 'should not reference test-script' {
+      >> 'should not mention test-script' {
         put $exception-log |
           should-not-contain "test-script"
       }
 
-      >> 'should not reference sandbox' {
+      >> 'should not mention sandbox' {
         put $exception-log |
           should-not-contain 'sandbox'
       }
 
-      >> 'should not reference aggregator' {
+      >> 'should not mention aggregator' {
         put $exception-log |
           should-not-contain 'aggregator'
       }

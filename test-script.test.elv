@@ -6,8 +6,8 @@ use ./test-result
 use ./test-script
 use ./tests/script-gallery
 
-fn run-single-script { |basename|
-  var test-script-path = (script-gallery:get-script-path single-scripts $basename)
+fn run-standalone-script { |basename|
+  var test-script-path = (script-gallery:get-standalone-script $basename)
 
   test-script:run $test-script-path
 }
@@ -15,13 +15,13 @@ fn run-single-script { |basename|
 >> 'Test script' {
   >> 'execution' {
     >> 'with empty script' {
-      run-single-script empty |
+      run-standalone-script empty |
         should-be $section:empty
     }
 
     >> 'with metainfo checks' {
       var stats = (
-        run-single-script metainfo |
+        run-standalone-script metainfo |
           stats:from-section
       )
 
@@ -30,7 +30,7 @@ fn run-single-script { |basename|
     }
 
     >> 'with root passing test' {
-      run-single-script root-ok |
+      run-standalone-script root-ok |
         should-be (
           section:create [
             &'My passing test'=(
@@ -41,7 +41,7 @@ fn run-single-script { |basename|
     }
 
     >> 'with root failing test' {
-      var section = (run-single-script root-failing)
+      var section = (run-standalone-script root-failing)
 
       >> 'should emit a section with a root failing test' {
         put $section |
@@ -73,7 +73,7 @@ fn run-single-script { |basename|
     }
 
     >> 'with root passing and failing test' {
-      run-single-script root-mixed |
+      run-standalone-script root-mixed |
         section:simplify |
         should-be (
           section:create [
@@ -88,7 +88,7 @@ fn run-single-script { |basename|
     }
 
     >> 'with section having a passing test' {
-      run-single-script in-section-ok |
+      run-standalone-script in-section-ok |
         should-be (
           section:create [&] [
             &'My test'=(
@@ -103,7 +103,7 @@ fn run-single-script { |basename|
     }
 
     >> 'with section having a single failing test' {
-      var section = (run-single-script in-section-failing)
+      var section = (run-standalone-script in-section-failing)
 
       >> 'should emit a section with a sub-section containing a failing test' {
         put $section |
@@ -140,13 +140,13 @@ fn run-single-script { |basename|
 
     >> 'with root test not including the title' {
       fails {
-        run-single-script root-test-without-title
+        run-standalone-script root-test-without-title
       } |
         should-be 'The title must be a string!'
     }
 
     >> 'with section not including the title' {
-      var section = (run-single-script sub-section-without-title)
+      var section = (run-standalone-script sub-section-without-title)
 
       >> 'should interpret the Alpha frame as a test' {
         section:simplify $section |
@@ -167,7 +167,7 @@ fn run-single-script { |basename|
     }
 
     >> 'with section having mixed outcomes' {
-      var section = (run-single-script in-section-mixed)
+      var section = (run-standalone-script in-section-mixed)
 
       section:simplify $section |
         should-be (
@@ -204,7 +204,7 @@ fn run-single-script { |basename|
     }
 
     >> 'with return keyword' {
-      run-single-script returning |
+      run-standalone-script returning |
         should-be (
           section:create [&] [
             &'Returning from a test'=(
@@ -220,7 +220,7 @@ fn run-single-script { |basename|
 
     >> 'with exception handling' {
       var stats = (
-        run-single-script exceptions |
+        run-standalone-script exceptions |
           stats:from-section
       )
 
@@ -229,7 +229,7 @@ fn run-single-script { |basename|
     }
 
     >> 'with test drafts' {
-      var section = (run-single-script test-drafts)
+      var section = (run-standalone-script test-drafts)
 
       >> 'should generate a regular section with a tree' {
         section:simplify $section |

@@ -1,4 +1,6 @@
 use os
+use path
+use github.com/giancosta86/ethereal/v1/fs
 use github.com/giancosta86/ethereal/v1/parallel
 use github.com/giancosta86/ethereal/v1/seq
 use ./aggregator
@@ -6,43 +8,58 @@ use ./reporting/console/full
 use ./reporting/console/terse
 use ./summary
 
-#
-# Emits all the **.test.elv** test scripts in the current directory tree.
-#
-fn get-test-scripts {
-  put **[nomatch-ok].test.elv
-}
+var -default-reporters = [$terse:report~]
 
-fn -resolve-test-scripts {
-  var items-from-pipe = $false
+fn -resolve-script-path { |script-path|
+  if (os:is-regular $script-path) {
+    put $script-path
+  } else {
+    var path-with-extension = $script-path'.test.elv'
 
-  each { |script-path|
-    set items-from-pipe = $true
+    if (os:is-regular $path-with-extension) {
+      put $path-with-extension
+    } elif (os:is-dir $script-path) {
+      tmp pwd = $script-path
 
-    if (not (os:is-regular $script-path)) {
-      var path-with-extension = $script-path'.test.elv'
-
-      if (os:is-regular $path-with-extension) {
-        put $path-with-extension
-      } elif (os:is-dir $script-path) {
-        put $script-path/**[nomatch-ok].test.elv
-      } else {
-        put $script-path
+      fs:find-test-scripts | each { |current-script|
+        path:join $script-path $current-script
       }
     } else {
       put $script-path
     }
   }
+}
 
-  if (not $items-from-pipe) {
-    get-test-scripts
+fn -resolve-test-scripts {
+  var paths-from-pipe = [(
+    each $-resolve-script-path~
+  )]
+
+  if (seq:is-non-empty $paths-from-pipe) {
+    all $paths-from-pipe
+  } else {
+    fs:find-test-scripts
   }
 }
 
 #
 # Runs the Velvet test system.
 #
-fn velvet { |&flawless=$false &emit-summary=$false &verbose=$false &reporters=[$terse:report~] &num-workers=$parallel:DEFAULT-NUM-WORKERS @script-paths|
+fn velvet { |&flawless=$false &emit-summary=$false &verbose=$false &reporters=$nil &num-workers=$parallel:DEFAULT-NUM-WORKERS @script-paths|
+  var actual-reporters = (
+    if $verbose {
+      if $reporters {
+        fail 'The &verbose flag and the &reporters option are mutually exclusive!'
+      }
+
+      put [$full:report~]
+    } elif $reporters {
+      put $reporters
+    } else {
+      put $-default-reporters
+    }
+  )
+
   var sandbox-result = (
     all $script-paths |
       -resolve-test-scripts |
@@ -51,11 +68,7 @@ fn velvet { |&flawless=$false &emit-summary=$false &verbose=$false &reporters=[$
 
   var summary = (summary:from-sandbox-result $sandbox-result)
 
-  if $verbose {
-    set reporters = [$full:report~]
-  }
-
-  all $reporters | each { |reporter|
+  all $actual-reporters | each { |reporter|
     $reporter $summary |
       only-bytes
   }

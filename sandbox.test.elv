@@ -11,9 +11,9 @@ var sandbox-path = (
     path:join (all) sandbox.elv
 )
 
-fn run-single-sandbox { |basename|
+fn run-standalone-sandbox { |basename|
   var test-script-path = (
-    script-gallery:get-script-path single-scripts $basename
+    script-gallery:get-standalone-script $basename
   )
 
   elvish -norc $sandbox-path $test-script-path |
@@ -22,7 +22,7 @@ fn run-single-sandbox { |basename|
 
 >> 'Running in sandbox' {
   >> 'passing test' {
-    run-single-sandbox in-section-ok |
+    run-standalone-sandbox in-section-ok |
       should-be (
         section:create [&] [
           &'My test'=(
@@ -38,7 +38,7 @@ fn run-single-sandbox { |basename|
   }
 
   >> 'failing test' {
-    var sandbox-result = (run-single-sandbox in-section-failing)
+    var sandbox-result = (run-standalone-sandbox in-section-failing)
 
     put $sandbox-result[section] |
       section:simplify |
@@ -64,7 +64,7 @@ fn run-single-sandbox { |basename|
 
   >> 'crashing script' {
     var crashing-script-path = (
-      script-gallery:get-script-path single-scripts root-test-without-title
+      script-gallery:get-standalone-script root-test-without-title
     )
 
     var sandbox-result = (
@@ -86,12 +86,12 @@ fn run-single-sandbox { |basename|
           should-contain 'The title must be a string!'
       }
 
-      >> 'should not reference test-script' {
+      >> 'should not mention test-script' {
         put $exception-log |
           should-not-contain "test-script"
       }
 
-      >> 'should not reference sandbox' {
+      >> 'should not mention sandbox' {
         put $exception-log |
           should-not-contain "sandbox"
       }

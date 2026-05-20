@@ -9,7 +9,7 @@ fn -get-scripts-from-sub-dir { |subdir|
   }
 }
 
-var single-scripts = [(-get-scripts-from-sub-dir single-scripts)]
+var standalone-scripts = [(-get-scripts-from-sub-dir standalone)]
 
 var aggregator = [(-get-scripts-from-sub-dir aggregator)]
 
@@ -17,13 +17,21 @@ var readme = [(-get-scripts-from-sub-dir readme)]
 
 var all = [(
   all [
-    $@single-scripts
+    $@standalone-scripts
     $@aggregator
     $@readme
   ] |
     order
 )]
 
-fn get-script-path { |subdirectory basename|
+fn -get-script-path { |subdirectory basename|
   path:join $-script-dir $subdirectory $basename'.test.elv'
+}
+
+fn get-standalone-script { |basename|
+  -get-script-path standalone $basename
+}
+
+fn get-aggregator-script { |basename|
+  -get-script-path aggregator $basename
 }

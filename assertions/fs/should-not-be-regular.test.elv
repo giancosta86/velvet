@@ -8,9 +8,9 @@ var should-not-be-regular~ = $should-not-be-regular:should-not-be-regular~
       fs:with-temp-dir { |temp-dir|
         cd $temp-dir
 
-        echo Alpha > alpha
-        echo Beta > beta
-        echo Gamma > gamma
+        echo '' > alpha
+        echo '' > beta
+        echo '' > gamma
 
         >> 'when the files are missing' {
           all [
