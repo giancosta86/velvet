@@ -23,6 +23,18 @@ var report~ = (
     str:repeat ' ' (* $level 4)
   }
 
+  fn display-wrong-lines { |description wrong-lines|
+    if (seq:is-non-empty $wrong-lines) {
+      echo (styled $description red bold)
+      echo
+
+      all $wrong-lines |
+        each $echo~
+
+      echo
+    }
+  }
+
   fn display-test-result { |test-title test-result level|
     var outcome = $test-result[outcome]
 
@@ -32,25 +44,9 @@ var report~ = (
 
     if (eq $outcome $outcomes:failed) {
       {
-        if (seq:is-non-empty $test-result[output-lines]) {
-          echo (styled '*** OUTPUT LOG (stdout + stderr) ***' red bold)
-          echo
+        display-wrong-lines '*** OUTPUT LOG (stdout + stderr) ***' $test-result[output-lines]
 
-          all $test-result[output-lines] |
-            each $echo~
-
-          echo
-        }
-
-        if (seq:is-non-empty $test-result[exception-lines]) {
-          echo (styled '*** EXCEPTION LOG ***' red bold)
-          echo
-
-          all $test-result[exception-lines] |
-            each $echo~
-
-          echo
-        }
+        display-wrong-lines '*** EXCEPTION LOG ***' $test-result[exception-lines]
       } |
         string:prefix-lines (get-indentation (+ $level 1))
     }
@@ -65,15 +61,17 @@ var report~ = (
         display-test-result $test-title $test-result $level
       }
 
-    var is-first-sub-section = $true
+    var section-has-test-results = (seq:is-non-empty $section[test-results])
+
+    var before-first-sub-section = $true
 
     keys $section[sub-sections] |
       order &key=$sorting-algorithm |
       each { |sub-title|
-        if $is-first-sub-section {
-          set is-first-sub-section = $false
+        if $before-first-sub-section {
+          set before-first-sub-section = $false
 
-          if (seq:is-non-empty $section[test-results])  {
+          if $section-has-test-results  {
             echo
           }
         } else {
@@ -86,6 +84,10 @@ var report~ = (
 
         display-section $sub-section (+ $level 1)
       }
+
+    if (and (== $level 0) (not $before-first-sub-section)) {
+      echo
+    }
   }
 
   fn display-stats { |stats|
@@ -148,8 +150,6 @@ var report~ = (
     }
 
     display-section $summary[section] 0
-
-    echo
 
     display-stats $summary[stats]
 

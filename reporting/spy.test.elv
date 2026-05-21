@@ -1,24 +1,26 @@
 use ../tests/aggregator/summaries
 use ./spy
 
->> 'Reporter spy' {
-  >> 'retrieving the summary' {
-    >> 'upon creation' {
-      var spy = (spy:create)
+>> 'Reporters' {
+  >> 'spy' {
+    >> 'retrieving the summary' {
+      >> 'upon creation' {
+        var spy = (spy:create)
 
-      $spy[get-summary] |
-        should-be $nil
-    }
+        $spy[get-summary] |
+          should-be $nil
+      }
 
-    >> 'upon after calling the reporter function' {
-      var spy = (spy:create)
+      >> 'upon after calling the reporter function' {
+        var spy = (spy:create)
 
-      var test-summary = $summaries:alpha-beta
+        var test-summary = $summaries:alpha-beta
 
-      $spy[reporter] $test-summary
+        $spy[reporter] $test-summary
 
-      $spy[get-summary] |
-        should-be $test-summary
+        $spy[get-summary] |
+          should-be $test-summary
+      }
     }
   }
 }
