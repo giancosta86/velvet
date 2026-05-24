@@ -338,6 +338,20 @@ They can be conceptually divided into the following categories:
 
 - `should-not-be-empty`: ensures the collection is not empty.
 
+#### Comparison assertions
+
+Each of them applies a _comparison operator_ between the **subject** and the **argument**:
+
+- `should-be-at-least` (&ge;)
+
+- `should-be-at-most` (&le;)
+
+- `should-be-greater-than` (&gt;)
+
+- `should-be-less-than` (&lt;)
+
+Unlike the core assertions, there is no `&strict` flag, because the **argument** is always cast to match the kind of the **subject**.
+
 #### File-system assertions
 
 These assertions take _file-system-entries_ via pipe, _test each of them_ and finally fail if _at least_ one entry does not pass the test - also displaying _all the failing entries_.

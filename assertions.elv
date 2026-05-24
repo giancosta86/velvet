@@ -5,6 +5,11 @@ use ./assertions/collections/should-contain
 use ./assertions/collections/should-not-be-empty
 use ./assertions/collections/should-not-contain
 
+use ./assertions/comparisons/should-be-at-least
+use ./assertions/comparisons/should-be-at-most
+use ./assertions/comparisons/should-be-greater-than
+use ./assertions/comparisons/should-be-less-than
+
 use ./assertions/core/should-be
 use ./assertions/core/should-emit
 use ./assertions/core/should-not-be
@@ -32,6 +37,11 @@ var should-contain-none~ = $should-contain-none:should-contain-none~
 var should-contain~ = $should-contain:should-contain~
 var should-not-be-empty~ = $should-not-be-empty:should-not-be-empty~
 var should-not-contain~ = $should-not-contain:should-not-contain~
+
+var should-be-at-least~ = $should-be-at-least:should-be-at-least~
+var should-be-at-most~ = $should-be-at-most:should-be-at-most~
+var should-be-greater-than~ = $should-be-greater-than:should-be-greater-than~
+var should-be-less-than~ = $should-be-less-than:should-be-less-than~
 
 var should-be~ = $should-be:should-be~
 var should-emit~ = $should-emit:should-emit~
