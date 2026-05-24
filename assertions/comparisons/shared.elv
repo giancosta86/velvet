@@ -1,5 +1,5 @@
 use ../../assertion
-use ../../utils/output
+use ../../output
 
 fn run-comparison-assertion { |settings|
   var assertion-reference = $settings[assertion-reference]

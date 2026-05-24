@@ -1,5 +1,5 @@
 use ../../assertion
-use ../../utils/output
+use ../../output
 
 fn should-emit { |&strict=$false &order-key=$nil &any-order=$false expected|
   if (not-eq (kind-of $expected) list) {

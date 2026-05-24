@@ -1,6 +1,6 @@
 use github.com/giancosta86/ethereal/v1/collection
 use ../../assertion
-use ../../utils/output
+use ../../output
 
 fn should-contain { |&strict=$false expected-value|
   var collection = (one | assertion:get-input &strict=$strict)

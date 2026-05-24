@@ -2,7 +2,7 @@ use builtin
 use github.com/giancosta86/ethereal/v1/fs
 use github.com/giancosta86/ethereal/v1/lang
 use github.com/giancosta86/ethereal/v1/seq
-use ./utils/output
+use ./output
 
 var failure-prefix = 'Assertion failed: '
 

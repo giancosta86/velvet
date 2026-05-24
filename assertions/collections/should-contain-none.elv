@@ -1,7 +1,7 @@
 use github.com/giancosta86/ethereal/v1/collection
 use github.com/giancosta86/ethereal/v1/seq
 use ../../assertion
-use ../../utils/output
+use ../../output
 
 fn should-contain-none { |&strict=$false unexpected-values|
   var collection = (one | assertion:get-input &strict=$strict)

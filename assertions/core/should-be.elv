@@ -1,5 +1,5 @@
 use ../../assertion
-use ../../utils/output
+use ../../output
 
 fn should-be { |&strict=$false expected|
   var actual = (one | assertion:get-input &strict=$strict)

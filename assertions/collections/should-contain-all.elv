@@ -1,7 +1,7 @@
 use github.com/giancosta86/ethereal/v1/collection
 use github.com/giancosta86/ethereal/v1/seq
 use ../../assertion
-use ../../utils/output
+use ../../output
 
 fn should-contain-all { |&strict=$false expected-values|
   var collection = (one | assertion:get-input &strict=$strict)

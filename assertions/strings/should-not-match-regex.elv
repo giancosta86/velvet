@@ -1,6 +1,6 @@
 use re
 use ../../assertion
-use ../../utils/output
+use ../../output
 
 fn should-not-match-regex { |unexpected-pattern|
   var actual = (assertion:get-string-subject)

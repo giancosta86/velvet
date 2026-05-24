@@ -1,7 +1,7 @@
 use str
 use github.com/giancosta86/ethereal/v1/exception
 use ../assertion
-use ../utils/output
+use ../output
 use ./throws
 
 var throws~ = $throws:throws~

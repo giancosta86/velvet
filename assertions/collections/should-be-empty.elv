@@ -1,6 +1,6 @@
 use github.com/giancosta86/ethereal/v1/collection
 use ../../assertion
-use ../../utils/output
+use ../../output
 
 fn should-be-empty {
   var collection = (one)

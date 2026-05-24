@@ -1,6 +1,6 @@
 use str
 use ../../assertion
-use ../../utils/output
+use ../../output
 
 fn should-have-prefix { |expected-prefix|
   var actual = (assertion:get-string-subject)

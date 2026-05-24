@@ -1,7 +1,7 @@
 use str
 use github.com/giancosta86/ethereal/v1/collection
 use ../../assertion
-use ../../utils/output
+use ../../output
 
 fn should-not-contain-snippet { |snippet-lines|
   var subject = (assertion:get-string-subject)
