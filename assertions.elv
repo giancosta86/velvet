@@ -5,6 +5,11 @@ use ./assertions/collections/should-contain
 use ./assertions/collections/should-not-be-empty
 use ./assertions/collections/should-not-contain
 
+use ./assertions/core/should-be
+use ./assertions/core/should-emit
+use ./assertions/core/should-not-be
+use ./assertions/core/should-not-emit
+
 use ./assertions/fs/should-be-dir
 use ./assertions/fs/should-be-regular
 use ./assertions/fs/should-exist
@@ -21,18 +26,17 @@ use ./assertions/strings/should-not-have-prefix
 use ./assertions/strings/should-not-have-suffix
 use ./assertions/strings/should-not-match-regex
 
-use ./assertions/should-be
-use ./assertions/should-emit
-use ./assertions/should-not-be
-use ./assertions/should-not-emit
-
-
 var should-be-empty~ = $should-be-empty:should-be-empty~
 var should-contain-all~ = $should-contain-all:should-contain-all~
 var should-contain-none~ = $should-contain-none:should-contain-none~
 var should-contain~ = $should-contain:should-contain~
 var should-not-be-empty~ = $should-not-be-empty:should-not-be-empty~
 var should-not-contain~ = $should-not-contain:should-not-contain~
+
+var should-be~ = $should-be:should-be~
+var should-emit~ = $should-emit:should-emit~
+var should-not-be~ = $should-not-be:should-not-be~
+var should-not-emit~ = $should-not-emit:should-not-emit~
 
 var should-be-dir~ = $should-be-dir:should-be-dir~
 var should-be-regular~ = $should-be-regular:should-be-regular~
@@ -49,8 +53,3 @@ var should-not-contain-snippet~ = $should-not-contain-snippet:should-not-contain
 var should-not-have-prefix~ = $should-not-have-prefix:should-not-have-prefix~
 var should-not-have-suffix~ = $should-not-have-suffix:should-not-have-suffix~
 var should-not-match-regex~ = $should-not-match-regex:should-not-match-regex~
-
-var should-be~ = $should-be:should-be~
-var should-emit~ = $should-emit:should-emit~
-var should-not-be~ = $should-not-be:should-not-be~
-var should-not-emit~ = $should-not-emit:should-not-emit~

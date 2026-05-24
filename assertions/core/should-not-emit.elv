@@ -1,7 +1,7 @@
 use github.com/giancosta86/ethereal/v1/seq
 use github.com/giancosta86/ethereal/v1/set
-use ../assertion
-use ../utils/output
+use ../../assertion
+use ../../utils/output
 
 fn should-not-emit { |&strict=$false unexpected|
   if (not-eq (kind-of $unexpected) list) {
