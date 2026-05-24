@@ -2,13 +2,13 @@
 
 _Smooth, functional testing in the Elvish shell_
 
-**velvet** is a minimalist - yet _sophisticated_ - **test framework** and **runner**, enabling its users to _run tests organized in hierarchical structures_ leveraging the _functional programming_ elegance of the [Elvish](https://elv.sh/) shell.
+**velvet** is a minimalist, _Vitest-like_ **test framework** and **runner**, enabling its users to _run tests organized in hierarchical structures_ leveraging the _functional programming_ elegance of the [Elvish](https://elv.sh/) shell.
 
 ![Logo](logo.png)
 
 ## Why Velvet?
 
-I am personally fond of the expressive, **Gherkin**-like syntax supported by testing infrastructures like [Jest](https://jestjs.io/), [Vitest](https://vitest.dev/) and [ScalaTest](https://www.scalatest.org/), but each of them is based on a specific language - which usually doesn't feel as _natural_ as a shell when dealing with _system aspects_ like files, networks or _inter-process communication_.
+I am definitely fond of the expressive, **Gherkin**-like syntax supported by testing infrastructures like [Vitest](https://vitest.dev/), [Jest](https://jestjs.io/) and [ScalaTest](https://www.scalatest.org/), but each of them is based on a specific language - which usually doesn't feel as _natural_ as a shell when dealing with _system aspects_ like files, networks or _inter-process communication_.
 
 Given my passion for the [Elvish](https://elv.sh/) shell, I've designed this _testing architecture_ by combining my favorite aspects of such frameworks, while applying my own perspective - especially focused on _cross-technology integration scenarios_.
 
@@ -44,11 +44,11 @@ This will make the `velvet` command globally available at the command prompt.
 
 ## Writing tests
 
-Tests are defined in **test scripts** - by convention, files having `.test.elv` extension: they are _standard Elvish scripts_ with a fundamental plus - they can also transparently invoke a handful of _additional builtin functions_, injected by Velvet and described in this section.
+Tests are defined in **test scripts** - by convention, files having `.test.elv` extension: they are _standard Elvish scripts_ with a fundamental plus - they can also transparently invoke a handful of _additional builtin functions and namespaces_, especially from [Ethereal](https://github.com/giancosta86/ethereal), injected by Velvet and described in this section.
 
 ### Structuring the tests
 
-The `>>` function is the basic building block for _defining the test tree_ - adopting _a Gherkin-like descriptive notation_:
+The `>>` function is the basic building block for _defining the test tree_ - adopting _a totally arbitrary, Gherkin-like descriptive notation_:
 
 ```elvish
 >> 'First component' {
@@ -69,9 +69,9 @@ The `>>` function is the basic building block for _defining the test tree_ - ado
 
 >> 'Second component' {
   >> 'other operation' {
-    >> 'should work' {
-      # Test code goes here
-    }
+    # More code goes here. You don't have to use 'should'
+    # to define tests: you could use 'must', or just describe
+    # the scenario, with no prescription.
   }
 }
 ```
@@ -81,8 +81,6 @@ The innermost calls of `>>` define **tests**, which are the leaves in a tree of 
 - **should return value**
 
 - **should crash**
-
-- **should work**
 
 whereas all the other occurrences of `>>` define **sections** - and each section can include _tests_ and _sub-sections_.
 
@@ -110,20 +108,60 @@ A test can only have one of _two outcomes_:
 
 - ✅**passed** if its block _ends with no exceptions_
 
-- ❌**failed** if an exception was thrown; in particular, you can fail a test via Elvish's `fail` function, or via one of Velvet's _assertions_.
+- ❌**failed** if an exception was thrown; in particular, you can fail a test via Elvish's `fail` function, or via one of Velvet's _block handlers_ or _assertions_.
 
 In the default console reporter, the **test output** - on both _stdout_ and _stderr_ - is displayed, together with the _exception log_, only _if the test fails_.
 
+## Test commands: assertions vs block handlers
+
+The body of a test usually contains one or more _test commands_ - which can be either _assertions_ or _block handlers_:
+
+- **assertions** - commands taking values (usually one, but sometimes more) via pipe, then performing checks via their arguments. Consequently, they are invoked _after_ generating the value they are testing. For example, `should-be` works like this:
+
+  ```elvish
+  + 83 7 |
+    should-be 90
+  ```
+
+- **block handlers** - commands taking one or more arguments, whose last argument is _a block_; they are especially useful for higher-order manipulation, such as _exception checking_; as a consequence, they are invoked _before_ opening the code block they are testing. For example, `fails` works as follows:
+
+  ```elvish
+  fails { # Ensures that `fail` is called, then emits the related value
+    fail DODO
+  } |
+    should-be DODO
+  ```
+
 ### Assertions
 
-- `should-be [&strict] <expected>`: if the value passed via pipe (`|`) is not equal to the `<expected>` argument:
+Assertions are freely accessible from any **.test.elv** test script - whereas utility **.elv** scripts can import them from the `assertions` barrel module provided by Velvet:
+
+```elvish
+use github.com/giancosta86/velvet/<VERSION>/assertions
+```
+
+They can be conceptually divided into the following categories:
+
+- **core** - basic inter-process communication
+
+- **comparisons** - focusing on comparison operators
+
+- **collections** - collection-oriented assertions
+
+- **file system** - dedicated to file-system objects
+
+- **strings** - ensuring specific string invariants
+
+#### Core assertions
+
+- `should-be [&strict] <expected>`: if the _single_ value passed via pipe (`|`) is not equal to the `<expected>` argument:
   1. Displays both values
 
   1. If the `diff` command is available on the system, also shows their differences
 
   1. Fails.
 
-  To test a single variable, you can prepend the `put` function:
+  To test variable, you can prepend the `put` function:
 
   ```elvish
   put $my-variable |
@@ -137,7 +175,7 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     should-be <expected value>
   ```
 
-  #### Equality
+  ##### Equality
 
   In Velvet, _equality_ is defined as follows:
   - the **default behavior** consists in comparing via `eq` the _minimized representations_ of both operands.
@@ -151,13 +189,13 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     **DEFINITION**: the _minimized representation_ for any value is defined as follows:
     - if the value is a **number**, it is the _string_ denoting the number
 
-    - if the value is a **list**, it is a list whose items are the _minimized representations_ of its items
+    - if the value is a **list** or a **set** from [Ethereal](https://github.com/giancosta86/ethereal), it is a list whose items are the _minimized representations_ of its items
 
     - if the value is a **map**, it is a map whose keys and values are the _minimized representations_ of the keys and values
 
     - otherwise, it is _the value itself_
 
-  - if `&strict` is requested, the `eq` function is applied to the pair of values.
+  - if `&strict` is passed to `should-be` or other equality-based assertions, the `eq` function is applied to the pair of values.
 
     ```elvish
     # NOT EQUAL!
@@ -165,28 +203,11 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
       should-be &strict (num 90)
     ```
 
-- `should-not-be [&strict] <unexpected>`: if the value passed via pipe (`|`) is equal to the `<unexpected>` argument:
-  1. Displays such value
+- `should-not-be [&strict] <unexpected>`: just the complement of `should-be`.
 
-  1. Fails.
+- `should-emit [&strict] [&order-key] [&any-order] <expected>`: ensures that the values (including lines) passed via pipe (`|`) are _exactly the values_ in the `expected` collection.
 
-  ```elvish
-  some-command <arguments> |
-    should-not-be 90
-  ```
-
-  The input mechanism and the equality logic are the same as those described for `should-be`.
-
-- `should-emit`: ensures that the values passed via pipe (`|`) are _exactly the values_ in the `expected` list; _emission order matters_, unless the `order-key` option or its mutally-exclusive `any-order` counterpart flag is set; on the other hand, the `strict` option works according to the equality rules described within the context of `should-be`.
-
-  The overall command is equivalent to:
-
-  ```elvish
-  put [(
-    order &key=$order-key | #Only if &order-key is set
-  )] |
-    should-be &strict=$strict $expected
-  ```
+  _Emission order matters_, unless the `order-key` option or its mutally-exclusive `any-order` counterpart flag is set; on the other hand, the `strict` option works according to the equality rules described within the context of `should-be`.
 
   ##### Example
 
@@ -225,7 +246,7 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
 
   **Please, note**: in lieu of a `should-emit` with just one value, it's more expressive to use `should-be`.
 
-- `should-not-emit`: ensures that the values passed via pipe (`|`) _do not include any_ of the values in the `unexpected-values` list; the `strict` option works according to the equality rules described within the context of `should-be`.
+- `should-not-emit [&strict] <unexpected>`: ensures that the values passed via pipe (`|`) _do not include any_ of the values in the `unexpected-values` collection; the `strict` option works according to the equality rules described within the context of `should-be`.
 
   ##### Example
 
@@ -241,28 +262,9 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     ]
   ```
 
-- `fails <block>`: requires `block` to _throw a fail exception_ - via `fail` - outputting the **content** of such failure and _failing if no fail was actually thrown_; if another type of exception is thrown by `block` - for example, a syntax error - it simply passes through. This assertion is preferable to `throws`, which is more general-purpose.
+#### Collection assertions
 
-  ##### Example
-
-  ```elvish
-  fails {
-    fail Dodo
-  } |
-    should-be Dodo
-  ```
-
-- `assertion-fails`: specific version of `fails` taking as arguments the **assertion** that should fail (for example, `should be`) and a block where such assertion is violated. It is especially useful when testing new assertions.
-
-  ##### Example
-
-  ```elvish
-  assertion-fails $expected-exception {
-    assertion:fail $expected-assertion
-  }
-  ```
-
-- `should-contain`: receives a _collection_ via pipe (`|`) and a `value` as argument, then:
+- `should-contain <expected>`: receives a _collection_ via pipe (`|`) and a `value` as argument, then:
   - if the collection is a **string**, ensures that `value` is _a substring_
 
   - if the collection is a **list**, ensures that `value` is _contained in the list_
@@ -300,7 +302,7 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     should-contain beta
   ```
 
-- `should-not-contain`: the negation of `should-contain` - please, see its documentation for aspects such as the supported collection types.
+- `should-not-contain <unexpected>`: the negation of `should-contain` - please, see its documentation for aspects such as the supported collection types.
 
   ##### Example
 
@@ -327,6 +329,73 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
   set:of alpha beta gamma |
     should-not-contain ro
   ```
+
+- `should-contain-all <expected>`: ensures the collection contains **all** the expected values.
+
+- `should-contain-none <unexpected>`: ensures the collection contains **none** of the expected values.
+
+- `should-be-empty`: ensures the collection is empty.
+
+- `should-not-be-empty`: ensures the collection is not empty.
+
+#### File-system assertions
+
+These assertions take _file-system-entries_ via pipe, _test each of them_ and finally fail if _at least_ one entry does not pass the test - also displaying _all the failing entries_.
+
+They are named according to the related functions in the standard `os` module:
+
+- `should-be-regular`
+
+- `should-not-be-regular`
+
+- `should-be-dir`
+
+- `should-not-be-dir`
+
+- `should-exist`
+
+- `should-not-exist`
+
+For example:
+
+```elvish
+# Just one file
+put alpha.txt |
+  should-be-regular
+
+# Multiple files
+all [
+  alpha.txt
+  beta.txt
+] |
+  should-be-regular
+```
+
+#### Strings
+
+- `should-match-regex <regex>`: ensures the subject matches - via `re:match` - the given regex.
+
+- `should-not-match-regex <regex>`: the complement of `should-match-regex`.
+
+- `should-contain-snippet <line-collection>`: ensures the collection of lines, when merged with "\n", generate a string contained in the subject string.
+
+- `should-not-contain-snippet <line-collection>`: the complement of `should-contain-snippet`.
+
+- `should-have-prefix <prefix>`: ensures the subject begins with `<prefix>`
+
+- `should-not-have-prefix <prefix>`: the complement of `should-have-prefix`
+
+- `should-have-suffix <suffix>`: ensures the subject ends with `<suffix>`
+
+- `should-not-have-suffix <suffix>`: the complement of `should-have-suffix`
+
+### Block handlers
+
+Block handlers are freely accessible from any **.test.elv** test script - whereas utility **.elv** scripts can import them from the `block-handlers` barrel module provided by Velvet:
+
+```elvish
+use github.com/giancosta86/velvet/<VERSION>/block-handlers
+```
 
 - `throws <block>`: most general way to assert that `block` _throws an exception_ of any kind - failing if the block _completed successfully_. The function emits:
   - by default:
@@ -364,7 +433,63 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
     should-be $false
   ```
 
-- `fail-test` takes _no arguments_ and _always fails_ - with a predefined message: it's perfect for _quickly sketching out a new test_ in test iterations.
+- `fails <block>`: requires `block` to _throw a fail exception_ - via `fail` - outputting the **content** of such failure and _failing if no fail was actually thrown_; if another type of exception is thrown by `block` - for example, a syntax error - it simply passes through. This assertion is preferable to `throws`, which is more general-purpose.
+
+  ##### Example
+
+  ```elvish
+  fails {
+    fail Dodo
+  } |
+    should-be Dodo
+  ```
+
+- `assertion-fails <assertion-reference> <block>`: specific version of `fails` taking as arguments:
+  - a _reference_ to the **assertion** that should fail - for example, `should-be`, or the output of the `src` builtin function from the assertion script or its test script
+
+  - a _block_ where such assertion is violated.
+
+  It is especially useful when testing new assertions.
+
+  ##### Example
+
+  ```elvish
+  assertion-fails $expected-exception {
+    assertion:fail $expected-assertion
+  }
+  ```
+
+- `capture [&throws] [&styled] [&stream=both|out|err|none] &type=[both|bytes|values] <block>` - invokes the `command:capture` function provided by [Ethereal](https://github.com/giancosta86/ethereal); then:
+  1. **emits the block-emitted output** as a `"\n"`-concatenated string; by default, **the output is emitted unstyled** - ignoring the formatting tags created by `styled` - unless the `&styled` flag is passed.
+
+     The captured output can be fine-tuned via the `&stream` and `&type` options, as explained in the documentation of the `command:capture` function from [Ethereal](https://github.com/giancosta86/ethereal).
+
+  1. the **exception status** is taken into account:
+     - if the command _completed successfully_ and the `&throws` option is set, `capture` **fails**, declaring that an exception was expected
+
+     - if the command _threw an exception_ and the `&throws` option is not set, `capture` **fails**, declaring that no exception was expected.
+
+  #### Example
+
+  ```elvish
+  capture {
+    echo Hello
+    echo World
+  } |
+    should-be "Hello\nWorld"
+  ```
+
+  For a wider range of examples, please refer to its [test script](block-handlers/capture.test.elv).
+
+## Tools
+
+Tools are _utility constructs_ that can be used in _advanced test scripts_; just like assertions and block handlers, they are all available in the _default namespace_ of any test scripts - whereas utility Elvish scripts can access them via the following _module import_:
+
+```elvish
+use github.com/giancosta86/velvet/<VERSION>/tools
+```
+
+- `fail-test` takes _no arguments_ and _always fails_ - with a predefined message: it's perfect for _quickly sketching out a new test_ in test iterations - although one can simply omit the test body to obtain the same effect.
 
 - `run-dual` takes in input - as _an argument_ or _via pipe_ - the output of the `src` command invoked by the caller itself - and spawns an Elvish shell running the **dual script**, i.e., the script having just **.elv** extension. This is particularly useful to ensure that _barrel modules_, merely re-exporting symbols, do not contain errors.
 
@@ -378,60 +503,7 @@ In the default console reporter, the **test output** - on both _stdout_ and _std
   }
   ```
 
-#### File-system assertions
-
-These assertions take _file-system-entries_ via pipe, _test each of them_ and finally fail if _at least_ one entry does not pass the test - also displaying _all the failing entries_.
-
-They are named according to the related functions in the standard `os` module:
-
-- `should-be-regular`
-
-- `should-not-be-regular`
-
-- `should-be-dir`
-
-- `should-not-be-dir`
-
-- `should-exist`
-
-- `should-not-exist`
-
-For example:
-
-```elvish
-# Just one file
-put alpha.txt |
-  should-be-regular
-
-# Multiple files
-all [
-  alpha.txt
-  beta.txt
-] |
-  should-be-regular
-```
-
-#### Using assertions in shared .elv modules
-
-Assertions are already _injected_ by Velvet into the _default namespace_ when running **.test.elv** test script, but what if one needs to call them from within a **.elv** _utility module_ shared by multiple test scripts?
-
-In such a scenario, one can access _all the assertions_ provided by Velvet simply by importing the `assertions` module from Velvet's package:
-
-```elvish
-use github.com/giancosta86/velvet/<VERSION>/assertions
-```
-
-then, instead of calling - for example - `should-be`, one can pass through the module namespace: `assertions:should-be`.
-
-### Tools
-
-Tools are _utility constructs_ that can be used in _advanced test scripts_; just like assertions, they are all available in the _default namespace_ of any test scripts - whereas other Elvish scripts can access them via the following _module import_:
-
-```elvish
-use github.com/giancosta86/velvet/<VERSION>/tools
-```
-
-### Example test script
+## Example test script
 
 The following script could be saved as a `.test.elv` file - ready to be run via the `velvet` command.
 
@@ -596,18 +668,7 @@ fs:with-temp-file { |temp-path|
 }
 ```
 
-The **available namespaces** at present are:
-
-- **command**
-- **edit**
-- **exception**
-- **fs**
-- **lang**
-- **map**
-- **resources**
-- **seq**
-- **set**
-- **string**
+The **available namespaces** at present are listed in [a dedicated script](test-script/ethereal.elv).
 
 Please, refer to [Ethereal](https://github.com/giancosta86/ethereal)'s documentation for further details.
 
