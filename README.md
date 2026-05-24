@@ -686,6 +686,56 @@ The **available namespaces** at present are listed in [a dedicated script](test-
 
 Please, refer to [Ethereal](https://github.com/giancosta86/ethereal)'s documentation for further details.
 
+## Creating a custom assertion
+
+Custom assertions can use the entire library provided by Velvet - especially the [assertion](assertion.elv) and [output](output.elv) modules.
+
+### Creating the assertion
+
+The following guidelines are recommended:
+
+- the assertion should be named `should-`
+
+- the script should be named like the assertion, with **.elv** extension
+
+- the subject should be obtained via `one`:
+
+  ```elvish
+  var subject = (one)
+  ```
+
+- the number of arguments depends on the actual operation to be performed on the subject
+
+- to signal an assertion failure, the `assertion:fail` function should **always** be used:
+
+  ```elvish
+  use github.com/giancosta86/velvet/<VERSION>/assertions
+
+  fn should-... { |arguments|
+    var pass = # Here, define the predicate that must be satisfied
+
+    if (not $pass) {
+      assertion:fail (src)
+    }
+  }
+  ```
+
+  also, to display values, please consider the `contrast` and `display-wrong` functions provided by the [output](output.elv) module.
+
+### Testing the assertion
+
+The following guidelines are recommended:
+
+- the script should be named like the assertion, with **.test.elv** extension
+
+- in tests where the assertion is expected to fail, the `assertion-fails` function should be invoked:
+
+  ```elvish
+  assertion-fails (src) {
+    # Here, call the assertion
+  }
+  ```
+
 ## Frequently asked questions
 
 ### Are there setup and teardown?
