@@ -1,9 +1,9 @@
 fn create {
-  var summary = $nil
+  var current-summary = $nil
 
   put [
-    &get-summary={ put $summary }
+    &get-summary={ put $current-summary }
 
-    &reporter={ |external-summary| set summary = $external-summary }
+    &reporter={ |summary| set current-summary = $summary }
   ]
 }

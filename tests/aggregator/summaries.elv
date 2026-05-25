@@ -1,126 +1,98 @@
-use ../../outcomes
+use ../../sandbox-result
+use ../../section
 use ../../summary
+use ../../test-result
 
-var alpha = (summary:from-sandbox-result [
-  &section=[
-    &test-results= [&]
-    &sub-sections=[
-      &'In alpha'=[
-        &test-results=[
-          &'should work'=[
-            &outcome=$outcomes:passed
-            &output="Alpha 1\n"
-            &exception-log=$nil
-          ]
-        ]
-        &sub-sections=[&]
+var alpha = (
+  section:create [&] [
+    &'In alpha'=(
+      section:create [
+        &'should work'=(
+          test-result:success ['Alpha 1']
+        )
       ]
-    ]
-  ]
-  &crashed-scripts=[&]
-])
+    )
+  ] |
+    sandbox-result:from-section |
+    summary:from-sandbox-result
+)
 
-var alpha-beta = (summary:from-sandbox-result [
-  &section=[
-    &test-results=[&]
-    &sub-sections=[
-      &'In alpha'=[
-        &test-results=[
-          &'should work'=[
-            &outcome=$outcomes:passed
-            &output="Alpha 1\n"
-            &exception-log=$nil
-          ]
-        ]
-        &sub-sections=[
-          &'In sub-level'=[
-            &test-results=[&]
-            &sub-sections=[
-              &'In sub-sub-level'=[
-                &test-results=[
-                  &'should be ok'=[
-                    &outcome=$outcomes:passed
-                    &output="Alpha X\n"
-                    &exception-log=$nil
-                  ]
-                ]
-                &sub-sections=[&]
+var alpha-beta = (
+  section:create [&] [
+    &'In alpha'=(
+      section:create [
+        &'should work'=(
+          test-result:success ['Alpha 1']
+        )
+      ] [
+        &'In sub-level'=(
+          section:create [&] [
+            &'In sub-sub-level'=(
+              section:create [
+                &'should be ok'=(
+                  test-result:success ['Alpha X']
+                )
               ]
-            ]
+            )
           ]
-        ]
+        )
       ]
-      &'In beta'=[
-        &sub-sections=[&]
-        &test-results=[
-          &'has duplicate in third source file'=[
-            &output="Beta 2\n"
-            &outcome=$outcomes:passed
-            &exception-log=$nil
-          ]
-        ]
+    )
+    &'In beta'=(
+      section:create [
+        &'has duplicate in third source file'=(
+          test-result:success ['Beta 2']
+        )
       ]
-    ]
-  ]
-  &crashed-scripts=[&]
-])
+    )
+  ] |
+    sandbox-result:from-section |
+    summary:from-sandbox-result
+)
 
-var alpha-beta-gamma-simplified = (summary:from-sandbox-result [
-  &section=[
-    &test-results=[&]
-    &sub-sections=[
-      &'In alpha'=[
-        &test-results=[
-          &'should work'=[
-            &outcome=$outcomes:passed
-            &output="Alpha 1\n"
-          ]
-          &'should work too'=[
-            &outcome=$outcomes:passed
-            &output="Alpha 5\n"
-          ]
-        ]
-        &sub-sections=[
-          &'In sub-level'=[
-            &test-results=[
-              &'should fail'=[
-                &outcome=$outcomes:failed
-                &output="Cip\nCiop\n"
+var alpha-beta-gamma-simplified = (
+  section:create [&] [
+    &'In alpha'=(
+      section:create [
+        &'should work'=(
+          test-result:success ['Alpha 1']
+        )
+        &'should work too'=(
+          test-result:success ['Alpha 5']
+        )
+      ] [
+        &'In sub-level'=(
+          section:create [
+            &'should fail'=(
+              test-result:failure [Cip Ciop] []
+            )
+          ] [
+            &'In sub-sub-level'=(
+              section:create [
+                &'should be ok'=(
+                  test-result:success ['Alpha X']
+                )
               ]
-            ]
-            &sub-sections=[
-              &'In sub-sub-level'=[
-                &test-results=[
-                  &'should be ok'=[
-                    &outcome=$outcomes:passed
-                    &output="Alpha X\n"
-                  ]
-                ]
-                &sub-sections=[&]
-              ]
-            ]
+            )
           ]
-        ]
+        )
       ]
-      &'In beta'=  [
-        &test-results=[
-          &'has duplicate in third source file'=[
-            &outcome=$outcomes:failed
-            &output=""
-          ]
-        ]
-        &sub-sections=[&]
+    )
+    &'In beta'=(
+      section:create [
+        &'has duplicate in third source file'=(
+          test-result:failure [] []
+        )
       ]
-      &'In gamma'=[
-        &test-results=[
-          &'should pass'=[
-            &outcome=$outcomes:passed
-            &output="Gamma 3\n"
-          ]
-        ]
-        &sub-sections=[&]
+    )
+    &'In gamma'=(
+      section:create [
+        &'should pass'=(
+          test-result:success ['Gamma 3']
+        )
       ]
-    ]
-  ]
-  &crashed-scripts=[&]
-])
+    )
+  ] |
+    sandbox-result:from-section |
+    summary:from-sandbox-result
+)

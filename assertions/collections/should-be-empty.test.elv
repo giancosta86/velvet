@@ -1,0 +1,93 @@
+use github.com/giancosta86/ethereal/v1/set
+use ./should-be-empty
+
+var should-be-empty~ = $should-be-empty:should-be-empty~
+
+>> 'Assertions' {
+  >> 'collections' {
+    >> 'should-be-empty' {
+      >> 'when there is a number instead of a collection' {
+        fails {
+          put (num 90) |
+            should-be-empty
+        } |
+          should-be 'Data type not supported as a collection: number'
+      }
+
+      >> 'when the collection is a string' {
+        >> 'when empty' {
+          put '' |
+            should-be-empty
+        }
+
+        >> 'when non-empty' {
+          assertion-fails (src) {
+            put Hello |
+              should-be-empty
+          }
+        }
+      }
+
+      >> 'when the collection is a list' {
+        >> 'when empty' {
+          put [] |
+            should-be-empty
+        }
+
+        >> 'when non-empty' {
+          assertion-fails (src) {
+            put [90 92 95 98] |
+              should-be-empty
+          }
+        }
+      }
+
+      >> 'when the collection is a map' {
+        >> 'when empty' {
+          put [&] |
+            should-be-empty
+        }
+
+        >> 'when non-empty' {
+          assertion-fails (src) {
+            put [&a=90] |
+              should-be-empty
+          }
+        }
+      }
+
+      >> 'when the collection is a set from Ethereal' {
+        >> 'when empty' {
+          put $set:empty |
+            should-be-empty
+        }
+
+        >> 'when non-empty' {
+          assertion-fails (src) {
+            set:of 90 92 95 98 |
+              should-be-empty
+          }
+        }
+      }
+
+      >> 'when failing' {
+        >> 'the output should describe the context' {
+          >> 'for list' {
+            capture &throws {
+              put [90 92 95] |
+                should-be-empty
+            } |
+              should-contain-snippet [
+                'This list should be empty:'
+                '['
+                ' 90'
+                ' 92'
+                ' 95'
+                ']'
+              ]
+          }
+        }
+      }
+    }
+  }
+}

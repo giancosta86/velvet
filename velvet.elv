@@ -1,38 +1,28 @@
 use os
-use str
+use path
+use github.com/giancosta86/ethereal/v1/fs
+use github.com/giancosta86/ethereal/v1/parallel
 use github.com/giancosta86/ethereal/v1/seq
 use ./aggregator
 use ./reporting/console/full
 use ./reporting/console/terse
 use ./summary
 
-fn get-test-scripts {
-  put **[nomatch-ok].test.elv
-}
+var -default-reporters = [$terse:report~]
 
-fn has-test-scripts {
-  get-test-scripts |
-    take 1 |
-    count |
-    != (all) 0
-}
+fn -resolve-script-path { |script-path|
+  if (os:is-regular $script-path) {
+    put $script-path
+  } else {
+    var path-with-extension = $script-path'.test.elv'
 
-fn -resolve-test-scripts { |requested-scripts|
-  if (== (count $requested-scripts) 0) {
-    get-test-scripts
-    return
-  }
+    if (os:is-regular $path-with-extension) {
+      put $path-with-extension
+    } elif (os:is-dir $script-path) {
+      tmp pwd = $script-path
 
-  all $requested-scripts | each { |script-path|
-    if (not (os:is-regular $script-path)) {
-      var path-with-extension = $script-path'.test.elv'
-
-      if (os:is-regular $path-with-extension) {
-        put $path-with-extension
-      } elif (os:is-dir $script-path) {
-        put $script-path/**[nomatch-ok].test.elv
-      } else {
-        put $script-path
+      fs:find-test-scripts | each { |current-script|
+        path:join $script-path $current-script
       }
     } else {
       put $script-path
@@ -40,33 +30,60 @@ fn -resolve-test-scripts { |requested-scripts|
   }
 }
 
-fn velvet { |&must-pass=$false &put=$false &verbose=$false &reporters=[$terse:report~] &num-workers=$aggregator:DEFAULT-NUM-WORKERS @script-paths|
-  var actual-test-scripts = [(-resolve-test-scripts $script-paths)]
+fn -resolve-test-scripts {
+  var paths-from-pipe = [(
+    each $-resolve-script-path~
+  )]
 
-  var sandbox-result = (aggregator:run-test-scripts &num-workers=$num-workers $@actual-test-scripts)
+  if (seq:is-non-empty $paths-from-pipe) {
+    all $paths-from-pipe
+  } else {
+    fs:find-test-scripts
+  }
+}
+
+#
+# Runs the Velvet test system.
+#
+fn velvet { |&flawless=$false &emit-summary=$false &verbose=$false &reporters=$nil &num-workers=$parallel:DEFAULT-NUM-WORKERS @script-paths|
+  var actual-reporters = (
+    if $verbose {
+      if $reporters {
+        fail 'The &verbose flag and the &reporters option are mutually exclusive!'
+      }
+
+      put [$full:report~]
+    } elif $reporters {
+      put $reporters
+    } else {
+      put $-default-reporters
+    }
+  )
+
+  var sandbox-result = (
+    all $script-paths |
+      -resolve-test-scripts |
+      aggregator:run-test-scripts &num-workers=$num-workers
+  )
 
   var summary = (summary:from-sandbox-result $sandbox-result)
 
-  if $verbose {
-    set reporters = [$full:report~]
-  }
-
-  all $reporters | each { |reporter|
+  all $actual-reporters | each { |reporter|
     $reporter $summary |
       only-bytes
   }
 
   var has-failed-tests = (> $summary[stats][failed] 0)
 
-  var has-crashed-scripts = (seq:is-non-empty $summary[crashed-scripts])
+  var has-crashed-scripts = (seq:is-non-empty $summary[exception-lines-by-script])
 
   var has-flaws = (or $has-failed-tests $has-crashed-scripts)
 
-  if (and $must-pass $has-flaws) {
-    fail '❌ There are failed tests!'
+  if (and $flawless $has-flaws) {
+    fail '❌ There are flaws in the tests!'
   }
 
-  if $put {
+  if $emit-summary {
     put $summary
   }
 }

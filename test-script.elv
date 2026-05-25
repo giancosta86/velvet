@@ -1,18 +1,14 @@
 use path
-use github.com/giancosta86/ethereal/v1/exception
-use github.com/giancosta86/ethereal/v1/lang
-use github.com/giancosta86/ethereal/v1/map
-use ./assertions
-use ./ethereal
-use ./section
-use ./test-script-frame
+use ./test-script/frame
+use ./test-script/namespace
+use ./test-script/root-frames
 use ./tools
 
 fn run { |script-path|
   var abs-script-path = (path:abs $script-path)
   var script-code = (slurp < $script-path)
 
-  var root-frames = []
+  var root-frames = (root-frames:create)
   var current-frame = $nil
 
   fn custom-src {
@@ -29,25 +25,27 @@ fn run { |script-path|
     }
 
     var block = (
-      var rest-length = (count $rest)
+      var rest-count = (count $rest)
 
-      if (== $rest-length 1) {
+      if (== $rest-count 1) {
         put $rest[0]
-      } elif (== $rest-length 0) {
-        put $assertions:fail-test~
+      } elif (== $rest-count 0) {
+        put $tools:fail-test~
       } else {
-        fail 'Only 1 or 2 arguments are allowed!'
+        fail 'Only <title> or <title> <block> arguments are allowed!'
       }
     )
 
-    var this-frame = (test-script-frame:create $abs-script-path $title)
+    var this-frame = (
+      frame:create $abs-script-path $title
+    )
 
     var parent-frame = $current-frame
 
     if $parent-frame {
       $parent-frame[add-sub-frame] $this-frame
     } else {
-      set root-frames = (conj $root-frames $this-frame)
+      $root-frames[append] $this-frame
     }
 
     tmp current-frame = $this-frame
@@ -55,51 +53,17 @@ fn run { |script-path|
     $current-frame[run-block] $block
   }
 
-  fn gather-section {
-    all $root-frames | each { |root-frame|
-      var frame-title = $root-frame[title]
-
-      var frame-artifact = ($root-frame[to-artifact])
-
-      if (section:is-section $frame-artifact) {
-        put [
-          &test-results=[&]
-          &sub-sections=[
-            &$frame-title=$frame-artifact
-          ]
-        ]
-      } else {
-        put [
-          &test-results=[
-            &$frame-title=$frame-artifact
-          ]
-          &sub-sections=[&]
-        ]
-      }
-    } |
-      section:merge
-  }
-
-  var core-functions = [
+  var script-builtins = [
     &src~=$custom-src~
     &'>>'~=$'>>~'
   ]
 
-  var namespace-map = (
-    all [
-      $core-functions
-      $ethereal:namespaces
-      $assertions:
-      $tools:
-    ] |
-      map:merge
-  )
-
-  var namespace = (ns $namespace-map)
+  var namespace = (namespace:create-for-script $script-builtins)
 
   tmp pwd = (path:dir $abs-script-path)
+
   eval &ns=$namespace $script-code |
     only-bytes
 
-  gather-section
+  $root-frames[to-section]
 }

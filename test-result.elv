@@ -1,11 +1,26 @@
+use github.com/giancosta86/ethereal/v1/lang
 use ./outcomes
 
-var duplicate = [
-  &output=''
-  &outcome=$outcomes:failed
-  &exception-log='DUPLICATE TEST!'
-]
+fn success { |output-lines|
+  put [
+    &outcome=$outcomes:passed
+    &output-lines=$output-lines
+    &exception-lines=$nil
+  ]
+}
 
-fn simplify { |test-result|
-  dissoc $test-result exception-log
+fn failure { |output-lines exception-lines|
+  put [
+    &outcome=$outcomes:failed
+    &output-lines=$output-lines
+    &exception-lines=$exception-lines
+  ]
+}
+
+var duplicate-test = (failure [] ['DUPLICATE TEST!'])
+
+fn simplify { |@arguments|
+  var test-result = (lang:get-single-input $arguments)
+
+  assoc $test-result exception-lines (lang:ternary $test-result[exception-lines] [] $nil)
 }

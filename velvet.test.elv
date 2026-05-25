@@ -1,8 +1,9 @@
 use path
 use re
 use str
-use github.com/giancosta86/ethereal/v1/string
+use github.com/giancosta86/ethereal/v1/seq
 use ./reporting/console/full
+use ./reporting/console/terse
 use ./reporting/json
 use ./reporting/spy
 use ./summary
@@ -11,119 +12,143 @@ use ./tests/script-gallery
 use ./velvet
 
 var this-script-dir = (path:dir (src)[name])
-var dir-with-no-tests = (path:join $this-script-dir docs)
 
-fn get-test-script { |basename|
-  script-gallery:get-script-path aggregator $basename
-}
+>> 'velvet command' {
+  >> 'resolving script path' {
+    fn create-test-script {
+      echo '' > alpha.test.elv
+    }
 
->> 'Listing test scripts' {
-  >> 'in directory with no tests' {
-    tmp pwd = $dir-with-no-tests
+    fn create-test-dir {
+      mkdir alpha
 
-    velvet:get-test-scripts |
-      put [(all)] |
-      should-be []
-  }
+      echo '' > alpha/beta.test.elv
+      echo '' > alpha/gamma.test.elv
+    }
 
-  >> 'in directory with tests' {
-    tmp pwd = (path:join $this-script-dir tests aggregator)
+    >> 'when the script path exists' {
+      fs:with-temp-dir { |temp-dir|
+        cd $temp-dir
 
-    var expected-scripts = [(
-      all $script-gallery:aggregator |
-        each $path:base~
-    )]
+        create-test-script
 
-    velvet:get-test-scripts |
-      order |
-      put [(all)] |
-      should-be $expected-scripts
-  }
-
-  >> 'in directory with nested tests' {
-    tmp pwd = (path:join $this-script-dir tests)
-
-    velvet:get-test-scripts |
-      order |
-      put [(all)] |
-      should-be $script-gallery:all
-  }
-}
-
->> 'Resolving test scripts' {
-  tmp pwd = (path:join $this-script-dir tests)
-
-  >> 'when requesting no scripts' {
-    velvet:-resolve-test-scripts [] |
-      should-emit $script-gallery:all
-  }
-
-  >> 'when requesting scripts without file extensions' {
-    velvet:-resolve-test-scripts [readme/maths] |
-      should-be (path:join readme maths.test.elv)
-  }
-
-  >> 'when requesting directories' {
-    velvet:-resolve-test-scripts [readme] |
-      should-be (path:join readme maths.test.elv)
-  }
-
-  >> 'when there is ambiguity between a test script and a directory' {
-    fs:with-temp-dir { |temp-dir|
-      cd $temp-dir
-
-      echo '
-      >> In script {
-        put 90 |
-          should-be 90
+        velvet:-resolve-script-path alpha.test.elv |
+          should-be alpha.test.elv
       }
-      ' > ciop.test.elv
+    }
 
-      fs:mkcd ciop
+    >> 'when the script path does not exist' {
+      >> 'when a file with test extension exists' {
+        fs:with-temp-dir { |temp-dir|
+          cd $temp-dir
 
-      echo '
-      >> Failing test {
-        fail KABOOM
+          create-test-script
+
+          velvet:-resolve-script-path alpha |
+            should-be alpha.test.elv
+        }
       }
-      ' > nested.test.elv
 
-      cd ..
+      >> 'when a directory having the same name exists' {
+        fs:with-temp-dir { |temp-dir|
+          cd $temp-dir
 
-      velvet:-resolve-test-scripts [ciop] |
-        should-be ciop.test.elv
+          create-test-dir
+
+          velvet:-resolve-script-path alpha |
+            should-emit [
+              (path:join alpha beta.test.elv)
+              (path:join alpha gamma.test.elv)
+            ]
+        }
+      }
+
+      >> 'when both a file with test extension and a directory exist' {
+        fs:with-temp-dir { |temp-dir|
+          cd $temp-dir
+
+          create-test-script
+
+          create-test-dir
+
+          velvet:-resolve-script-path alpha |
+            should-be alpha.test.elv
+        }
+      }
+
+      >> 'when neither a file with test extension nor a directory exist' {
+        fs:with-temp-dir { |temp-dir|
+          cd $temp-dir
+
+          create-test-script
+
+          create-test-dir
+
+          velvet:-resolve-script-path beta |
+            should-be beta
+        }
+      }
     }
   }
-}
 
->> 'Boolean detection of test scripts' {
-  >> 'in directory with no tests' {
-    tmp pwd = $dir-with-no-tests
-
-    velvet:has-test-scripts |
-      should-be $false
-  }
-
-  >> 'in directory with tests' {
-    tmp pwd = (path:join $this-script-dir tests aggregator)
-
-    velvet:has-test-scripts |
-      should-be $true
-  }
-
-  >> 'in directory having nested tests' {
+  >> 'resolving test scripts' {
     tmp pwd = (path:join $this-script-dir tests)
 
-    velvet:has-test-scripts |
-      should-be $true
-  }
-}
+    >> 'when requesting no scripts' {
+      all [] |
+        velvet:-resolve-test-scripts |
+        should-emit $script-gallery:all
+    }
 
->> 'Top-level command' {
+    >> 'when requesting scripts without file extensions' {
+      all [
+        (path:join readme maths)
+      ] |
+        velvet:-resolve-test-scripts |
+        should-be (path:join readme maths.test.elv)
+    }
+
+    >> 'when requesting directories' {
+      all [
+        readme
+      ] |
+        velvet:-resolve-test-scripts |
+        should-be (path:join readme maths.test.elv)
+    }
+
+    >> 'when there is ambiguity between a test script and a directory' {
+      fs:with-temp-dir { |temp-dir|
+        cd $temp-dir
+
+        echo '
+        >> In script {
+          put 90 |
+            should-be 90
+        }
+        ' > ciop.test.elv
+
+        mkdir ciop
+
+        echo '
+        >> Failing test {
+          fail KABOOM
+        }
+        ' > (path:join ciop nested.test.elv)
+
+        all [
+          ciop
+        ] |
+          velvet:-resolve-test-scripts |
+          should-be ciop.test.elv
+      }
+    }
+  }
+
   >> 'running one aggregator script' {
     >> 'with a single reporter' {
       var spy = (spy:create)
 
-      velvet:velvet &reporters=[$spy[reporter]] (get-test-script alpha)
+      velvet:velvet &reporters=[$spy[reporter]] (script-gallery:get-aggregator-script alpha)
 
       $spy[get-summary] |
         should-be $summaries:alpha
@@ -136,12 +161,12 @@ fn get-test-script { |basename|
       )]
 
       var reporters = [(
-        all $spies | each { |spy|
-          put $spy[reporter]
-        }
+        all $spies |
+          each (seq:make-getter reporter)
       )]
 
-      velvet:velvet &reporters=$reporters (get-test-script alpha)
+      script-gallery:get-aggregator-script alpha |
+        velvet:velvet &reporters=$reporters (all)
 
       all $spies | each { |spy|
         $spy[get-summary] |
@@ -153,125 +178,106 @@ fn get-test-script { |basename|
   >> 'running two aggregator scripts' {
     var spy = (spy:create)
 
-    velvet:velvet &reporters=[$spy[reporter]] (get-test-script alpha) (get-test-script beta)
+    all [
+      (script-gallery:get-aggregator-script alpha)
+      (script-gallery:get-aggregator-script beta)
+    ] |
+      velvet:velvet &reporters=[$spy[reporter]] (all)
 
     $spy[get-summary] |
       should-be $summaries:alpha-beta
   }
 
-  >> 'running all aggregator scripts via inference' {
+  >> 'running all aggregator scripts' {
     tmp pwd = (path:join $this-script-dir tests aggregator)
 
-    var spy = (spy:create)
+    >> 'when running them via inference' {
+      var spy = (spy:create)
 
-    velvet:velvet &reporters=[$spy[reporter]]
-    $spy[get-summary] |
-      summary:simplify (all) |
-      should-be $summaries:alpha-beta-gamma-simplified
-  }
+      velvet:velvet &reporters=[$spy[reporter]]
 
-  >> 'running all aggregator tests and asserting success' {
-    tmp pwd = (path:join $this-script-dir tests aggregator)
+      $spy[get-summary] |
+        summary:simplify |
+        should-be $summaries:alpha-beta-gamma-simplified
+    }
 
-    throws {
-      velvet:velvet &must-pass &reporters=[]
-    } |
-      exception:get-fail-content |
-      should-be '❌ There are failed tests!'
-  }
+    >> 'when asserting success' {
+      fails {
+        velvet:velvet &flawless &reporters=[]
+      } |
+        should-be '❌ There are flaws in the tests!'
+    }
 
-  >> 'running all the aggregator tests and requesting a summary' {
-    tmp pwd = (path:join $this-script-dir tests aggregator)
+    >> 'when requesting a summary' {
+      velvet:velvet &emit-summary &reporters=[] |
+        summary:simplify |
+        should-be $summaries:alpha-beta-gamma-simplified
+    }
 
-    velvet:velvet &put &reporters=[] |
-      summary:simplify (all) |
-      should-be $summaries:alpha-beta-gamma-simplified
-  }
+    >> 'when testing reporters' {
+      fn run-with-console-reporter { |reporter expected-log-name|
+        var expected-log-path = (path:join $this-script-dir tests aggregator $expected-log-name)
 
-  >> 'running all the aggregator tests and checking the report output' {
-    tmp pwd = (path:join $this-script-dir tests aggregator)
+        var expected-log = (slurp < $expected-log-path)
 
-    var home-directory = (put ~)
+        capture {
+          velvet:velvet &reporters=[$reporter]
+        } |
+          re:replace '([ \t]*?)\S+?/velvet/(?:velvet/)?' '$1<VELVET>/' (all) |
+          should-be $expected-log
+      }
 
-    var expected-log-path = (path:join $this-script-dir tests aggregator terse.log)
+      >> 'with the terse console reporter' {
+        run-with-console-reporter $terse:report~ terse.log
+      }
 
-    var expected-log = (slurp < $expected-log-path)
+      >> 'with the full console reporter' {
+        run-with-console-reporter $full:report~ full.log
+      }
 
-    velvet:velvet |
-      slurp |
-      string:unstyled (all) |
-      str:trim-space (all) |
-      re:replace '([ \t]*?)\S+?/velvet/(?:velvet/)?' '$1<VELVET>/' (all) |
-      should-be $expected-log
-  }
+      >> 'with the JSON reporter' {
+        var spy = (spy:create)
 
-  >> 'running all the aggregator tests and checking the full report output' {
-    tmp pwd = (path:join $this-script-dir tests aggregator)
+        fs:with-temp-file { |json-report-path|
+          var json-reporter = (json:create-reporter $json-report-path)
 
-    var home-directory = (put ~)
+          velvet:velvet &reporters=[$json-reporter $spy[reporter]]
 
-    var expected-log-path = (path:join $this-script-dir tests aggregator full.log)
-
-    var expected-log = (slurp < $expected-log-path)
-
-    velvet:velvet &must-pass=$false &reporters=[$full:report~] |
-      slurp |
-      string:unstyled (all) |
-      str:trim-space (all) |
-      re:replace '([ \t]*?)\S+?/velvet/(?:velvet/)?' '$1<VELVET>/' (all) |
-      should-be $expected-log
-  }
-
-  >> 'running all the aggregator tests and checking the JSON report' {
-    tmp pwd = (path:join $this-script-dir tests aggregator)
-
-    var spy = (spy:create)
-
-    fs:with-temp-file { |json-report-path|
-      var json-reporter = (json:report $json-report-path)
-
-      velvet:velvet &must-pass=$false &reporters=[$json-reporter $spy[reporter]]
-
-      from-json < $json-report-path |
-        should-be ($spy[get-summary])
+          from-json < $json-report-path |
+            should-be ($spy[get-summary])
+        }
+      }
     }
   }
 
-  >> 'when not using the `verbose` flag' {
-    var test-title = 'Just an empty test'
+  >> 'verbose flag' {
+    fn with-empty-test { |&verbose=$false block|
+      var test-title = 'Just an empty test'
 
-    fs:with-temp-dir { |temp-dir|
-      cd $temp-dir
+      fs:with-temp-dir { |temp-dir|
+        cd $temp-dir
 
-      printf '>> ''%s'' { }' $test-title > basic.test.elv
+        printf '>> ''%s'' { }' $test-title > basic.test.elv
 
-      var output-tester = (
-        velvet:velvet |
-          output-tester:create
-      )
-
-      $output-tester[should-contain-none] [
-        $test-title
-      ]
+        capture {
+          velvet:velvet &verbose=$verbose
+        } |
+          $block $test-title (all)
+      }
     }
-  }
 
-  >> 'when using the `verbose` flag' {
-    var test-title = 'Just an empty test'
+    >> 'when disabled' {
+      with-empty-test { |test-title output|
+        put $output |
+          should-not-contain $test-title
+      }
+    }
 
-    fs:with-temp-dir { |temp-dir|
-      cd $temp-dir
-
-      printf '>> ''%s'' { }' $test-title > basic.test.elv
-
-      var output-tester = (
-        velvet:velvet &verbose |
-          output-tester:create
-      )
-
-      $output-tester[should-contain-all] [
-        $test-title
-      ]
+    >> 'when enabled' {
+      with-empty-test &verbose { |test-title output|
+        put $output |
+          should-contain $test-title
+      }
     }
   }
 }

@@ -1,8 +1,6 @@
 use os
-use ../shared
+use ../../assertion
 
-var -error-message = 'should-exist assertion failed'
-
-var should-exist~ = (
-  shared:create-assertion-on-tested-entries $os:exists~ 'Missing file system entries' $-error-message
-)
+fn should-exist {
+  assertion:enforce-predicate (src) $os:exists~ 'Missing file system entries'
+}

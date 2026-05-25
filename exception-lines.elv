@@ -1,6 +1,24 @@
+use path
 use re
+use str
 
-var -first-clockwork-line-pattern = '/ethereal/v1/command\.elv|/velvet/(?:v\d+/)?test-script\.elv'
+var -first-clockwork-line-pattern = (
+  all [
+    ['ethereal' 'v\d+' 'command\.elv']
+
+    ['velvet' 'v\d+' 'test-script\.elv']
+
+    ['velvet' 'test-script\.elv']
+
+    ['velvet' 'v\d+' 'sandbox\.elv']
+
+    ['velvet' 'sandbox\.elv']
+  ] |
+    each { |path-component-list|
+      path:join $@path-component-list
+    } |
+    str:join '|'
+)
 
 fn trim-clockwork-stack {
   each { |line|
@@ -19,25 +37,23 @@ fn replace-bottom-eval { |replacement|
 
   var last-eval = $nil
 
-  var generic-eval-pattern = '^\s*(\[eval\s+\d+\]):\d+?:\d+.*?:'
-
   all $lines | each { |line|
+    var generic-eval-pattern = '^\s*(\[eval\s+\d+\]):\d+?:\d+?.*?:'
+
     var find-result = [(re:find $generic-eval-pattern $line)]
 
-    if (eq $find-result []) {
-      continue
+    if (not-eq $find-result []) {
+      set last-eval = $find-result[0][groups][1][text]
     }
-
-    set last-eval = $find-result[0][groups][1][text]
   }
 
-  if (not $last-eval) {
-    all $lines
-  } else {
+  if $last-eval {
     var specific-eval-pattern = '^(\s*)'(re:quote $last-eval)
 
     all $lines | each { |line|
       re:replace $specific-eval-pattern '${1}'$replacement $line
     }
+  } else {
+    all $lines
   }
 }

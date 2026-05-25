@@ -2,276 +2,281 @@ use str
 use ./section
 use ./outcomes
 use ./stats
+use ./test-result
 use ./test-script
 use ./tests/script-gallery
 
->> 'Test script execution' {
-  fn run-test-script { |basename|
-    var test-script-path = (script-gallery:get-script-path single-scripts $basename)
+fn run-standalone-script { |basename|
+  var test-script-path = (script-gallery:get-standalone-script $basename)
 
-    test-script:run $test-script-path
-  }
+  test-script:run $test-script-path
+}
 
-  >> 'empty' {
-    run-test-script empty |
-      should-be $section:empty
-  }
+>> 'Test script' {
+  >> 'execution' {
+    >> 'with empty script' {
+      run-standalone-script empty |
+        should-be $section:empty
+    }
 
-  >> 'with metainfo checks' {
-    var stats = (
-      run-test-script metainfo |
-        stats:from-section (all)
-    )
+    >> 'with metainfo checks' {
+      var stats = (
+        run-standalone-script metainfo |
+          stats:from-section
+      )
 
-    put $stats[failed] |
-      should-be 0
-  }
+      put $stats[failed] |
+        should-be 0
+    }
 
-  >> 'with root passing test' {
-    run-test-script root-ok |
-      should-be [
-        &test-results= [
-          &'My passing test'=[
-            &outcome=$outcomes:passed
-            &output="Wiii!\nWiii2!\n"
-            &exception-log=$nil
+    >> 'with root passing test' {
+      run-standalone-script root-ok |
+        should-be (
+          section:create [
+            &'My passing test'=(
+              test-result:success [Wiii! Wiii2!]
+            )
           ]
-        ]
-        &sub-sections= [&]
-      ]
-  }
+        )
+    }
 
-  >> 'with root failing test' {
-    run-test-script root-failing |
-      section:simplify (all) |
-      should-be [
-        &test-results= [
-          &'My failing test'=[
-            &outcome=$outcomes:failed
-            &output="Wooo!\nWooo2!\n"
-          ]
-        ]
-        &sub-sections= [&]
-      ]
-  }
+    >> 'with root failing test' {
+      var section = (run-standalone-script root-failing)
 
-  >> 'exception log for root failing test' {
-    var section = (run-test-script root-failing)
-
-    var exception-log = $section[test-results]['My failing test'][exception-log]
-
-    str:contains $exception-log '[eval' |
-      should-be $false
-
-    str:contains $exception-log 'root-failing.test.elv:6:3-11:' |
-      should-be $true
-
-    str:contains $exception-log DODO |
-      should-be $true
-  }
-
-  >> 'with root passing and failing test' {
-    run-test-script root-mixed |
-      section:simplify (all) |
-      should-be [
-        &test-results= [
-          &'My passing test'=[
-            &outcome=$outcomes:passed
-            &output="Wiii!\nWiii2!\n"
-          ]
-
-          &'My failing test'=[
-            &outcome=$outcomes:failed
-            &output="Wooo!\nWooo2!\n"
-          ]
-        ]
-        &sub-sections= [&]
-      ]
-  }
-
-  >> 'with section having a passing test' {
-    run-test-script in-section-ok |
-      should-be [
-        &test-results= [&]
-        &sub-sections= [
-          &'My test'=[
-            &test-results=[
-              &'should work'=[
-                &outcome=$outcomes:passed
-                &output="Wiii!\nWiii2!\n"
-                &exception-log=$nil
-              ]
+      >> 'should emit a section with a root failing test' {
+        put $section |
+          section:simplify |
+          should-be (
+            section:create [
+              &'My failing test'=(
+                test-result:failure [Wooo! Wooo2!] []
+              )
             ]
-            &sub-sections=[&]
+          )
+      }
+
+      >> 'should contain an exception log' {
+        var exception-log = (
+          all $section[test-results]['My failing test'][exception-lines] |
+            str:join "\n"
+        )
+
+        put $exception-log |
+          should-not-contain '[eval'
+
+        put $exception-log |
+          should-contain 'root-failing.test.elv:6:3-11:'
+
+        put $exception-log |
+          should-contain DODO
+      }
+    }
+
+    >> 'with root passing and failing test' {
+      run-standalone-script root-mixed |
+        section:simplify |
+        should-be (
+          section:create [
+            &'My passing test'=(
+              test-result:success [Wiii! Wiii2!]
+            )
+            &'My failing test'=(
+              test-result:failure [Wooo! Wooo2!] []
+            )
           ]
-        ]
-      ]
-  }
+        )
+    }
 
-  >> 'with section having a single failing test' {
-    run-test-script in-section-failing |
-      section:simplify (all) |
-      should-be [
-        &test-results= [&]
-        &sub-sections= [
-          &'My test'=[
-            &test-results=[
-              &'should fail'=[
-                &outcome=$outcomes:failed
-                &output="Wooo!\nWooo2!\n"
+    >> 'with section having a passing test' {
+      run-standalone-script in-section-ok |
+        should-be (
+          section:create [&] [
+            &'My test'=(
+              section:create [
+                &'should work'=(
+                  test-result:success [Wiii! Wiii2!]
+                )
               ]
-            ]
-            &sub-sections=[&]
+            )
           ]
-        ]
-      ]
-  }
+        )
+    }
 
-  >> 'exception log for in-section failing test' {
-    var section = (run-test-script in-section-failing)
+    >> 'with section having a single failing test' {
+      var section = (run-standalone-script in-section-failing)
 
-    var exception-log = $section[sub-sections]['My test'][test-results]['should fail'][exception-log]
-
-    str:contains $exception-log '[eval' |
-      should-be $false
-
-    str:contains $exception-log 'in-section-failing.test.elv:7:5-13:' |
-      should-be $true
-
-    str:contains $exception-log DODO |
-      should-be $true
-  }
-
-  >> 'root test without title' {
-    fails {
-      run-test-script root-test-without-title
-    } |
-      should-be 'The title must be a string!'
-  }
-
-  >> 'section without title' {
-    var section = (run-test-script sub-section-without-title)
-
-    section:simplify $section |
-      should-be [
-        &test-results=[
-          &Alpha=[
-            &outcome=$outcomes:failed
-            &output=''
-          ]
-        ]
-        &sub-sections=[&]
-      ]
-
-    put $section[test-results][Alpha][exception-log] |
-      should-contain 'The title must be a string!'
-  }
-
-  >> 'test drafts' {
-    var section = (run-test-script test-drafts)
-
-    section:simplify $section |
-      should-be [
-        &test-results=[
-          &Alpha=[
-            &outcome=$outcomes:failed
-            &output=''
-          ]
-        ]
-        &sub-sections=[
-          &'In subsection'=[
-            &test-results=[
-              &Beta=[
-                &outcome=$outcomes:failed
-                &output=''
-              ]
-              &Gamma=[
-                &outcome=$outcomes:failed
-                &output=''
-              ]
-              &'Longer title'=[
-                &outcome=$outcomes:failed
-                &output=''
-              ]
-            ]
-            &sub-sections=[&]
-          ]
-        ]
-      ]
-
-    put $section[test-results][Alpha][exception-log] |
-      should-contain 'TEST SET TO FAIL'
-  }
-
-  >> 'with section having mixed outcomes' {
-    var section = (run-test-script in-section-mixed)
-
-    section:simplify $section |
-      should-be [
-        &test-results= [&]
-        &sub-sections= [
-          &'My test'=[
-            &test-results=[
-              &'should pass'=[
-                &outcome=$outcomes:passed
-                &output="Wiii!\n"
-              ]
-            ]
-            &sub-sections=[
-              &Cip=[
-                &test-results=[&]
-                &sub-sections=[
-                  &Ciop=[
-                    &test-results=[
-                      &'should fail'=[
-                        &outcome=$outcomes:failed
-                        &output="Wooo!\n"
-                      ]
-                    ]
-                    &sub-sections=[&]
-                  ]
+      >> 'should emit a section with a sub-section containing a failing test' {
+        put $section |
+          section:simplify |
+          should-be (
+            section:create [&] [
+              &'My test'=(
+                section:create [
+                  &'should fail'=(
+                    test-result:failure [Wooo! Wooo2!] []
+                  )
                 ]
-              ]
+              )
             ]
-          ]
-        ]
-      ]
+          )
+      }
 
-    var failed-result = $section[sub-sections]['My test'][sub-sections][Cip][sub-sections][Ciop][test-results]['should fail']
+      >> 'should contain an exception log' {
+        var exception-log = (
+          all $section[sub-sections]['My test'][test-results]['should fail'][exception-lines] |
+            str:join "\n"
+        )
 
-    str:contains $failed-result[exception-log] DODUS |
-      should-be $true
-  }
+        put $exception-log |
+          should-not-contain '[eval'
 
-  >> 'with return keyword' {
-    run-test-script returning |
-      should-be [
-        &test-results=[&]
-        &sub-sections=[
-          &'Returning from a test'=[
-            &test-results=[
-              &'should work'=[
-                &outcome=$outcomes:passed
-                &output="Alpha\nBeta\n"
-                &exception-log=$nil
-              ]
+        put $exception-log |
+          should-contain 'in-section-failing.test.elv:7:5-13:'
+
+        put $exception-log |
+          should-contain DODO
+      }
+    }
+
+    >> 'with root test not including the title' {
+      fails {
+        run-standalone-script root-test-without-title
+      } |
+        should-be 'The title must be a string!'
+    }
+
+    >> 'with section not including the title' {
+      var section = (run-standalone-script sub-section-without-title)
+
+      >> 'should interpret the Alpha frame as a test' {
+        section:simplify $section |
+          should-be (
+            section:create [
+              &Alpha=(
+                test-result:failure [] []
+              )
             ]
-            &sub-sections=[&]
+          )
+      }
+
+      >> 'should notify the lack of a title as an exception' {
+        all $section[test-results][Alpha][exception-lines] |
+          str:join "\n" |
+          should-contain 'The title must be a string!'
+      }
+    }
+
+    >> 'with section having mixed outcomes' {
+      var section = (run-standalone-script in-section-mixed)
+
+      section:simplify $section |
+        should-be (
+          section:create [&] [
+            &'My test'=(
+              section:create [
+                &'should pass'=(
+                  test-result:success [Wiii!]
+                )
+              ] [
+                &Cip=(
+                  section:create [&] [
+                    &Ciop=(
+                      section:create [
+                        &'should fail'=(
+                          test-result:failure [Wooo!] []
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
           ]
-        ]
-      ]
-  }
+        )
 
-  >> 'exception handling' {
-    var stats = (
-      run-test-script exceptions |
-        stats:from-section (all)
-    )
+      put $section[sub-sections]['My test'] |
+        put (all)[sub-sections][Cip] |
+        put (all)[sub-sections][Ciop] |
+        put (all)[test-results]['should fail'] |
+        all (all)[exception-lines] |
+        str:join "\n" |
+        should-contain DODUS
+    }
 
-    put $stats[passed] |
-      should-be 1
+    >> 'with return keyword' {
+      run-standalone-script returning |
+        should-be (
+          section:create [&] [
+            &'Returning from a test'=(
+              section:create [
+                &'should work'=(
+                  test-result:success [Alpha Beta]
+                )
+              ]
+            )
+          ]
+        )
+    }
 
-    put $stats[failed] |
-      should-be 0
+    >> 'with exception handling' {
+      var stats = (
+        run-standalone-script exceptions |
+          stats:from-section
+      )
+
+      put $stats[passed] |
+        should-be 1
+    }
+
+    >> 'with test drafts' {
+      var section = (run-standalone-script test-drafts)
+
+      >> 'should generate a regular section with a tree' {
+        section:simplify $section |
+          should-be (
+            section:create [
+              &Alpha=(
+                test-result:failure [] []
+              )
+            ] [
+              &'In subsection'=(
+                section:create [
+                  &Beta=(
+                    test-result:failure [] []
+                  )
+                  &Gamma=(
+                    test-result:failure [] []
+                  )
+                  &'Longer title'=(
+                    test-result:failure [] []
+                  )
+                ]
+              )
+            ]
+          )
+      }
+
+      >> 'should have the not-implemented tests set to fail' {
+        fn should-be-set-to-fail {
+          var test-result = (one)
+
+          all $test-result[exception-lines] |
+            str:join "\n" |
+            should-contain 'TEST SET TO FAIL'
+        }
+
+        put $section[test-results][Alpha] |
+          should-be-set-to-fail
+
+        put $section[sub-sections]['In subsection'][test-results][Beta] |
+          should-be-set-to-fail
+
+        put $section[sub-sections]['In subsection'][test-results][Gamma] |
+          should-be-set-to-fail
+
+        put $section[sub-sections]['In subsection'][test-results]['Longer title'] |
+          should-be-set-to-fail
+      }
+    }
   }
 }

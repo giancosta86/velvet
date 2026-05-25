@@ -1,27 +1,20 @@
+use github.com/giancosta86/ethereal/v1/lang
+use ./sandbox-result
 use ./section
 use ./stats
 
-var empty = [
-  &section=$section:empty
-  &stats=$stats:empty
-  &crashed-scripts=[&]
-]
+fn from-sandbox-result { |@arguments|
+  var sandbox-result = (lang:get-single-input $arguments)
 
-fn from-sandbox-result { |sandbox-result|
-  var section = $sandbox-result[section]
-  var stats = (stats:from-section $section)
-
-  put [
-    &section=$section
-    &stats=$stats
-    &crashed-scripts=$sandbox-result[crashed-scripts]
-  ]
+  stats:from-section $sandbox-result[section] |
+    assoc $sandbox-result stats (all)
 }
 
-fn simplify { |summary|
-  put [
-    &section=(section:simplify $summary[section])
-    &stats=$summary[stats]
-    &crashed-scripts=$summary[crashed-scripts]
-  ]
+var empty = (from-sandbox-result $sandbox-result:empty)
+
+fn simplify { |@arguments|
+  var summary = (lang:get-single-input $arguments)
+
+  section:simplify $summary[section] |
+    assoc $summary section (all)
 }

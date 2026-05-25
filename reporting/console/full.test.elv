@@ -1,206 +1,97 @@
-use ../../outcomes
-use ../../sandbox-result
-use ../../section
 use ./full
 use ./test-shared
 
-var create-console-tester~ = (test-shared:create-console-tester-constructor $full:report~)
+>> 'Reporters' {
+  >> 'command-line' {
+    >> 'full' {
+      test-shared:run-console-tests [
+        &'>>~'=$'>>~'
 
->> 'Full command-line reporting' {
-  >> 'with empty section' {
-    var output-tester = (create-console-tester $sandbox-result:empty)
+        &console-reporter=$full:report~
 
-    $output-tester[should-contain-all] [
-      💬
-      'No test structure found.'
-    ]
-
-    $output-tester[should-contain-none] [
-      LOG
-      Total
-      Passed
-      Failed
-    ]
-  }
-
-  >> 'with single passed test' {
-    var sandbox-result = [
-      &section=[
-        &test-results=[
-          &Alpha=[
-            &outcome=$outcomes:passed
-            &output="Wiii!\n"
-            &exception-log=$nil
+        &scenarios= [
+          &empty-section=[
+            &all=[
+              '💬 No test structure found.'
+            ]
+            &none=[
+              LOG
+              Total
+              Passed
+              Failed
+            ]
           ]
-        ]
-        &sub-sections=[&]
-      ]
-      &crashed-scripts=[&]
-    ]
-
-    var output-tester = (create-console-tester $sandbox-result)
-
-    $output-tester[should-contain-all] [
-      ✅
-      Alpha
-      'Total tests: 1.'
-    ]
-
-    $output-tester[should-contain-none] [
-      'Passed: 1.'
-      'Failed: 0.'
-      Wiii!
-      LOG
-    ]
-  }
-
-  >> 'with single failed test - having output' {
-    var sandbox-result = [
-      &section=[
-        &test-results=[
-          &Beta=[
-            &outcome=$outcomes:failed
-            &output="Wooo!\n"
-            &exception-log=DODO
+          &single-passed-test=[
+            &all=[
+              '✅ Alpha'
+              '✅ Total tests: 1.'
+            ]
+            &none=[
+              Passed
+              Failed
+              Wiii!
+              LOG
+            ]
           ]
-        ]
-        &sub-sections=[&]
-      ]
-      &crashed-scripts=[&]
-    ]
-
-    var output-tester = (create-console-tester $sandbox-result)
-
-    $output-tester[should-contain-all] [
-      ❌
-      Beta
-      'OUTPUT LOG'
-      'EXCEPTION LOG'
-      Wooo!
-      DODO
-      'Total tests: 1.'
-      'Passed: 0.'
-      'Failed: 1.'
-    ]
-  }
-
-  >> 'with single failed test - having no output' {
-    var sandbox-result = [
-      &section=[
-        &test-results=[
-          &Beta=[
-            &outcome=$outcomes:failed
-            &output=''
-            &exception-log=DODO
+          &single-failed-having-output-and-exception=[
+            &all=[
+              '❌ Beta'
+              'OUTPUT LOG'
+              Wooo!
+              'EXCEPTION LOG'
+              DODO
+              '❌ Total tests: 1.'
+              'Passed: 0.'
+              'Failed: 1.'
+            ]
+            &none=[]
           ]
-        ]
-        &sub-sections=[&]
-      ]
-      &crashed-scripts=[&]
-    ]
-
-    var output-tester = (create-console-tester $sandbox-result)
-
-    $output-tester[should-contain-all] [
-      ❌
-      Beta
-      'EXCEPTION LOG'
-      DODO
-      'Total tests: 1.'
-      'Passed: 0.'
-      'Failed: 1.'
-    ]
-
-    $output-tester[should-contain-none] [
-      'OUTPUT LOG'
-    ]
-  }
-
-  >> 'with multi-level describe result' {
-    var section = [
-      &test-results=[
-        &Alpha=[
-          &outcome=$outcomes:passed
-          &output="Wiii!\n"
-          &exception-log=$nil
-        ]
-      ]
-      &sub-sections=[
-        &SomeOther=[
-          &test-results=[&]
-          &sub-sections=[
-            &YetAnother=[
-              &test-results=[
-                &Beta=[
-                  &outcome=$outcomes:failed
-                  &output="Wooo!\n"
-                  &exception-log=DODO
-                ]
-              ]
-              &sub-sections=[&]
+          &single-failed-having-output-only=[
+            &all=[
+              '❌ Beta'
+              'OUTPUT LOG'
+              Wooo!
+              '❌ Total tests: 1.'
+              'Passed: 0.'
+              'Failed: 1.'
+            ]
+            &none=[
+              'EXCEPTION LOG'
+            ]
+          ]
+          &single-failed-having-exception-only=[
+            &all=[
+              '❌ Beta'
+              'EXCEPTION LOG'
+              DODO
+              '❌ Total tests: 1.'
+              'Passed: 0.'
+              'Failed: 1.'
+            ]
+            &none=[
+              'OUTPUT LOG'
+            ]
+          ]
+          &multi-level-tree=[
+            &all=[
+              '✅ Alpha'
+              SomeOther
+              YetAnother
+              '❌ Beta'
+              'OUTPUT LOG'
+              Wooo!
+              'EXCEPTION LOG'
+              DODO
+              '❌ Total tests: 2.'
+              'Passed: 1.'
+              'Failed: 1.'
+            ]
+            &none=[
+              Wiii!
             ]
           ]
         ]
       ]
-    ]
-
-    var sandbox-result = [
-      &section=$section
-      &crashed-scripts=[&]
-    ]
-
-    var output-tester = (create-console-tester $sandbox-result)
-
-    $output-tester[should-contain-all] [
-      ✅
-      Alpha
-      SomeOther
-      YetAnother
-      ❌
-      Beta
-      'OUTPUT LOG'
-      Wooo!
-      'EXCEPTION LOG'
-      DODO
-      'Total tests: 2.'
-      'Passed: 1.'
-      'Failed: 1.'
-    ]
-
-    $output-tester[should-contain-none] [
-      Wiii!
-    ]
-  }
-
-  >> 'when running just crashed scripts' {
-    var output-tester = (create-console-tester [
-      &section=$section:empty
-      &crashed-scripts=[
-        &yogi.test.elv=[
-          alpha
-          beta
-          gamma
-        ]
-        &bubu.test.elv=[
-          ro
-          sigma
-        ]
-      ]
-    ])
-
-    $output-tester[should-contain-all] [
-      'Total tests: 0'
-      ⛔⛔⛔
-      'CRASHED SCRIPTS'
-      yogi.test.elv
-      alpha
-      bubu.test.elv
-      ro
-    ]
-
-    $output-tester[should-contain-none] [
-      💬
-      'No test structure found.'
-    ]
+    }
   }
 }

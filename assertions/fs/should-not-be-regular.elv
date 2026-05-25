@@ -1,9 +1,7 @@
 use os
 use github.com/giancosta86/ethereal/v1/lang
-use ../shared
+use ../../assertion
 
-var -error-message = 'should-not-be-regular assertion failed'
-
-var should-not-be-regular~ = (
-  shared:create-assertion-on-tested-entries (lang:negate $os:is-regular~) 'Non-missing files' $-error-message
-)
+fn should-not-be-regular {
+  assertion:enforce-predicate (src) (lang:negate $os:is-regular~) 'Non-missing files'
+}

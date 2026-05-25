@@ -1,8 +1,10 @@
 use ./outcomes
+use ./sandbox-result
+use ./section
 use ./summary
 use ./test-result
 
-var crashed-scripts = [
+var exception-lines-by-script = [
   &park/yogi.test.elv=[
     alpha
     beta
@@ -10,49 +12,38 @@ var crashed-scripts = [
   ]
 ]
 
->> 'Summary creation' {
-  >> 'from sandbox result' {
-    var section = [
-      &test-results=[
-        &alpha=[
-          &output=''
-          &outcome=$outcomes:passed
-        ]
-      ]
-      &sub-sections=[
-        &beta=[
-          &test-results=[
-            &gamma=[
-              &output=''
-              &outcome=$outcomes:passed
-            ]
-            &delta=[
-              &output=''
-              &outcome=$outcomes:failed
-            ]
-          ]
-          &sub-sections=[
-            &epsilon=[
-              &test-results=[
-                &zeta=$test-result:duplicate
-                &eta=[
-                  &output=''
-                  &outcome=$outcomes:passed
-                ]
+>> 'Summary' {
+  >> 'creation from sandbox result' {
+    var section = (
+      section:create [
+        &alpha=(
+          test-result:success []
+        )
+      ] [
+        &beta=(
+          section:create [
+            &gamma=(
+              test-result:success []
+            )
+            &delta=(
+              test-result:failure [] []
+            )
+          ] [
+            &epsilon=(
+              section:create [
+                &zeta=$test-result:duplicate-test
+                &eta=(
+                  test-result:success []
+                )
               ]
-              &sub-sections=[&]
-            ]
+            )
           ]
-        ]
+        )
       ]
-    ]
+    )
 
-    var sandbox-result = [
-      &section=$section
-      &crashed-scripts=$crashed-scripts
-    ]
-
-    summary:from-sandbox-result $sandbox-result |
+    sandbox-result:create $section $exception-lines-by-script |
+      summary:from-sandbox-result |
       should-be [
         &section=$section
         &stats=[
@@ -60,85 +51,44 @@ var crashed-scripts = [
           &passed=3
           &failed=2
         ]
-        &crashed-scripts=$crashed-scripts
+        &exception-lines-by-script=$exception-lines-by-script
       ]
   }
-}
 
->> 'Summary simplification' {
-  >> 'with section tree' {
-    var section = [
-      &test-results=[
-        &Yogi=[
-          &output="Wiii!"
-          &outcome=$outcomes:passed
-          &exception-log=$nil
-        ]
-      ]
-      &sub-sections=[
-        &Cip=[
-          &test-results=[
-            &Bubu=[
-              &output="Wooo!"
-              &outcome=$outcomes:failed
-              &exception-log=(show ?(fail DODO) | slurp)
-            ]
-          ]
-          &sub-sections=[
-            &Ciop=[
-              &test-results=[
-                &ranger=$test-result:duplicate
+  >> 'simplification' {
+    var section = (
+      section:create [
+        &Yogi=(
+          test-result:success [Wiii!]
+        )
+      ] [
+        &Cip=(
+          section:create [
+            &Bubu=(
+              test-result:failure [Wooo!] [DODO]
+            )
+          ] [
+            &Ciop=(
+              section:create [
+                &Ranger=$test-result:duplicate-test
               ]
-              &sub-sections=[&]
-            ]
+            )
           ]
-        ]
+        )
       ]
-    ]
+    )
 
-    var sandbox-result = [
-      &section=$section
-      &crashed-scripts=$crashed-scripts
-    ]
-
-    summary:from-sandbox-result $sandbox-result |
-      summary:simplify (all) |
+    sandbox-result:create $section $exception-lines-by-script |
+      summary:from-sandbox-result |
+      summary:simplify |
       should-be [
-        &section=[
-          &test-results=[
-            &Yogi=[
-              &output="Wiii!"
-              &outcome=$outcomes:passed
-            ]
-          ]
-          &sub-sections=[
-            &Cip=[
-              &test-results=[
-                &Bubu=[
-                  &output="Wooo!"
-                  &outcome=$outcomes:failed
-                ]
-              ]
-              &sub-sections=[
-                &Ciop=[
-                  &test-results=[
-                    &ranger=[
-                      &output=''
-                      &outcome=$outcomes:failed
-                    ]
-                  ]
-                  &sub-sections=[&]
-                ]
-              ]
-            ]
-          ]
-        ]
+        &section=(section:simplify $section)
         &stats=[
           &total=3
           &passed=1
           &failed=2
         ]
-        &crashed-scripts=$crashed-scripts
+        &exception-lines-by-script=$exception-lines-by-script
       ]
   }
 }

@@ -1,5 +1,3 @@
-use str
-
 >> 'In arithmetic' {
   >> 'addition' {
     >> 'should work' {
@@ -27,20 +25,18 @@ use str
           / 92 0
         } |
           to-string (all)[reason] |
-          str:contains (all) divisor |
-          should-be $true
+          should-contain divisor
       }
     }
   }
 
   >> 'custom fail' {
     >> 'should be handled and inspectable' {
-      throws {
+      fails {
         if (== (% 8 2) 0) {
           fail '8 is even!'
         }
       } |
-        exception:get-fail-content |
         should-be '8 is even!'
     }
   }

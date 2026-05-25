@@ -4,149 +4,155 @@ use github.com/giancosta86/ethereal/v1/string
 use ../../outcomes
 use ../../summary
 
-var -styles-by-outcome = [
-  &$outcomes:passed=[
-    &emoji=✅
-    &color=green
+var report~ = (
+  var sorting-algorithm = $str:to-lower~
+
+  var styles-by-outcome = [
+    &$outcomes:passed=[
+      &emoji=✅
+      &color=green
+    ]
+
+    &$outcomes:failed=[
+      &emoji=❌
+      &color=red
+    ]
   ]
 
-  &$outcomes:failed=[
-    &emoji=❌
-    &color=red
-  ]
-]
+  fn get-indentation { |level|
+    str:repeat ' ' (* $level 4)
+  }
 
-fn -get-indentation { |level|
-  str:repeat ' ' (* $level 4)
-}
+  fn display-wrong-lines { |description wrong-lines|
+    if (seq:is-non-empty $wrong-lines) {
+      echo (styled $description red bold)
+      echo
 
-fn -display-test-result { |test-title test-result level|
-  var outcome = $test-result[outcome]
+      all $wrong-lines |
+        each $echo~
 
-  var style = $-styles-by-outcome[$outcome]
+      echo
+    }
+  }
 
-  var indentation = (-get-indentation $level)
+  fn display-test-result { |test-title test-result level|
+    var outcome = $test-result[outcome]
 
-  echo $indentation''$style[emoji] (styled $test-title $style[color] bold)
+    var style = $styles-by-outcome[$outcome]
 
-  if (eq $outcome $outcomes:failed) {
-    var logging-indentation = (-get-indentation (+ $level 1))
+    echo (get-indentation $level)''$style[emoji] (styled $test-title $style[color] bold)
 
-    {
-      if (not-eq $test-result[output] '') {
-        echo (styled '*** OUTPUT LOG (stdout + stderr) ***' red bold)
-        echo
-        echo (str:trim-space $test-result[output])
-        echo
+    if (eq $outcome $outcomes:failed) {
+      {
+        display-wrong-lines '*** OUTPUT LOG (stdout + stderr) ***' $test-result[output-lines]
+
+        display-wrong-lines '*** EXCEPTION LOG ***' $test-result[exception-lines]
+      } |
+        string:prefix-lines (get-indentation (+ $level 1))
+    }
+  }
+
+  fn display-section { |section level|
+    keys $section[test-results] |
+      order &key=$sorting-algorithm |
+      each { |test-title|
+        var test-result = $section[test-results][$test-title]
+
+        display-test-result $test-title $test-result $level
       }
 
-      echo (styled '*** EXCEPTION LOG ***' red bold)
-      echo
-      echo (str:trim-space $test-result[exception-log])
-      echo
-    } |
-      string:prefix-lines $logging-indentation |
-      str:join "\n" |
-      echo (all)
-  }
-}
+    var section-has-test-results = (seq:is-non-empty $section[test-results])
 
-fn -display-section { |section level|
-  keys $section[test-results] |
-    order &key=$str:to-lower~ |
-    each { |test-title|
-      var test-result = $section[test-results][$test-title]
+    var before-first-sub-section = $true
 
-      -display-test-result $test-title $test-result $level
-    }
+    keys $section[sub-sections] |
+      order &key=$sorting-algorithm |
+      each { |sub-title|
+        if $before-first-sub-section {
+          set before-first-sub-section = $false
 
-  var is-first-sub-section = $true
-
-  keys $section[sub-sections] |
-    order &key=$str:to-lower~ |
-    each { |sub-title|
-      if $is-first-sub-section {
-        set is-first-sub-section = $false
-
-        var preceding-test-results = (count $section[test-results])
-
-        if (> $preceding-test-results 0)  {
+          if $section-has-test-results  {
+            echo
+          }
+        } else {
           echo
         }
-      } else {
-        echo
+
+        echo (get-indentation $level)''(styled $sub-title white bold)
+
+        var sub-section = $section[sub-sections][$sub-title]
+
+        display-section $sub-section (+ $level 1)
       }
 
-      var indentation = (-get-indentation $level)
-
-      echo $indentation''(styled $sub-title white bold)
-
-      var sub-section = $section[sub-sections][$sub-title]
-
-      -display-section $sub-section (+ $level 1)
+    if (and (== $level 0) (not $before-first-sub-section)) {
+      echo
     }
-}
-
-fn -display-stats { |stats|
-  var total-style
-
-  if (== 0 $stats[failed]) {
-    set total-style = $-styles-by-outcome[$outcomes:passed]
-  } else {
-    set total-style = $-styles-by-outcome[$outcomes:failed]
   }
 
-  var total-fragment = $total-style[emoji]' '(styled 'Total tests: '$stats[total]'.' bold $total-style[color])
-
-  var fragments = [$total-fragment]
-
-  if (> $stats[failed] 0) {
-    var passed-fragment = (styled 'Passed: '$stats[passed]'.' green bold)
-    var failed-fragment = (styled 'Failed: '$stats[failed]'.' red bold)
-
-    set fragments = (conj $fragments $passed-fragment $failed-fragment)
-  }
-
-  echo $@fragments
-}
-
-fn -display-crashed-scripts { |crashed-scripts|
-  if (seq:is-empty $crashed-scripts) {
-    return
-  }
-
-  echo
-  echo
-  echo ⛔⛔⛔ (styled 'CRASHED SCRIPTS' bold red) ⛔⛔⛔
-
-  keys $crashed-scripts | each { |crashed-script-path|
-    var exception-lines = $crashed-scripts[$crashed-script-path]
-
-    var exception-log = (
-      all $exception-lines |
-        str:join "\n"
+  fn display-stats { |stats|
+    var total-style = (
+      if (== 0 $stats[failed]) {
+        put $styles-by-outcome[$outcomes:passed]
+      } else {
+        put $styles-by-outcome[$outcomes:failed]
+      }
     )
 
-    echo
-    echo ⛔ (styled $crashed-script-path bold red)
-    echo
-    echo $exception-log
-    echo
-    echo
+    var total-fragment = (
+      put 'Total tests: '$stats[total]'.' |
+        styled (all) bold $total-style[color] |
+        put $total-style[emoji]' '(all)
+    )
+
+    var fragments = [$total-fragment]
+
+    if (> $stats[failed] 0) {
+      var passed-fragment = (styled 'Passed: '$stats[passed]'.' green bold)
+      var failed-fragment = (styled 'Failed: '$stats[failed]'.' red bold)
+
+      set fragments = (conj $fragments $passed-fragment $failed-fragment)
+    }
+
+    echo $@fragments
   }
-}
 
-fn report { |summary|
-  if (eq $summary $summary:empty) {
-    echo 💬 (styled 'No test structure found.' bold white)
-    return
+  fn display-crashed-scripts { |exception-lines-by-script|
+    if (seq:is-empty $exception-lines-by-script) {
+      return
+    }
+
+    echo
+    echo
+    echo ⛔⛔⛔ (styled 'CRASHED SCRIPTS' bold red) ⛔⛔⛔
+
+    keys $exception-lines-by-script |
+      order &key=$sorting-algorithm |
+      each { |crashed-script-path|
+        var exception-lines = $exception-lines-by-script[$crashed-script-path]
+
+        echo
+        echo ⛔ (styled $crashed-script-path bold red)
+        echo
+
+        all $exception-lines |
+          each $echo~
+
+        echo
+        echo
+      }
   }
 
-  -display-section $summary[section] 0
+  put { |summary|
+    if (eq $summary $summary:empty) {
+      echo 💬 (styled 'No test structure found.' bold white)
+      return
+    }
 
-  echo
+    display-section $summary[section] 0
 
-  -display-stats $summary[stats]
+    display-stats $summary[stats]
 
-  -display-crashed-scripts $summary[crashed-scripts]
-}
+    display-crashed-scripts $summary[exception-lines-by-script]
+  }
+)
