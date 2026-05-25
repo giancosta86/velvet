@@ -7,5 +7,5 @@
 
   "dependencies": ["github.com/giancosta86/ethereal@v1"],
 
-  "devDependencies": ["github.com/giancosta86/velvet@v4.0.0-beta.2"]
+  "devDependencies": ["github.com/giancosta86/velvet@v4"]
 }
