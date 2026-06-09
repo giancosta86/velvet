@@ -23,7 +23,7 @@ fn -process-style { |styled|
   }
 }
 
-fn capture { |&throws=$false &styled=$false &stream=both &type=both block|
+fn capture { |&throws=$false &styled=$false &lines=$false &stream=both &type=both block|
   var capturing-block = {
     command:capture &stream=$stream &type=$type $block |
       -replay-capture-result
@@ -35,6 +35,13 @@ fn capture { |&throws=$false &styled=$false &stream=both &type=both block|
     $capturing-block
   } |
     each $to-string~ |
+    if $lines {
+      each { |value|
+        put $value |
+          -process-style $styled
+      }
+    } else {
       str:join "\n" |
-      -process-style $styled
+        -process-style $styled
+    }
 }

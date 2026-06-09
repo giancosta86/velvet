@@ -23,6 +23,17 @@ var capture~ = $capture:capture~
           } |
             should-be "90\n92\n$true"
         }
+
+        >> 'when enabling lines' {
+          capture &lines {
+            echo Hello
+            put (num 90)
+          } |
+            should-emit &any-order [
+              Hello
+              90
+            ]
+        }
       }
 
       >> 'when an exception is thrown' {
@@ -85,6 +96,21 @@ var capture~ = $capture:capture~
             fail DODO
           } |
             should-be "90\n92\n$false"
+        }
+
+        >> 'when enabling lines' {
+          capture &throws &lines {
+            echo Hello
+            put (num 92)
+            put $false
+
+            fail DODO
+          } |
+            should-emit &any-order [
+              Hello
+              92
+              '$false'
+            ]
         }
       }
     }
