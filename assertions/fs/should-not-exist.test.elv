@@ -9,9 +9,9 @@ var should-not-exist~ = $should-not-exist:should-not-exist~
       fs:with-temp-dir { |temp-dir|
         cd $temp-dir
 
-        echo '' > alpha
+        fs:touch alpha
         os:mkdir beta
-        echo '' > gamma
+        fs:touch gamma
 
         >> 'when the file system entries are missing' {
           all [
