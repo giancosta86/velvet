@@ -8,9 +8,9 @@ var should-exist~ = $should-exist:should-exist~
       fs:with-temp-dir { |temp-dir|
         cd $temp-dir
 
-        echo '' > alpha
+        fs:touch alpha
         mkdir beta
-        echo '' > gamma
+        fs:touch gamma
 
         >> 'when the file system entries exist' {
           all [

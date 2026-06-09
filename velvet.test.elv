@@ -16,14 +16,12 @@ var this-script-dir = (path:dir (src)[name])
 >> 'velvet command' {
   >> 'resolving script path' {
     fn create-test-script {
-      echo '' > alpha.test.elv
+      fs:touch alpha.test.elv
     }
 
     fn create-test-dir {
-      mkdir alpha
-
-      echo '' > alpha/beta.test.elv
-      echo '' > alpha/gamma.test.elv
+      fs:touch alpha/beta.test.elv
+      fs:touch alpha/gamma.test.elv
     }
 
     >> 'when the script path exists' {
