@@ -20,8 +20,6 @@ var this-script-dir = (path:dir (src)[name])
     }
 
     fn create-test-dir {
-      mkdir alpha
-
       fs:touch alpha/beta.test.elv
       fs:touch alpha/gamma.test.elv
     }
