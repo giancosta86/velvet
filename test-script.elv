@@ -1,3 +1,4 @@
+use os
 use path
 use ./test-script/frame
 use ./test-script/namespace
@@ -62,8 +63,8 @@ fn run { |script-path|
 
   tmp pwd = (path:dir $abs-script-path)
 
-  eval &ns=$namespace $script-code |
-    only-bytes
+  eval &ns=$namespace $script-code 2>$os:dev-null |
+    only-bytes > $os:dev-null
 
   $root-frames[to-section]
 }
