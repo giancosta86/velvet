@@ -278,5 +278,23 @@ fn run-standalone-script { |basename|
           should-be-set-to-fail
       }
     }
+
+    >> 'with root output' {
+      capture {
+        run-standalone-script root-output |
+          section:simplify |
+          should-be (
+            section:create [&] [
+              &Tests=(
+                section:create [
+                  &passing=(test-result:success [Wiii])
+                  &failing=(test-result:failure [Wooo] [])
+                ]
+              )
+            ]
+          )
+      } |
+        should-be ''
+    }
   }
 }
