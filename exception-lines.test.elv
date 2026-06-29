@@ -4,6 +4,40 @@ use github.com/giancosta86/ethereal/v1/string
 use ./exception-lines
 
 >> 'Exception lines' {
+  >> 'trying to extract first cause' {
+    >> 'for a basic exception' {
+      var exception = ?(fail DODO)
+
+      show $exception |
+        exception-lines:try-to-extract-first-cause |
+        should-emit [(show $exception)]
+    }
+
+    >> 'for an exception with causes' {
+      var exception = ?(
+        { fail A } |
+          { fail B } |
+          { fail C }
+      )
+
+      var filtered-lines = [(
+        capture &lines {
+          show $exception |
+            exception-lines:try-to-extract-first-cause
+        }
+      )]
+
+      put $filtered-lines[0] |
+        should-be 'Exception: A'
+
+      put $filtered-lines |
+        should-contain-none [
+          'Exception: B'
+          'Exception: C'
+        ]
+    }
+  }
+
   >> 'trimming clockwork stack' {
     >> 'with no lines' {
       all [] |

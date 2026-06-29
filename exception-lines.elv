@@ -2,6 +2,10 @@ use path
 use re
 use str
 
+var -cause-prefix = '  Exception: '
+
+var -cause-leading-spaces = (str:index $-cause-prefix Exception)
+
 var -first-clockwork-line-pattern = (
   all [
     ['ethereal' 'v\d+' 'command\.elv']
@@ -19,6 +23,31 @@ var -first-clockwork-line-pattern = (
     } |
     str:join '|'
 )
+
+fn try-to-extract-first-cause {
+  var lines = [(all)]
+
+  var first-cause-found = $false
+
+  all $lines | each { |line|
+    if (str:has-prefix $line $-cause-prefix) {
+      if $first-cause-found {
+        break
+      } else {
+        set first-cause-found = $true
+        put $line[$-cause-leading-spaces..]
+      }
+    } else {
+      if $first-cause-found {
+        put $line[$-cause-leading-spaces..]
+      }
+    }
+  }
+
+  if (not $first-cause-found) {
+    all $lines
+  }
+}
 
 fn trim-clockwork-stack {
   each { |line|

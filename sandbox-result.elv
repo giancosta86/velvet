@@ -31,6 +31,7 @@ fn from-section { |@arguments|
 fn from-exception { |script-path exception|
   var exception-lines = [(
     show $exception |
+      exception-lines:try-to-extract-first-cause |
       exception-lines:trim-clockwork-stack |
       exception-lines:replace-bottom-eval $script-path
   )]
