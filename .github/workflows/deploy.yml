@@ -1,14 +1,13 @@
-name: Publish
+name: Deploy
 
 on:
   pull_request:
-    types: [closed]
+    types: closed
     branches: main
 
-  workflow_dispatch:
-
 jobs:
-  publish:
+  tag-and-release:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
