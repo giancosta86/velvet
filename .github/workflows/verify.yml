@@ -11,4 +11,4 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: giancosta86/aurora-github/actions/verify-elvish-package@v11
+      - uses: giancosta86/aurora-github/actions/verify-elvish-package@v12

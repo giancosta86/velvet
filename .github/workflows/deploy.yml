@@ -12,6 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: giancosta86/aurora-github/actions/tag-and-release@v11
+      - uses: giancosta86/aurora-github/actions/tag-and-release@v12
         with:
           product-name: Velvet
